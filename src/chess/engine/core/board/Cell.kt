@@ -3,7 +3,7 @@ package chess.engine.core.board
 import chess.engine.core.columnToString
 import chess.engine.core.rowToString
 
-class Cell(val row: Int, val column: Int) {
+data class Cell(val row: Int, val column: Int) {
     val index: Int = row * 8 + column
 
     constructor(index: Int) : this(index shr 3, index and 7)
@@ -38,8 +38,18 @@ class Cell(val row: Int, val column: Int) {
         fun encode(row: Int, column: Int) = (row shl 3) + column
 
         fun of(cellStr: String): Cell {
-            require(cellStr.length == 2)
-            return Cell(row = cellStr[1] - '1', column = cellStr[0] - 'a')
+            require(cellStr.length == 2) { "$cellStr cannot be parsed as Cell" }
+            return Cell(row = rowOf(cellStr[1]), column = columnOf(cellStr[0]))
         }
     }
+}
+
+fun rowOf(rowChar: Char): Int {
+    require(rowChar in '1'..'8')
+    return rowChar - '1'
+}
+
+fun columnOf(columnChar: Char): Int {
+    require(columnChar in 'a'..'h')
+    return columnChar - 'a'
 }

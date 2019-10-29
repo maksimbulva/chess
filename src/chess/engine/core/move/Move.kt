@@ -4,7 +4,7 @@ import chess.engine.core.Piece
 import chess.engine.core.Player
 import chess.engine.core.board.Cell
 
-class Move(
+data class Move(
     val fromCell: Cell,
     val toCell: Cell,
     val promoteTo: Piece? = null,
