@@ -4,6 +4,7 @@ import chess.engine.core.ColoredPiece
 import chess.engine.core.Piece
 import chess.engine.core.Player
 import chess.engine.core.board.Board
+import chess.engine.core.columnToString
 import chess.engine.core.position.CastlingAvailability
 import chess.engine.core.position.Position
 import extensions.toUpperCaseIf
@@ -20,7 +21,7 @@ object FenEncoder {
             position.halfMoveClock.toString(),
             encodeFullMoveNumber(position.fullMoveNumber, options)
         )
-            .joinToString { " " }
+            .joinToString(separator = " ")
     }
 
     private fun encodeBoard(board: Board): String {
@@ -84,7 +85,7 @@ object FenEncoder {
         } else {
             FenFormat.whiteEnPassantCaptureRow
         }
-        return column.toString() + rowString
+        return columnToString(column) + rowString
     }
 
     private fun encodePiece(piece: ColoredPiece): Char {

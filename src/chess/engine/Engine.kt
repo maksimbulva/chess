@@ -7,7 +7,7 @@ import chess.engine.fen.FenDecoder
 
 class Engine {
 
-    var currentPosition: Position
+    var currentPosition: Position = FenDecoder.decode(initialPosition)
         private set
 
     var moveHistory: List<Move> = emptyList()
@@ -21,7 +21,7 @@ class Engine {
             return _legalMoves!!
         }
 
-    init {
+    fun resetToInitialPosition() {
         currentPosition = FenDecoder.decode(initialPosition)
     }
 

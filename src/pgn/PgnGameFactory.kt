@@ -19,17 +19,15 @@ internal object PgnGameFactory {
             val parsedMove = PgnMoveParser.parseMove(moveString)
 
             val currentPosition = engine.currentPosition
-            val move = engine.legalMoves
-                .firstOrNull { move -> parsedMove.isMatch(move, currentPosition) }
-                ?: throw PgnParseException("Cannot find legal move which matches pgn move $moveString")
-                    /*piece == board.pieceAt(move.fromCell)?.piece &&
-                            move.toCell == toCell &&
-                            (fromCell == null || move.fromCell == fromCell) &&
-                            (fromRow == null || move.fromCell.row == fromRow) &&
-                            (fromColumn == null || move.fromCell.column == fromColumn)
-                     */
 
-            engine.playMove(move)
+            val matchedLegalMoves = engine.legalMoves.filter {
+                move -> parsedMove.isMatch(move, currentPosition)
+            }
+            if (matchedLegalMoves.size == 1) {
+                engine.playMove(matchedLegalMoves.first())
+            } else {
+                throw PgnParseException("Cannot find legal move which matches pgn move $moveString")
+            }
         }
 
         return PgnGame(tags.toMap(), engine.moveHistory)

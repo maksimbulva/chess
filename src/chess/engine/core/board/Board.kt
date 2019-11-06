@@ -32,7 +32,7 @@ class Board(private val cells: Array<ColoredPiece?>) {
     }
 
     fun rowSequence(row: Int): Sequence<ColoredPiece?> {
-        return (0..8).asSequence().map { column -> pieceAt(row, column) }
+        return (0..7).asSequence().map { column -> pieceAt(row, column) }
     }
 
     fun pieceAt(row: Int, column: Int): ColoredPiece? = cells[Cell.encode(row, column)]
