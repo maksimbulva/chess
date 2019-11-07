@@ -3,8 +3,8 @@ package chess.engine.fen
 import chess.engine.Engine
 import chess.engine.core.board.Cell
 import chess.engine.core.move.Move
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 internal class FenEncoderTest {
 
