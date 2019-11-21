@@ -2,7 +2,7 @@ package pgn
 
 object PgnParser {
 
-    private val GAME_RESULTS = hashSetOf("1-0", "0-1", "1/2-1/2")
+    private val GAME_RESULTS = hashSetOf("1-0", "0-1", "1/2-1/2", "*")
 
     fun parse(strIter: Iterator<String>): List<PgnGame> {
         return parse(strIter.asSequence().flatMap { parseToWords(it).asSequence() })
@@ -13,8 +13,8 @@ object PgnParser {
 
         var currentParserState: State = State.ParseMoveList()
         var currentTagKey = ""
-        var currentTags = mutableMapOf<String, String>()
-        var unparsedMoves = mutableListOf<String>()
+        val currentTags = mutableMapOf<String, String>()
+        val unparsedMoves = mutableListOf<String>()
 
         words.forEach { word ->
             val newParserState = currentParserState.consume(word)
@@ -31,7 +31,9 @@ object PgnParser {
                 }
 
                 if (newParserState is State.ParseTagKey) {
-                    require(unparsedMoves.isEmpty())
+                    if (!unparsedMoves.isEmpty()) {
+                        require(unparsedMoves.isEmpty())
+                    }
                 }
             }
 
