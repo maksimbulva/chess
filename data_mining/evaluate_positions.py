@@ -13,7 +13,10 @@ def evaluate_position(engine, fen: str):
     print('Evaluating position {0}'.format(fen))
     board = chess.Board(fen)
     info = engine.analyse(board, limit=evaluation_limit())
-    score = info['score'].relative.score() / 100.0
+    
+    score = info['score'].white().score()
+    if score is not None:
+        score /= 100.0
     print('Score: {0}'.format(score))
     return score
 

@@ -24,7 +24,8 @@ def create_table_if_not_exists():
         CREATE TABLE IF NOT EXISTS Positions (
             'id' INTEGER PRIMARY KEY AUTOINCREMENT,
             'position' VARCHAR(80) NOT NULL UNIQUE,
-            'evaluation' SINGLE NULL
+            'evaluation' SINGLE NULL,
+            'evaluated' INT DEFAULT 0
         );
     """
     execute_command(command)
@@ -39,7 +40,7 @@ def insert_positions(fen_list: list):
 def get_not_evaluated_position():
     command = """
         SELECT Positions.'id', Positions.'position' FROM Positions
-            WHERE Positions.'evaluation' IS NULL
+            WHERE Positions.'evaluated' = 0
             LIMIT 1;
     """
     result = execute_command_and_get_result(command)
@@ -49,10 +50,13 @@ def get_not_evaluated_position():
         return result[0], result[1]
 
 def count_not_evaluated_positions():
-    command = "SELECT COUNT() FROM Positions WHERE Positions.'evaluation' IS NULL;"
+    command = "SELECT COUNT() FROM Positions WHERE Positions.'evaluated' = 0;"
     return execute_command_and_get_result(command)[0]
 
 def update_position_evaluation(position_id: int, score: float):
-    command = "UPDATE Positions SET evaluation={0}".format(score)
-    command += " WHERE Positions.'id'={0}".format(position_id)
+    scoreSql = str(score)
+    if score is None:
+        scoreSql = 'NULL'
+    command = "UPDATE Positions SET evaluation = {0}, evaluated = 1".format(scoreSql)
+    command += " WHERE Positions.'id' = {0};".format(position_id)
     execute_command(command)
