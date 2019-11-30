@@ -1,4 +1,5 @@
 import chess
+import csv
 from factors.factor_advanced_pawn_count import FactorAdvancedPawnCount
 from factors.factor_doubled_pawn_count import FactorDoubledPawnCount
 from factors.factor_isolated_pawn_count import FactorIsolatedPawnCount
@@ -38,12 +39,13 @@ def main():
         FactorAdvancedPawnCount()
     ]
 
-    with open('values.txt', 'w') as output_file:
+    with open('position_evaluation.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',')
         for evaluated_position in positions_db.get_evaluated_positions():
             fen, evaluation = evaluated_position
-            evaluated_factors = calculate_evaluation_factors(factors, chess.Board(fen))
-            evaluated_factors_str = '\t'.join([str(x) for x in evaluated_factors])
-            output_file.write('{0}\t{1}\n'.format(sigmoid(evaluation), evaluated_factors_str))
+            row_data = [sigmoid(evaluation)]
+            row_data += calculate_evaluation_factors(factors, chess.Board(fen))
+            writer.writerow(row_data)
 
 if __name__ == '__main__':
     main()
