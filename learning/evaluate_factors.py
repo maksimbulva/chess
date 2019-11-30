@@ -2,9 +2,12 @@ import chess
 from factors.factor_advanced_pawn_count import FactorAdvancedPawnCount
 from factors.factor_doubled_pawn_count import FactorDoubledPawnCount
 from factors.factor_isolated_pawn_count import FactorIsolatedPawnCount
+from factors.factor_material_bishop_pair import FactorMaterialBishopPair
 from factors.factor_material import FactorMaterial
+from factors.factor_mobility import FactorMobility
 from factors.factor_passed_pawn_count import FactorPassedPawnCount
 from factors.factor_pawn_island_count import FactorPawnIslandCount
+from factors.factor_piece_square_table_value import FactorPieceSquareTableValue
 from math import exp
 import positions_db
 
@@ -25,6 +28,9 @@ def main():
 
     factors = [
         FactorMaterial(),
+        FactorMaterialBishopPair(),
+        FactorPieceSquareTableValue(),
+        FactorMobility(),
         FactorPawnIslandCount(),
         FactorDoubledPawnCount(),
         FactorIsolatedPawnCount(),
