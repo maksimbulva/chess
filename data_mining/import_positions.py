@@ -1,6 +1,7 @@
 import chess
 import chess.pgn
 import positions_db
+import position_mutators
 import sys
 
 
@@ -31,6 +32,14 @@ def import_games(filename: str):
     print("{0} positions imported".format(len(fen_list)))
     return fen_list
 
+def mutate_positions(fen_list: list):
+    result = []
+    for fen in fen_list:
+        mutated_position = position_mutators.erase_random_piece(chess.Board(fen))
+        if mutate_positions is not None:
+            result.append(erase_move_counters(mutated_position.fen()))
+    return result
+
 def main():
     if (len(sys.argv)) < 2:
         print('Please specify the pgn file to import games from')
@@ -39,6 +48,9 @@ def main():
     pgn_file = str(sys.argv[1])
     fen_list = import_games(pgn_file)
     adjusted_fen_list = [erase_move_counters(fen) for fen in fen_list]
+
+    # Uncomment to use position mutation
+    # adjusted_fen_list = mutate_positions(adjusted_fen_list)
 
     positions_db.create_table_if_not_exists()
     positions_db.insert_positions(adjusted_fen_list)
