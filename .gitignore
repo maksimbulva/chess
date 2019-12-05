@@ -28,3 +28,7 @@ hs_err_pid*
 # Gradle
 /app/.gradle/
 *.pyc
+*.user
+*.obj
+*.pdb
+*.exe
