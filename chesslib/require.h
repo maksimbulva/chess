@@ -4,10 +4,15 @@
 
 namespace chesslib {
 
+inline void FAIL()
+{
+    throw ChesslibException{ };
+}
+    
 inline void REQUIRE(bool expr)
 {
     if (!expr) {
-        throw ChesslibException{ };
+        FAIL();
     }
 }
 

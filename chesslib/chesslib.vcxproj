@@ -126,15 +126,22 @@
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="fen.cpp" />
     <ClCompile Include="Position.cpp" />
+    <ClCompile Include="position_factory.cpp" />
     <ClCompile Include="string_utils.cpp" />
     <ClCompile Include="winboard_main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bitboard.h" />
     <ClInclude Include="Board.h" />
+    <ClInclude Include="board_utils.h" />
+    <ClInclude Include="CastleOptions.h" />
     <ClInclude Include="exceptions.h" />
     <ClInclude Include="fen.h" />
+    <ClInclude Include="Move.h" />
+    <ClInclude Include="MovesCollection.h" />
     <ClInclude Include="PieceOnBoard.h" />
     <ClInclude Include="Position.h" />
+    <ClInclude Include="position_factory.h" />
     <ClInclude Include="require.h" />
     <ClInclude Include="string_utils.h" />
     <ClInclude Include="types.h" />
