@@ -32,9 +32,10 @@ def main():
     engine.configure({'Threads': 6})
 
     while True:
-        position_id, fen = positions_db.get_not_evaluated_position()
-        if fen is None:
+        record = positions_db.get_not_evaluated_position()
+        if record is None:
             break
+        position_id, fen = record
         score = evaluate_position(engine, fen)
         positions_db.update_position_evaluation(position_id, score)
 
