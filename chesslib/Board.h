@@ -21,6 +21,22 @@ public:
         return squares_[square].isEmpty();
     }
 
+    bool isNotEmpty(square_t square) const
+    {
+        return !isEmpty(square);
+    }
+
+    bool isNotEmptyAndOtherPlayer(square_t square, player_t player) const
+    {
+        const auto squareValue = squares_[square];
+        return squareValue.isNotEmpty() && squareValue.getPlayer() != player;
+    }
+
+    player_t getPlayer(square_t square) const
+    {
+        return squares_[square].getPlayer();
+    }
+
     square_t getKingSquare(player_t player) const
     {
         return kingSquares_[player];
@@ -51,6 +67,11 @@ public:
         piece_type_t getPieceType() const
         {
             return current_->getPieceType();
+        }
+
+        player_t getPlayer() const
+        {
+            return current_->getPlayer();
         }
 
         square_t getSquare() const
@@ -92,6 +113,11 @@ private:
         bool isEmpty() const
         {
             return coloredPiece == 0;
+        }
+
+        bool isNotEmpty() const
+        {
+            return !isEmpty();
         }
 
         uint8_t square = 0;

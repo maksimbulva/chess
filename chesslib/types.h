@@ -37,6 +37,9 @@ constexpr square_t BLACK_PAWN_ROW = 7;
 constexpr square_t ROW_COUNT = 8;
 constexpr square_t COLUMN_COUNT = 8;
 
+constexpr square_t MAX_ROW = ROW_COUNT - 1;
+constexpr square_t MAX_COLUMN = COLUMN_COUNT - 1;
+
 constexpr position_flags_t NO_EN_PASSANT_COLUMN = COLUMN_COUNT;
 
 constexpr inline square_t encodeSquare(square_t row, square_t column)

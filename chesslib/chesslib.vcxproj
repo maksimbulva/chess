@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="fen.cpp" />
+    <ClCompile Include="moves_generator.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="position_factory.cpp" />
     <ClCompile Include="string_utils.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="fen.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="MovesCollection.h" />
+    <ClInclude Include="OptionalColumn.h" />
     <ClInclude Include="PieceOnBoard.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="position_factory.h" />

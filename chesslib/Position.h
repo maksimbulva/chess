@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Board.h"
+#include "board_utils.h"
 #include "MovesCollection.h"
+#include "OptionalColumn.h"
 
 namespace chesslib {
 
@@ -22,6 +24,12 @@ public:
         return White;
     }
 
+    OptionalColumn getEnPassantColumn() const
+    {
+        // TODO
+        return OptionalColumn();
+    }
+
 private:
 
     void fillWithPseudoLegalMoves(MovesCollection& moves) const;
@@ -29,6 +37,10 @@ private:
     void fillWithPawnMoves(square_t pawnSquare, MovesCollection& moves) const;
     void fillWithKnightMoves(square_t knightSquare, MovesCollection& moves) const;
 
+    void fillWithSlideMoves(
+        piece_type_t pieceType,
+        RayIterator RayIterator,
+        MovesCollection& moves) const;
 
 private:
     Board board_;
