@@ -14,14 +14,20 @@ public:
         square_t blackKingSquare,
         square_t whiteKingSquare);
 
-    void addPiece(const PieceOnBoard& piece);
-
     void fillWithLegalMoves(MovesCollection& moves) const;
+
+    void fillWithPseudoLegalMoves(MovesCollection& moves) const;
 
     player_t getPlayerToMove() const
     {
         // TODO
         return White;
+    }
+
+    player_t getOtherPlayer() const
+    {
+        // TODO
+        return Black;
     }
 
     OptionalColumn getEnPassantColumn() const
@@ -30,12 +36,24 @@ public:
         return OptionalColumn();
     }
 
-private:
+    const Board& getBoard() const
+    {
+        return board_;
+    }
 
-    void fillWithPseudoLegalMoves(MovesCollection& moves) const;
+    bool isKingCanBeCaptured() const;
+
+    void addPiece(const PieceOnBoard& piece);
+
+    void playMove(const Move& move);
+
+    void undoMove();
+
+private:
 
     void fillWithPawnMoves(square_t pawnSquare, MovesCollection& moves) const;
     void fillWithKnightMoves(square_t knightSquare, MovesCollection& moves) const;
+    void fillWithKingMoves(square_t kingSquare, MovesCollection& moves) const;
 
     void fillWithSlideMoves(
         piece_type_t pieceType,

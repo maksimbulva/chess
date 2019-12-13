@@ -6,6 +6,8 @@
 
 namespace chesslib {
 
+class Board;
+
 constexpr inline square_t getDelta(fastint deltaRow, fastint deltaColumn)
 {
     return static_cast<square_t>(deltaRow * 8 + deltaColumn);
@@ -117,5 +119,7 @@ inline fastint calculateMaxRayLenght<DIRECTION_DOWN_RIGHT>(square_t origin)
         calculateMaxRayLenght<DIRECTION_DOWN>(origin),
         calculateMaxRayLenght<DIRECTION_RIGHT>(origin));
 }
+
+bool isSquareAttacked(square_t target, const Board& board, player_t attacker);
 
 }

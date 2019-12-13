@@ -32,6 +32,12 @@ public:
         return squareValue.isNotEmpty() && squareValue.getPlayer() != player;
     }
 
+    bool isPlayerPiece(square_t square, player_t player, piece_type_t pieceType) const
+    {
+        const uint8_t encoded = static_cast<uint8_t>((pieceType << 1) | player);
+        return squares_[square].coloredPiece == encoded;
+    }
+
     player_t getPlayer(square_t square) const
     {
         return squares_[square].getPlayer();

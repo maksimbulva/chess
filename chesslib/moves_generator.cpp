@@ -7,35 +7,71 @@ namespace chesslib {
 
 namespace {
 
-    struct KnightDirection {
-        constexpr KnightDirection(fastint deltaRow, fastint deltaColumn)
-            : delta(getDelta(deltaRow, deltaColumn))
-            , origins(generateValidOriginsForDelta(deltaRow, deltaColumn))
-        {
+struct MoveDelta {
+    constexpr MoveDelta(fastint deltaRow, fastint deltaColumn)
+        : delta(getDelta(deltaRow, deltaColumn))
+        , origins(generateValidOriginsForDelta(deltaRow, deltaColumn))
+    {
+    }
+
+    const square_t delta;
+    const bitboard_t origins;
+};
+
+constexpr std::array<MoveDelta, 8> KNIGHT_MOVE_DELTAS = {
+    MoveDelta(-2, -1),
+    MoveDelta(-2, 1),
+    MoveDelta(-1, -2),
+    MoveDelta(-1, 2),
+    MoveDelta(1, -2),
+    MoveDelta(1, 2),
+    MoveDelta(2, -1),
+    MoveDelta(2, 1)
+};
+
+constexpr std::array<MoveDelta, 8> KING_MOVE_DELTAS = {
+    MoveDelta(-1, -1),
+    MoveDelta(-1, 0),
+    MoveDelta(-1, 1),
+    MoveDelta(0, -1),
+    MoveDelta(0, 1),
+    MoveDelta(1, -1),
+    MoveDelta(1, 0),
+    MoveDelta(1, 1)
+};
+
+void fillWithDeltaMoves(piece_type_t pieceType, square_t origin, const Position& position, MovesCollection& moves)
+{
+    const auto& deltas = pieceType == Knight ? KNIGHT_MOVE_DELTAS : KING_MOVE_DELTAS;
+    const player_t myPlayer = position.getPlayerToMove();
+    const Board& board = position.getBoard();
+    const bitboard_t originBit = setSquare(0, origin);
+
+    for (const auto& delta : deltas) {
+        if (delta.origins & originBit) {
+            const square_t destSquare = origin + delta.delta;
+            if (board.isEmpty(destSquare)) {
+                moves.push_back(Move(pieceType, origin, destSquare));
+            }
+            else if (board.getPlayer(destSquare) != myPlayer) {
+                moves.push_back(Move(pieceType, origin, destSquare, Move::Capture));
+            }
         }
+    }
 
-        const square_t delta;
-        const bitboard_t origins;
-    };
-
-    constexpr std::array<KnightDirection, 8> KNIGHT_DIRECTIONS = {
-        KnightDirection(-2, -1),
-        KnightDirection(-2, 1),
-        KnightDirection(-1, -2),
-        KnightDirection(-1, 2),
-        KnightDirection(1, -2),
-        KnightDirection(1, 2),
-        KnightDirection(2, -1),
-        KnightDirection(2, 1)
-    };
+}
 
 }  // namespace
-
 
 void Position::fillWithLegalMoves(MovesCollection& moves) const
 {
     // TODO
     fillWithPseudoLegalMoves(moves);
+
+    for (Move& move : moves) {
+        // TODO: if capture, fill the captured piece
+        (void)move;
+    }
 }
 
 void Position::fillWithPseudoLegalMoves(MovesCollection& moves) const
@@ -58,7 +94,7 @@ void Position::fillWithPseudoLegalMoves(MovesCollection& moves) const
             fillWithKnightMoves(origin, moves);
             break;
         case King:
-            // TODO
+            fillWithKingMoves(origin, moves);
             break;
         default:
             if (pieceType == Rook || pieceType == Queen) {
@@ -173,20 +209,13 @@ void Position::fillWithPawnMoves(square_t pawnSquare, MovesCollection& moves) co
 
 void Position::fillWithKnightMoves(square_t knightSquare, MovesCollection& moves) const
 {
-    const player_t myPlayer = getPlayerToMove();
-    const bitboard_t originBit = (static_cast<bitboard_t>(1)) << knightSquare;
+    fillWithDeltaMoves(Knight, knightSquare, *this, moves);
+}
 
-    for (const auto& knightDirection : KNIGHT_DIRECTIONS) {
-        if (knightDirection.origins & originBit) {
-            const square_t destSquare = knightSquare + knightDirection.delta;
-            if (board_.isEmpty(destSquare)) {
-                moves.push_back(Move(Knight, knightSquare, destSquare));
-            }
-            else if (board_.getPlayer(destSquare) != myPlayer) {
-                moves.push_back(Move(Knight, knightSquare, destSquare, Move::Capture));
-            }
-        }
-    }
+void Position::fillWithKingMoves(square_t kingSquare, MovesCollection& moves) const
+{
+    fillWithDeltaMoves(King, kingSquare, *this, moves);
+    // TODO: Castle
 }
 
 void Position::fillWithSlideMoves(

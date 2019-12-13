@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
+    <ClCompile Include="board_utils.cpp" />
     <ClCompile Include="fen.cpp" />
     <ClCompile Include="moves_generator.cpp" />
     <ClCompile Include="Position.cpp" />

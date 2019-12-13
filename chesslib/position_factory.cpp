@@ -24,6 +24,7 @@ Position createPosition(std::vector<PieceOnBoard> pieces)
         }
     }
 
+    REQUIRE(!position.isKingCanBeCaptured());
     return position;
 }
 
