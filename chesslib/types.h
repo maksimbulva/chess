@@ -17,6 +17,8 @@ using position_flags_t = uint32_t;
 
 using encoded_move_t = uint32_t;
 
+static constexpr encoded_move_t SQUARE_MASK = 63;
+
 enum PieceType : piece_type_t {
     NoPiece = 0,
     Pawn,

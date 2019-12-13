@@ -38,6 +38,11 @@ public:
         return squares_[square].coloredPiece == encoded;
     }
 
+    piece_type_t getPieceTypeAt(square_t square) const
+    {
+        return squares_[square].getPieceType();
+    }
+
     player_t getPlayer(square_t square) const
     {
         return squares_[square].getPlayer();

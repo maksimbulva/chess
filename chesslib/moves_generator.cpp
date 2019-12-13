@@ -1,3 +1,4 @@
+#include "MoveBuilder.h"
 #include "Position.h"
 
 #include "bitboard.h"
@@ -46,15 +47,17 @@ void fillWithDeltaMoves(piece_type_t pieceType, square_t origin, const Position&
     const player_t myPlayer = position.getPlayerToMove();
     const Board& board = position.getBoard();
     const bitboard_t originBit = setSquare(0, origin);
+    MoveBuilder moveBuilder{ pieceType, origin };
 
     for (const auto& delta : deltas) {
         if (delta.origins & originBit) {
             const square_t destSquare = origin + delta.delta;
+            MoveBuilder mb = moveBuilder.setDestSquare(destSquare);
             if (board.isEmpty(destSquare)) {
-                moves.push_back(Move(pieceType, origin, destSquare));
+                moves.push_back(mb.build());
             }
             else if (board.getPlayer(destSquare) != myPlayer) {
-                moves.push_back(Move(pieceType, origin, destSquare, Move::Capture));
+                moves.push_back(mb.setCapture(board).build());
             }
         }
     }
@@ -67,11 +70,6 @@ void Position::fillWithLegalMoves(MovesCollection& moves) const
 {
     // TODO
     fillWithPseudoLegalMoves(moves);
-
-    for (Move& move : moves) {
-        // TODO: if capture, fill the captured piece
-        (void)move;
-    }
 }
 
 void Position::fillWithPseudoLegalMoves(MovesCollection& moves) const
@@ -124,10 +122,11 @@ namespace {
 
 constexpr std::array<piece_type_t, 4> PROMOTION_PIECES = { Knight, Bishop, Rook, Queen };
 
-void generatePromotions(square_t originSquare, square_t destSquare, encoded_move_t flags, MovesCollection& moves)
+void generatePromotions(MoveBuilder moveBuilder, MovesCollection& moves)
 {
+    moveBuilder = moveBuilder.setFlagPromotion();
     for (auto promotionPiece : PROMOTION_PIECES) {
-        moves.push_back(Move(Pawn, originSquare, destSquare, promotionPiece, flags | Move::Promotion));
+        moves.push_back(moveBuilder.setPromoteToPieceType(promotionPiece).build());
     }
 }
 
@@ -157,18 +156,19 @@ void Position::fillWithPawnMoves(square_t pawnSquare, MovesCollection& moves) co
     }
 
     const player_t myPlayer = getPlayerToMove();
+    MoveBuilder moveBuilder{ Pawn, pawnSquare };
 
     const auto singleMoveForwardSquare = pawnSquare + forward;
     if (board_.isEmpty(singleMoveForwardSquare)) {
         if (pawnRow == prePromotionRow) {
-            generatePromotions(pawnSquare, singleMoveForwardSquare, 0, moves);
+            generatePromotions(moveBuilder.setDestSquare(singleMoveForwardSquare), moves);
         }
         else {
-            moves.push_back(Move(Pawn, pawnSquare, singleMoveForwardSquare));
+            moves.push_back(moveBuilder.setDestSquare(singleMoveForwardSquare).build());
             if (pawnRow == initialRow) {
                 const auto doubleMoveForwardSquare = pawnSquare + 2 * forward;
                 if (board_.isEmpty(doubleMoveForwardSquare)) {
-                    moves.push_back(Move(Pawn, pawnSquare, doubleMoveForwardSquare));
+                    moves.push_back(moveBuilder.setDestSquare(doubleMoveForwardSquare).build());
                 }
             }
         }
@@ -183,11 +183,14 @@ void Position::fillWithPawnMoves(square_t pawnSquare, MovesCollection& moves) co
         }
         const auto captureSquare = pawnSquare + forward + deltaColumn;
         if (board_.isNotEmptyAndOtherPlayer(captureSquare, myPlayer)) {
+            MoveBuilder mb = moveBuilder
+                .setDestSquare(captureSquare)
+                .setCapture(board_);
             if (pawnRow == prePromotionRow) {
-                generatePromotions(pawnSquare, captureSquare, Move::Capture, moves);
+                generatePromotions(mb, moves);
             }
             else {
-                moves.push_back(Move(Pawn, pawnSquare, captureSquare, Move::Capture));
+                moves.push_back(mb.build());
             }
         }
     }
@@ -201,7 +204,11 @@ void Position::fillWithPawnMoves(square_t pawnSquare, MovesCollection& moves) co
                 const auto captureSquare = encodeSquare(
                     getRow(singleMoveForwardSquare),
                     enPassantColumn.getColumn());
-                moves.push_back(Move(Pawn, pawnSquare, captureSquare, Move::Capture | Move::EnPassantCapture));
+                moves.push_back(
+                    moveBuilder
+                        .setDestSquare(captureSquare)
+                        .setEnPassantCapture()
+                        .build());
             }
         }
     }
@@ -225,16 +232,18 @@ void Position::fillWithSlideMoves(
 {
     const player_t myPlayer = getPlayerToMove();
     const square_t origin = rayIterator.currentSquare();
+    MoveBuilder moveBuilder{ pieceType, origin };
 
     while (rayIterator.hasNext()) {
         ++rayIterator;
         const square_t currentSquare = rayIterator.currentSquare();
+        MoveBuilder mb = moveBuilder.setDestSquare(currentSquare);
         if (board_.isEmpty(currentSquare)) {
-            moves.push_back(Move(pieceType, origin, currentSquare));
+            moves.push_back(mb.build());
         }
         else {
             if (board_.getPlayer(currentSquare) != myPlayer) {
-                moves.push_back(Move(pieceType, origin, currentSquare, Move::Capture));
+                moves.push_back(mb.setCapture(board_).build());
             }
             break;
         }

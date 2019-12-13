@@ -6,27 +6,10 @@ namespace chesslib {
 
 struct Move {
 public:
-    Move(piece_type_t pieceType, square_t originSquare, square_t destSquare)
-        : encoded_(encode(pieceType, originSquare, destSquare))
-    {
-    }
-
-    Move(piece_type_t pieceType, square_t originSquare, square_t destSquare, encoded_move_t flags)
-        : encoded_(encode(pieceType, originSquare, destSquare) | flags)
-    {
-    }
-
-    Move(
-        piece_type_t pieceType,
-        square_t originSquare,
-        square_t destSquare,
-        piece_type_t promoteToPiece,
-        encoded_move_t flags
-    )
-        : encoded_(encode(pieceType, originSquare, destSquare)
-            | ((static_cast<encoded_move_t>(promoteToPiece)) << 16)
-            | flags)
-    {
+    // Use MoveBuilder class to get encoded value
+    Move(const encoded_move_t encoded)
+        : encoded_(encoded)
+    {        
     }
 
     square_t getOriginSquare() const
@@ -39,10 +22,25 @@ public:
         return (encoded_ >> 6) & SQUARE_MASK;
     }
 
+    piece_type_t getPieceType() const
+    {
+        return static_cast<piece_type_t>((encoded_ >> 12) & PIECE_TYPE_MASK);
+    }
+
+    piece_type_t getPromoteToPieceType() const
+    {
+        return static_cast<piece_type_t>((encoded_ >> 15) & PIECE_TYPE_MASK);
+    }
+
+    piece_type_t getCapturedPieceType() const
+    {
+        return static_cast<piece_type_t>((encoded_ >> 18) & PIECE_TYPE_MASK);
+    }
+
 public:
-    static constexpr encoded_move_t Capture = (static_cast<encoded_move_t>(1)) << 20;
-    static constexpr encoded_move_t EnPassantCapture = (static_cast<encoded_move_t>(1)) << 21;
-    static constexpr encoded_move_t Promotion = (static_cast<encoded_move_t>(1)) << 24;
+    static constexpr encoded_move_t Capture = (static_cast<encoded_move_t>(1)) << 21;
+    static constexpr encoded_move_t EnPassantCapture = (static_cast<encoded_move_t>(1)) << 22;
+    static constexpr encoded_move_t Promotion = (static_cast<encoded_move_t>(1)) << 23;
 
 private:
     encoded_move_t encode(piece_type_t pieceType, square_t originSquare, square_t destSquare)
@@ -50,8 +48,15 @@ private:
         return static_cast<encoded_move_t>(originSquare | (destSquare << 6) | (pieceType << 12));
     }
 
-    static constexpr encoded_move_t SQUARE_MASK = 63;
+    static constexpr encoded_move_t PIECE_TYPE_MASK = 7;
 
+    /**
+     * bits 0..5 - move origin square
+     * bits 6..11 - move destination square
+     * bits 12..14 - piece type to move
+     * bits 15..17 - promote to piece type (pawn promotion)
+     * bits 18..20 - captured piece type (for move undos)
+     */ 
     const encoded_move_t encoded_;
 };
 
