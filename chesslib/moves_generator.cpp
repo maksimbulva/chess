@@ -76,7 +76,7 @@ void Position::fillWithLegalMoves(MovesCollection& moves) const
 
 void Position::fillWithPseudoLegalMoves(MovesCollection& moves) const
 {
-    _ASSERT(moves.empty());
+    assert(moves.empty());
 
     const player_t myPlayer = getPlayerToMove();
     auto myPiecesIt = board_.getPieceIterator(myPlayer);

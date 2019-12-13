@@ -6,9 +6,9 @@ namespace chesslib {
 Board::Board(square_t blackKingSquare, square_t whiteKingSquare)
     : kingSquares_({blackKingSquare, whiteKingSquare})
 {
-    _ASSERT(blackKingSquare != whiteKingSquare);
+    assert(blackKingSquare != whiteKingSquare);
 
-    for (size_t i = 0; i < squares_.size(); ++i) {
+    for (std::size_t i = 0; i < squares_.size(); ++i) {
         squares_[i].square = static_cast<uint8_t>(i);
     }
 
@@ -18,7 +18,7 @@ Board::Board(square_t blackKingSquare, square_t whiteKingSquare)
 
 void Board::addPiece(const PieceOnBoard& piece)
 {
-    _ASSERT(piece.pieceType != King && piece.pieceType != NoPiece);
+    assert(piece.pieceType != King && piece.pieceType != NoPiece);
     REQUIRE(isEmpty(piece.square));
 
     auto& kingNode = squares_[getKingSquare(piece.player)];

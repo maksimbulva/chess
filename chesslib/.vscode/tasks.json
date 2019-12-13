@@ -1,0 +1,29 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Build with Clang",
+        "type": "shell",
+        "command": "clang++",
+        "args": [
+          "-std=c++17",
+          "-stdlib=libc++",
+          "board_utils.cpp",
+          "Board.cpp",
+          "fen.cpp",
+          "moves_generator.cpp",
+          "position_factory.cpp",
+          "Position.cpp",
+          "string_utils.cpp",
+          "winboard_main.cpp",
+          "-o",
+          "chesslib.out",
+          "--debug"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      }
+    ]
+  }

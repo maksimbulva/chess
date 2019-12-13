@@ -66,7 +66,7 @@ public:
 
         void operator++()
         {
-            _ASSERT(hasNext());
+            assert(hasNext());
             current_ = &board_->squares_[current_->nextNode];
         }
 

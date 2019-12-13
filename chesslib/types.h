@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+#include <cstddef>
 #include <cstdint>
 
 namespace chesslib {
@@ -28,8 +30,8 @@ enum PieceType : piece_type_t {
 constexpr player_t Black = 0;
 constexpr player_t White = 1;
 
-constexpr size_t PLAYER_COUNT = 2;
-constexpr size_t SQUARE_COUNT = 64;
+constexpr std::size_t PLAYER_COUNT = 2;
+constexpr std::size_t SQUARE_COUNT = 64;
 
 constexpr square_t WHITE_PAWN_ROW = 1;
 constexpr square_t BLACK_PAWN_ROW = 7;
@@ -44,7 +46,7 @@ constexpr position_flags_t NO_EN_PASSANT_COLUMN = COLUMN_COUNT;
 
 constexpr inline square_t encodeSquare(square_t row, square_t column)
 {
-    _ASSERT(row >= 0 && row < ROW_COUNT && column >= 0 && column < COLUMN_COUNT);
+    assert(row >= 0 && row < ROW_COUNT && column >= 0 && column < COLUMN_COUNT);
     return (row << 3) | column;
 }
 
