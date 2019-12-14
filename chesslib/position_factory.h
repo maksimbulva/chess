@@ -7,6 +7,9 @@
 
 namespace chesslib {
 
-Position createPosition(std::vector<PieceOnBoard> pieces);
+Position createPosition(
+    std::vector<PieceOnBoard> pieces,
+    player_t playerToMove
+);
 
 }

@@ -4,6 +4,10 @@
 #include "board_utils.h"
 #include "MovesCollection.h"
 #include "OptionalColumn.h"
+#include "PositionFlags.h"
+#include "PositionHistory.h"
+
+#include <vector>
 
 namespace chesslib {
 
@@ -12,7 +16,8 @@ class Position
 public:
     Position(
         square_t blackKingSquare,
-        square_t whiteKingSquare);
+        square_t whiteKingSquare,
+        player_t playerToMove);
 
     void fillWithLegalMoves(MovesCollection& moves) const;
 
@@ -20,14 +25,12 @@ public:
 
     player_t getPlayerToMove() const
     {
-        // TODO
-        return White;
+        return positionFlags_.getPlayerToMove();
     }
 
     player_t getOtherPlayer() const
     {
-        // TODO
-        return Black;
+        return 1 - getPlayerToMove();
     }
 
     OptionalColumn getEnPassantColumn() const
@@ -47,6 +50,11 @@ public:
 
     void playMove(const Move& move);
 
+    bool isCanUndoMove() const
+    {
+        return !history_.empty();
+    }
+
     void undoMove();
 
 private:
@@ -62,6 +70,10 @@ private:
 
 private:
     Board board_;
+    PositionFlags positionFlags_;
+
+    // TODO: consider another type of container if needed
+    std::vector<PositionHistory> history_;
 };
 
 }

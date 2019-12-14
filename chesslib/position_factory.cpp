@@ -6,7 +6,9 @@
 
 namespace chesslib {
 
-Position createPosition(std::vector<PieceOnBoard> pieces)
+Position createPosition(
+    std::vector<PieceOnBoard> pieces,
+    player_t playerToMove)
 {
     auto blackKingIt = std::find_if(pieces.begin(), pieces.end(),
         [] (const auto& piece) { return piece.pieceType == King && piece.player == Black; });
@@ -16,7 +18,7 @@ Position createPosition(std::vector<PieceOnBoard> pieces)
 
     REQUIRE(blackKingIt != pieces.end() && whiteKingIt != pieces.end());
 
-    auto position = Position(blackKingIt->square, whiteKingIt->square);
+    auto position = Position(blackKingIt->square, whiteKingIt->square, playerToMove);
 
     for (const auto& piece : pieces) {
         if (piece.pieceType != King) {

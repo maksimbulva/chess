@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Board.h"
 #include "Move.h"
 #include "types.h"

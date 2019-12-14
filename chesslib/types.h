@@ -13,11 +13,14 @@ using player_t = fastint;
 using square_t = fastint;
 using row_t = fastint;
 using column_t = fastint;
+// TODO: replace me with encoded_position_flags_t
 using position_flags_t = uint32_t;
 
 using encoded_move_t = uint32_t;
 
 static constexpr encoded_move_t SQUARE_MASK = 63;
+
+using encoded_position_flags_t = uint32_t;
 
 enum PieceType : piece_type_t {
     NoPiece = 0,
@@ -36,7 +39,7 @@ constexpr std::size_t PLAYER_COUNT = 2;
 constexpr std::size_t SQUARE_COUNT = 64;
 
 constexpr square_t WHITE_PAWN_ROW = 1;
-constexpr square_t BLACK_PAWN_ROW = 7;
+constexpr square_t BLACK_PAWN_ROW = 6;
 
 constexpr square_t ROW_COUNT = 8;
 constexpr square_t COLUMN_COUNT = 8;

@@ -36,4 +36,27 @@ void Board::addPiece(const PieceOnBoard& piece)
     kingNode.nextNode = piece.square;
 }
 
+void Board::updatePieceSquare(const square_t oldSquare, const square_t newSquare)
+{
+    BoardSquare& oldBoardSquare = squares_[oldSquare];
+    squares_[newSquare] = oldBoardSquare;
+    if (oldBoardSquare.prevNode != BoardSquare::NO_NODE) {
+        squares_[oldBoardSquare.prevNode].nextNode = newSquare;
+    }
+    if (oldBoardSquare.nextNode != BoardSquare::NO_NODE) {
+        squares_[oldBoardSquare.nextNode].prevNode = newSquare;
+    }
+    oldBoardSquare.makeEmpty();
+}
+
+void Board::removeFromList(BoardSquare& square)
+{
+    if (square.prevNode != BoardSquare::NO_NODE) {
+        squares_[square.prevNode].nextNode = square.nextNode;
+    }
+    if (square.nextNode != BoardSquare::NO_NODE) {
+        squares_[square.nextNode].prevNode = square.prevNode;
+    }
+}
+
 }

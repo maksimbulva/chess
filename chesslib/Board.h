@@ -60,6 +60,8 @@ public:
 
     void addPiece(const PieceOnBoard& piece);
 
+    void updatePieceSquare(const square_t oldSquare, const square_t newSquare);
+
 public:
     class PieceIterator {
         friend class Board;
@@ -131,6 +133,13 @@ private:
             return !isEmpty();
         }
 
+        void makeEmpty()
+        {
+            coloredPiece = 0;
+            prevNode = NO_NODE;
+            nextNode = NO_NODE;
+        }
+
         uint8_t square = 0;
         uint8_t coloredPiece = 0;
         uint8_t prevNode = NO_NODE;
@@ -138,6 +147,8 @@ private:
     };
 
 private:
+    void removeFromList(BoardSquare& square);
+
     std::array<BoardSquare, SQUARE_COUNT> squares_;
     std::array<square_t, PLAYER_COUNT> kingSquares_;
 };

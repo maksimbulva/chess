@@ -142,13 +142,12 @@ Position decodeFen(const std::string& fenString)
     position_flags_t fullmoveNumber = decodeFullmoveNumber(tokens[5]);
 
     // TODO
-    (void)playerToMove;
     (void)castleOptions;
     (void)enPassantColumn;
     (void)halfmoveClock;
     (void)fullmoveNumber;
 
-    return createPosition(std::move(pieces));
+    return createPosition(std::move(pieces), playerToMove);
 }
 
 }  // namespace chesslib
