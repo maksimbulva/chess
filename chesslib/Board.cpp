@@ -39,6 +39,7 @@ void Board::addPiece(const PieceOnBoard& piece)
 void Board::erasePieceAt(square_t square)
 {
     BoardSquare& boardSquare = squares_[square];
+    CHECK(boardSquare.getPieceType() != King);
     removeFromList(boardSquare);
     boardSquare.makeEmpty();
 }
@@ -61,6 +62,10 @@ void Board::updatePieceSquare(const square_t oldSquare, const square_t newSquare
         squares_[oldBoardSquare.nextNode].prevNode = newSquare;
     }
     oldBoardSquare.makeEmpty();
+
+    if (newBoardSquare.getPieceType() == King) {
+        kingSquares_[newBoardSquare.getPlayer()] = newBoardSquare.square;
+    }
 }
 
 void Board::removeFromList(BoardSquare& square)

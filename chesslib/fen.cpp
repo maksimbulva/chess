@@ -132,14 +132,15 @@ position_flags_t decodeFullmoveNumber(const std::string& encoded)
 Position decodeFen(const std::string& fenString)
 {
     const auto tokens = split(fenString, ' ');
-    REQUIRE(tokens.size() > 5);
+    REQUIRE(tokens.size() >= 4);
 
     auto pieces = decodeBoard(tokens[0]);
     player_t playerToMove = decodePlayerToMove(tokens[1]);
     auto castleOptions = decodeCastleOptions(tokens[2]);
     position_flags_t enPassantColumn = decodeEnPassantColumn(tokens[3]);
-    position_flags_t halfmoveClock = decodeHalfmoveClock(tokens[4]);
-    position_flags_t fullmoveNumber = decodeFullmoveNumber(tokens[5]);
+
+    position_flags_t halfmoveClock = tokens.size() > 4 ? decodeHalfmoveClock(tokens[4]) : 0;
+    position_flags_t fullmoveNumber = tokens.size() > 5 ? decodeFullmoveNumber(tokens[5]) : 0;
 
     // TODO
     (void)castleOptions;

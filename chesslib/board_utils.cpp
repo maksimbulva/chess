@@ -111,10 +111,10 @@ bool isSquareAttacked(square_t target, const Board& board, player_t attacker)
             if (pieceType == Rook || pieceType == Queen)
             {
                 if (deltaRow == 0) {
-                    checkDirFlags |= (deltaColumn > 0) ? FLAG_DIRECTION_UP : FLAG_DIRECTION_DOWN;
+                    checkDirFlags |= (deltaColumn < 0) ? FLAG_DIRECTION_LEFT : FLAG_DIRECTION_RIGHT;
                 }
                 else if (deltaColumn == 0) {
-                    checkDirFlags |= (deltaRow > 0) ? FLAG_DIRECTION_RIGHT : FLAG_DIRECTION_LEFT;
+                    checkDirFlags |= (deltaRow > 0) ? FLAG_DIRECTION_UP : FLAG_DIRECTION_DOWN;
                 }
             }
             break;
