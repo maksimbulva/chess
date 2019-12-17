@@ -124,7 +124,6 @@ constexpr std::array<piece_type_t, 4> PROMOTION_PIECES = { Knight, Bishop, Rook,
 
 void generatePromotions(MoveBuilder moveBuilder, MovesCollection& moves)
 {
-    moveBuilder = moveBuilder.setFlagPromotion();
     for (auto promotionPiece : PROMOTION_PIECES) {
         moves.push_back(moveBuilder.setPromoteToPieceType(promotionPiece).build());
     }
@@ -151,7 +150,7 @@ void Position::fillWithPawnMoves(square_t pawnSquare, MovesCollection& moves) co
     else {
         forward = DIRECTION_UP;
         initialRow = WHITE_PAWN_ROW;
-        prePromotionRow = ROW_COUNT - 2;
+        prePromotionRow = MAX_ROW - 1;
         enPassantCaptureRow = 4;
     }
 

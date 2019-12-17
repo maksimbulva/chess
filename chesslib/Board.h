@@ -60,6 +60,8 @@ public:
 
     void addPiece(const PieceOnBoard& piece);
 
+    void erasePieceAt(square_t square);
+
     void updatePieceSquare(const square_t oldSquare, const square_t newSquare);
 
 public:

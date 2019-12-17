@@ -16,4 +16,6 @@ inline void REQUIRE(bool expr)
     }
 }
 
+#define CHECK(expr) REQUIRE(expr)
+
 }

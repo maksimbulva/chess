@@ -23,6 +23,8 @@ void Position::playMove(const Move& move)
 {
     const auto oldPositionFlags = positionFlags_;
 
+    const square_t destSquare = move.getDestSquare();
+
     // TODO
     if (move.isCapture())
     {
@@ -32,10 +34,12 @@ void Position::playMove(const Move& move)
             FAIL();
         }
         // TODO
-        FAIL();
+        // TODO: optimization - there is no need to clear the dest square first
+        board_.erasePieceAt(destSquare);
+        board_.updatePieceSquare(move.getOriginSquare(), destSquare);
     }
     else {
-        board_.updatePieceSquare(move.getOriginSquare(), move.getDestSquare());
+        board_.updatePieceSquare(move.getOriginSquare(), destSquare);
         if (move.isPromotion()) {
             // TODO
             FAIL();
@@ -64,6 +68,7 @@ void Position::undoMove()
 
     const PositionHistory& historyToUndo = history_.back();
     const Move move = historyToUndo.getMove();
+    const square_t destSquare = move.getDestSquare();
 
     // TODO
     if (move.isCapture())
@@ -74,10 +79,11 @@ void Position::undoMove()
             FAIL();
         }
         // TODO
-        FAIL();
+        board_.updatePieceSquare(destSquare, move.getOriginSquare());
+        board_.addPiece({ getPlayerToMove(), move.getCapturedPieceType(), destSquare });
     }
     else {
-        board_.updatePieceSquare(move.getDestSquare(), move.getOriginSquare());
+        board_.updatePieceSquare(destSquare, move.getOriginSquare());
         if (move.isPromotion()) {
             // TODO
             FAIL();

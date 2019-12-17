@@ -36,10 +36,24 @@ void Board::addPiece(const PieceOnBoard& piece)
     kingNode.nextNode = piece.square;
 }
 
+void Board::erasePieceAt(square_t square)
+{
+    BoardSquare& boardSquare = squares_[square];
+    removeFromList(boardSquare);
+    boardSquare.makeEmpty();
+}
+
 void Board::updatePieceSquare(const square_t oldSquare, const square_t newSquare)
 {
     BoardSquare& oldBoardSquare = squares_[oldSquare];
-    squares_[newSquare] = oldBoardSquare;
+    BoardSquare& newBoardSquare = squares_[newSquare];
+
+    CHECK(oldBoardSquare.isNotEmpty() && newBoardSquare.isEmpty());
+
+    newBoardSquare.coloredPiece = oldBoardSquare.coloredPiece;
+    newBoardSquare.prevNode = oldBoardSquare.prevNode;
+    newBoardSquare.nextNode = oldBoardSquare.nextNode;
+
     if (oldBoardSquare.prevNode != BoardSquare::NO_NODE) {
         squares_[oldBoardSquare.prevNode].nextNode = newSquare;
     }

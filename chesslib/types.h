@@ -47,6 +47,11 @@ constexpr square_t COLUMN_COUNT = 8;
 constexpr square_t MAX_ROW = ROW_COUNT - 1;
 constexpr square_t MAX_COLUMN = COLUMN_COUNT - 1;
 
+inline constexpr bool isValidSquare(square_t square)
+{
+    return square >= 0 && square < 64;
+}
+
 constexpr position_flags_t NO_EN_PASSANT_COLUMN = COLUMN_COUNT;
 
 constexpr inline square_t encodeSquare(square_t row, square_t column)
