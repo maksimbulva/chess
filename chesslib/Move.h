@@ -62,12 +62,18 @@ public:
         return encoded_ & LongCastle;
     }
 
+    bool isPawnDoubleMove() const
+    {
+        return encoded_ & PawnDoubleMove;
+    }
+
 public:
     static constexpr encoded_move_t Capture = (static_cast<encoded_move_t>(1)) << 21;
     static constexpr encoded_move_t EnPassantCapture = (static_cast<encoded_move_t>(1)) << 22;
     static constexpr encoded_move_t Promotion = (static_cast<encoded_move_t>(1)) << 23;
     static constexpr encoded_move_t ShortCastle = (static_cast<encoded_move_t>(1)) << 24;
     static constexpr encoded_move_t LongCastle = (static_cast<encoded_move_t>(1)) << 25;
+    static constexpr encoded_move_t PawnDoubleMove = (static_cast<encoded_move_t>(1)) << 26;
 
 private:
     encoded_move_t encode(piece_type_t pieceType, square_t originSquare, square_t destSquare)

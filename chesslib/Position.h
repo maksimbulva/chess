@@ -35,8 +35,12 @@ public:
 
     OptionalColumn getEnPassantColumn() const
     {
-        // TODO
-        return OptionalColumn();
+        return positionFlags_.getEnPassantColumn();
+    }
+
+    void setEnPassantColumn(OptionalColumn column)
+    {
+        positionFlags_.setEnPassantColumn(column);
     }
 
     const Board& getBoard() const

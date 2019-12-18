@@ -52,8 +52,6 @@ inline constexpr bool isValidSquare(square_t square)
     return square >= 0 && square < 64;
 }
 
-constexpr position_flags_t NO_EN_PASSANT_COLUMN = COLUMN_COUNT;
-
 constexpr inline square_t encodeSquare(square_t row, square_t column)
 {
     assert(row >= 0 && row < ROW_COUNT && column >= 0 && column < COLUMN_COUNT);

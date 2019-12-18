@@ -51,6 +51,11 @@ public:
             | ((static_cast<encoded_move_t>(capturedPieceType)) << 18));
     }
 
+    MoveBuilder setPawnDoubleMove()
+    {
+        return MoveBuilder(encoded_ | Move::PawnDoubleMove);
+    }
+
 private:
     MoveBuilder(const encoded_move_t encoded)
         : encoded_(encoded)

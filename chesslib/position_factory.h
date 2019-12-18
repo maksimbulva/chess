@@ -9,7 +9,8 @@ namespace chesslib {
 
 Position createPosition(
     std::vector<PieceOnBoard> pieces,
-    player_t playerToMove
+    player_t playerToMove,
+    OptionalColumn enPassantColumn
 );
 
 }

@@ -8,7 +8,8 @@ namespace chesslib {
 
 Position createPosition(
     std::vector<PieceOnBoard> pieces,
-    player_t playerToMove)
+    player_t playerToMove,
+    OptionalColumn enPassantColumn)
 {
     auto blackKingIt = std::find_if(pieces.begin(), pieces.end(),
         [] (const auto& piece) { return piece.pieceType == King && piece.player == Black; });
@@ -25,6 +26,8 @@ Position createPosition(
             position.addPiece(piece);
         }
     }
+
+    position.setEnPassantColumn(enPassantColumn);
 
     REQUIRE(!position.isKingCanBeCaptured());
     return position;

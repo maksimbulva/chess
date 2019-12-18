@@ -105,15 +105,15 @@ std::array<CastleOptions, PLAYER_COUNT> decodeCastleOptions(const std::string& e
     return result;
 }
 
-position_flags_t decodeEnPassantColumn(const std::string& encoded)
+OptionalColumn decodeEnPassantColumn(const std::string& encoded)
 {
     if (encoded.size() > 1) {
-        position_flags_t result = encoded.front() - 'a';
+        const square_t result = encoded.front() - 'a';
         REQUIRE(result >= 0 && result < COLUMN_COUNT);
-        return result;
+        return OptionalColumn(result);
     }
     else {
-        return NO_EN_PASSANT_COLUMN;
+        return OptionalColumn();
     }
 }
 
@@ -135,9 +135,9 @@ Position decodeFen(const std::string& fenString)
     REQUIRE(tokens.size() >= 4);
 
     auto pieces = decodeBoard(tokens[0]);
-    player_t playerToMove = decodePlayerToMove(tokens[1]);
+    const player_t playerToMove = decodePlayerToMove(tokens[1]);
     auto castleOptions = decodeCastleOptions(tokens[2]);
-    position_flags_t enPassantColumn = decodeEnPassantColumn(tokens[3]);
+    const auto enPassantColumn = decodeEnPassantColumn(tokens[3]);
 
     position_flags_t halfmoveClock = tokens.size() > 4 ? decodeHalfmoveClock(tokens[4]) : 0;
     position_flags_t fullmoveNumber = tokens.size() > 5 ? decodeFullmoveNumber(tokens[5]) : 0;
@@ -148,7 +148,7 @@ Position decodeFen(const std::string& fenString)
     (void)halfmoveClock;
     (void)fullmoveNumber;
 
-    return createPosition(std::move(pieces), playerToMove);
+    return createPosition(std::move(pieces), playerToMove, enPassantColumn);
 }
 
 }  // namespace chesslib

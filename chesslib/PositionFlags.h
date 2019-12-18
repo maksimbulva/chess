@@ -1,5 +1,6 @@
 #pragma once
 
+#include "OptionalColumn.h"
 #include "types.h"
 
 namespace chesslib {
@@ -23,8 +24,21 @@ public:
         encoded_ |= static_cast<encoded_position_flags_t>(playerToMove);
     }
 
+    OptionalColumn getEnPassantColumn() const
+    {
+        return OptionalColumn((encoded_ & EN_PASSANT_COLUMN_MASK) >> EN_PASSANT_COLUMN_SHIFT);
+    }
+
+    void setEnPassantColumn(OptionalColumn column)
+    {
+        encoded_ &= ~EN_PASSANT_COLUMN_MASK;
+        encoded_ |= column.getEncodedValue();
+    }
+
 private:
     static constexpr encoded_position_flags_t PLAYER_MASK = 1;
+    static constexpr int EN_PASSANT_COLUMN_SHIFT = 6;
+    static constexpr encoded_position_flags_t EN_PASSANT_COLUMN_MASK = 15 << EN_PASSANT_COLUMN_SHIFT;
 
     encoded_position_flags_t encoded_;
 };

@@ -167,7 +167,10 @@ void Position::fillWithPawnMoves(square_t pawnSquare, MovesCollection& moves) co
             if (pawnRow == initialRow) {
                 const auto doubleMoveForwardSquare = pawnSquare + 2 * forward;
                 if (board_.isEmpty(doubleMoveForwardSquare)) {
-                    moves.push_back(moveBuilder.setDestSquare(doubleMoveForwardSquare).build());
+                    moves.push_back(
+                        moveBuilder.setDestSquare(doubleMoveForwardSquare)
+                            .setPawnDoubleMove()
+                            .build());
                 }
             }
         }
