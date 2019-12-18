@@ -60,7 +60,7 @@ void Position::playMove(const Move& move)
 
     positionFlags_.setPlayerToMove(getOtherPlayer());
     positionFlags_.setEnPassantColumn(
-        move.isPawnDoubleMove() ? OptionalColumn(getColumn(originSquare)) : OptionalColumn());
+        move.isPawnDoubleMove() ? OptionalColumn::fromColumn(getColumn(originSquare)) : OptionalColumn());
 
     // TODO: Update castling options
     // TODO: Update en passant capture possibility

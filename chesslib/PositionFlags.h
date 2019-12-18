@@ -26,13 +26,14 @@ public:
 
     OptionalColumn getEnPassantColumn() const
     {
-        return OptionalColumn((encoded_ & EN_PASSANT_COLUMN_MASK) >> EN_PASSANT_COLUMN_SHIFT);
+        auto encoded = (encoded_ & EN_PASSANT_COLUMN_MASK) >> EN_PASSANT_COLUMN_SHIFT;
+        return OptionalColumn::fromEncoded(encoded);
     }
 
     void setEnPassantColumn(OptionalColumn column)
     {
         encoded_ &= ~EN_PASSANT_COLUMN_MASK;
-        encoded_ |= column.getEncodedValue();
+        encoded_ |= column.getEncodedValue() << EN_PASSANT_COLUMN_SHIFT;
     }
 
 private:

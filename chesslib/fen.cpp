@@ -110,7 +110,7 @@ OptionalColumn decodeEnPassantColumn(const std::string& encoded)
     if (encoded.size() > 1) {
         const square_t result = encoded.front() - 'a';
         REQUIRE(result >= 0 && result < COLUMN_COUNT);
-        return OptionalColumn(result);
+        return OptionalColumn::fromColumn(result);
     }
     else {
         return OptionalColumn();

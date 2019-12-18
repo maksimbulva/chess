@@ -201,16 +201,20 @@ void Position::fillWithPawnMoves(square_t pawnSquare, MovesCollection& moves) co
     if (pawnRow == enPassantCaptureRow) {
         const OptionalColumn enPassantColumn = getEnPassantColumn();
         if (enPassantColumn.hasValue()) {
-            const auto deltaColumn = std::abs(pawnColumn - enPassantColumn.getColumn());
+            const auto enemyPawnColumn = enPassantColumn.getColumn();
+            const auto deltaColumn = std::abs(pawnColumn - enemyPawnColumn);
             if (deltaColumn == 1) {
-                const auto captureSquare = encodeSquare(
-                    getRow(singleMoveForwardSquare),
-                    enPassantColumn.getColumn());
-                moves.push_back(
-                    moveBuilder
-                        .setDestSquare(captureSquare)
-                        .setEnPassantCapture()
-                        .build());
+                const auto enemyPawnSquare = encodeSquare(pawnRow, enemyPawnColumn);
+                if (board_.isPlayerPiece(enemyPawnSquare, getOtherPlayer(), Pawn)) {
+                    const auto captureSquare = encodeSquare(
+                        getRow(singleMoveForwardSquare),
+                        enPassantColumn.getColumn());
+                    moves.push_back(
+                        moveBuilder
+                            .setDestSquare(captureSquare)
+                            .setEnPassantCapture()
+                            .build());
+                }
             }
         }
     }

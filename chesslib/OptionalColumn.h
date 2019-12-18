@@ -7,7 +7,15 @@ namespace chesslib {
 struct OptionalColumn {
     OptionalColumn() : encoded_(0) { }
 
-    OptionalColumn(square_t column) : encoded_(column | FLAG_HAS_VALUE) { }
+    static OptionalColumn fromColumn(square_t column)
+    {
+        return OptionalColumn(column | FLAG_HAS_VALUE);
+    }
+
+    static OptionalColumn fromEncoded(encoded_position_flags_t encoded)
+    {
+        return OptionalColumn(encoded);
+    }
 
     bool hasValue() const
     {
@@ -29,6 +37,11 @@ private:
     static constexpr encoded_position_flags_t FLAG_HAS_VALUE = 8;
 
 private:
+    OptionalColumn(encoded_position_flags_t encoded)
+        : encoded_(encoded)
+    {
+    }
+
     const encoded_position_flags_t encoded_;
 };
 

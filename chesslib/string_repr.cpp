@@ -54,4 +54,24 @@ std::string moveToString(Move move)
     return result;
 }
 
+std::string historyToString(const PositionHistory& history)
+{
+    // TODO: include position flags as well
+    std::string result = moveToString(history.getMove());
+    const OptionalColumn enPassantColumn = history.getPositionFlags().getEnPassantColumn();
+    result.append("\tep=");
+    result.append(std::string{enPassantColumn.hasValue() ? columnToChar(enPassantColumn.getColumn()) : '-'});
+    return result;
+}
+
+std::string historyCollectionToString(const std::vector<PositionHistory>& history)
+{
+    std::string result;
+    for (const auto& item : history) {
+        result.append(historyToString(item));
+        result.append("\n");
+    }
+    return result;
+}
+
 }

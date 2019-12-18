@@ -38,7 +38,7 @@ int main()
 {
     std::cout << "Perft results:" << std::endl;
 
-    for (uint32_t depth = 1; depth <= 4; ++depth) {
+    for (uint32_t depth = 1; depth <= 5; ++depth) {
         auto position = decodeFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         uint64_t moveCount = countMoves(position, depth);
         std::cout << "\tDepth: " << depth << "\tMoves: " << moveCount << std::endl;
