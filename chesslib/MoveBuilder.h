@@ -56,6 +56,16 @@ public:
         return MoveBuilder(encoded_ | Move::PawnDoubleMove);
     }
 
+    MoveBuilder setLongCastle()
+    {
+        return MoveBuilder(encoded_ | Move::LongCastle);
+    }
+
+    MoveBuilder setShortCastle()
+    {
+        return MoveBuilder(encoded_ | Move::ShortCastle);
+    }
+
 private:
     MoveBuilder(const encoded_move_t encoded)
         : encoded_(encoded)

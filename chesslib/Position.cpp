@@ -2,6 +2,7 @@
 
 #include "board_utils.h"
 #include "require.h"
+#include "squares.h"
 
 namespace chesslib {
 
@@ -22,8 +23,10 @@ void Position::addPiece(const PieceOnBoard& piece)
 void Position::playMove(const Move& move)
 {
     const auto oldPositionFlags = positionFlags_;
+    const player_t playerToMove = getPlayerToMove();
     
     const square_t originSquare = move.getOriginSquare();
+    const square_t originRow = getRow(originSquare);
     const square_t destSquare = move.getDestSquare();
 
     // TODO
@@ -32,7 +35,7 @@ void Position::playMove(const Move& move)
         if (move.isEnPassantCapture())
         {
             const auto capturedPieceSquare = encodeSquare(
-                getRow(originSquare), getColumn(destSquare));
+                originRow, getColumn(destSquare));
             board_.erasePieceAt(capturedPieceSquare);
         }
         else {
@@ -48,22 +51,37 @@ void Position::playMove(const Move& move)
             // TODO
             FAIL();
         }
-        else if (move.isShortCastle()) {
-            // TODO
-            FAIL();
-        }
         else if (move.isLongCastle()) {
-            // TODO
-            FAIL();
+            square_t rookOriginSquare = encodeSquare(originRow, COLUMN_A);
+            square_t rookDestSquare = encodeSquare(originRow, COLUMN_D);
+            board_.updatePieceSquare(rookOriginSquare, rookDestSquare);
+        }
+        else if (move.isShortCastle()) {
+            square_t rookOriginSquare = encodeSquare(originRow, COLUMN_H);
+            square_t rookDestSquare = encodeSquare(originRow, COLUMN_F);
+            board_.updatePieceSquare(rookOriginSquare, rookDestSquare);
         }
     }
 
-    positionFlags_.setPlayerToMove(getOtherPlayer());
+    CastleOptions castleOptions = getCastleOptions(playerToMove);
+    const piece_type_t pieceToMove = move.getPieceType();
+    if (pieceToMove == King) {
+        castleOptions = CastleOptions();
+    }
+    else if (pieceToMove == Rook) {
+        if (castleOptions.isCanCastleLong() && getColumn(originSquare) == COLUMN_A) {
+            castleOptions.setCanCastleLong(false);
+        }
+        else if (castleOptions.isCanCastleShort() && getColumn(originSquare) == COLUMN_H) {
+            castleOptions.setCanCastleShort(false);
+        }
+    }
+    positionFlags_.setCastleOptions(playerToMove, castleOptions);
+
     positionFlags_.setEnPassantColumn(
         move.isPawnDoubleMove() ? OptionalColumn::fromColumn(getColumn(originSquare)) : OptionalColumn());
 
-    // TODO: Update castling options
-    // TODO: Update en passant capture possibility
+    positionFlags_.setPlayerToMove(getOtherPlayer());
 
     history_.emplace_back(move, oldPositionFlags);
 }
@@ -75,9 +93,11 @@ void Position::undoMove()
     }
 
     const PositionHistory& historyToUndo = history_.back();
+    const player_t playerToMove = getPlayerToMove();
 
     const Move move = historyToUndo.getMove();
     const square_t originSquare = move.getOriginSquare();
+    const square_t originRow = getRow(originSquare);
     const square_t destSquare = move.getDestSquare();
 
     // TODO
@@ -87,21 +107,23 @@ void Position::undoMove()
         board_.updatePieceSquare(destSquare, originSquare);
 
         const square_t capturedPieceSquare = move.isEnPassantCapture()
-            ? encodeSquare(getRow(originSquare), getColumn(destSquare))
+            ? encodeSquare(originRow, getColumn(destSquare))
             : destSquare;
-        board_.addPiece({ getPlayerToMove(), move.getCapturedPieceType(), capturedPieceSquare });
+        board_.addPiece({ playerToMove, move.getCapturedPieceType(), capturedPieceSquare });
     }
     else {
         board_.updatePieceSquare(destSquare, originSquare);
         if (move.isPromotion()) {
             // TODO
             FAIL();
-        } else if (move.isShortCastle()) {
-            // TODO
-            FAIL();
         } else if (move.isLongCastle()) {
-            // TODO
-            FAIL();
+            square_t rookOriginSquare = encodeSquare(originRow, COLUMN_A);
+            square_t rookDestSquare = encodeSquare(originRow, COLUMN_D);
+            board_.updatePieceSquare(rookDestSquare, rookOriginSquare);
+        } else if (move.isShortCastle()) {
+            square_t rookOriginSquare = encodeSquare(originRow, COLUMN_H);
+            square_t rookDestSquare = encodeSquare(originRow, COLUMN_F);
+            board_.updatePieceSquare(rookDestSquare, rookOriginSquare);
         }
     }
 
@@ -118,6 +140,43 @@ bool Position::isKingCanBeCaptured() const
     const player_t otherPlayer = getOtherPlayer();
     const square_t kingSquare = board_.getKingSquare(otherPlayer);
     return isSquareAttacked(kingSquare, board_, attacker);
+}
+
+bool Position::isInCheck() const
+{
+    // TODO: Optimize me, store the result for re-use
+    const square_t kingSquare = board_.getKingSquare(getPlayerToMove());
+    return isSquareAttacked(kingSquare, board_, getOtherPlayer());
+}
+
+namespace {
+
+CastleOptions optimize(CastleOptions castleOptions, const Board& board, player_t player)
+{
+    CastleOptions result;
+    const square_t row = player == Black ? MAX_ROW : 0;
+    if (!board.isPlayerPiece(encodeSquare(row, COLUMN_E), player, King)) {
+        return result;
+    }
+
+    result.setCanCastleLong(
+        castleOptions.isCanCastleLong()
+        && board.isPlayerPiece(encodeSquare(row, COLUMN_A), player, Rook));
+
+    result.setCanCastleShort(
+        castleOptions.isCanCastleShort()
+        && board.isPlayerPiece(encodeSquare(row, COLUMN_H), player, Rook));
+
+    return result;
+}
+
+}  // namespace
+
+void Position::optimizeCastleOptions()
+{
+    for (player_t player = 0; player < PLAYER_COUNT; ++player) {
+        setCastleOptions(player, optimize(getCastleOptions(player), board_, player));
+    }
 }
 
 }

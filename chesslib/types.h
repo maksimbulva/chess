@@ -13,8 +13,6 @@ using player_t = fastint;
 using square_t = fastint;
 using row_t = fastint;
 using column_t = fastint;
-// TODO: replace me with encoded_position_flags_t
-using position_flags_t = uint32_t;
 
 using encoded_move_t = uint32_t;
 

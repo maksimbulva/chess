@@ -3,6 +3,7 @@
 
 #include "bitboard.h"
 #include "require.h"
+#include "squares.h"
 
 namespace chesslib {
 
@@ -228,7 +229,54 @@ void Position::fillWithKnightMoves(square_t knightSquare, MovesCollection& moves
 void Position::fillWithKingMoves(square_t kingSquare, MovesCollection& moves) const
 {
     fillWithDeltaMoves(King, kingSquare, *this, moves);
-    // TODO: Castle
+
+    const player_t otherPlayer = getOtherPlayer();
+
+    // Castle
+    const CastleOptions castleOptions = getCastleOptions(getPlayerToMove());
+    if (castleOptions.isCannotCastle() || isInCheck()) {
+        return;
+    }
+
+    MoveBuilder moveBuilder{ King, kingSquare };
+
+    const square_t kingRow = getRow(kingSquare);
+
+    if (castleOptions.isCanCastleLong()) {
+        bool isEmptySquares = true;
+        for (square_t column = COLUMN_B; column < COLUMN_E; ++column) {
+            if (board_.isNotEmpty(encodeSquare(kingRow, column))) {
+                isEmptySquares = false;
+                break;
+            }
+        }
+        if (isEmptySquares
+            && !isSquareAttacked(encodeSquare(kingRow, COLUMN_D), board_, otherPlayer)) {
+            moves.push_back(
+                moveBuilder
+                .setDestSquare(encodeSquare(kingRow, COLUMN_C))
+                .setLongCastle()
+                .build());
+        }
+    }
+
+    if (castleOptions.isCanCastleShort()) {
+        bool isEmptySquares = true;
+        for (square_t column = COLUMN_F; column < COLUMN_H; ++column) {
+            if (board_.isNotEmpty(encodeSquare(kingRow, column))) {
+                isEmptySquares = false;
+                break;
+            }
+        }
+        if (isEmptySquares
+            && !isSquareAttacked(encodeSquare(kingRow, COLUMN_F), board_, otherPlayer)) {
+            moves.push_back(
+                moveBuilder
+                .setDestSquare(encodeSquare(kingRow, COLUMN_G))
+                .setShortCastle()
+                .build());
+        }
+    }
 }
 
 void Position::fillWithSlideMoves(

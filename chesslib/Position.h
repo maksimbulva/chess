@@ -43,12 +43,26 @@ public:
         positionFlags_.setEnPassantColumn(column);
     }
 
+    CastleOptions getCastleOptions(player_t player) const
+    {
+        return positionFlags_.getCastleOptions(player);
+    }
+
+    void setCastleOptions(player_t player, CastleOptions castleOptions)
+    {
+        positionFlags_.setCastleOptions(player, castleOptions);
+    }
+
+    void optimizeCastleOptions();
+
     const Board& getBoard() const
     {
         return board_;
     }
 
     bool isKingCanBeCaptured() const;
+
+    bool isInCheck() const;
 
     void addPiece(const PieceOnBoard& piece);
 

@@ -7,14 +7,19 @@ namespace chesslib {
 struct CastleOptions {
     CastleOptions() : encodedValue_(0) { }
 
-    CastleOptions(position_flags_t encodedValue) : encodedValue_(encodedValue) { }
+    constexpr CastleOptions(encoded_position_flags_t encodedValue) : encodedValue_(encodedValue) { }
+
+    bool isCannotCastle() const
+    {
+        return encodedValue_ == 0;
+    }
 
     bool isCanCastleShort() const
     {
         return encodedValue_ & CAN_CASTLE_SHORT;
     }
 
-    bool isCanCastle() const
+    bool isCanCastleLong() const
     {
         return encodedValue_ & CAN_CASTLE_LONG;
     }
@@ -39,16 +44,16 @@ struct CastleOptions {
         }
     }
 
-    position_flags_t getEncodedValue() const
+    encoded_position_flags_t getEncodedValue() const
     {
         return encodedValue_;
     }
 
 private:
-    static constexpr position_flags_t CAN_CASTLE_SHORT = 1;
-    static constexpr position_flags_t CAN_CASTLE_LONG = 2;
+    static constexpr encoded_position_flags_t CAN_CASTLE_SHORT = 1;
+    static constexpr encoded_position_flags_t CAN_CASTLE_LONG = 2;
 
-    position_flags_t encodedValue_;
+    encoded_position_flags_t encodedValue_;
 };
 
 }

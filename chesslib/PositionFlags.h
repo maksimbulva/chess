@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CastleOptions.h"
 #include "OptionalColumn.h"
 #include "types.h"
 
@@ -36,8 +37,23 @@ public:
         encoded_ |= column.getEncodedValue() << EN_PASSANT_COLUMN_SHIFT;
     }
 
+    CastleOptions getCastleOptions(player_t player) const
+    {
+        const int shift = (player * 2) + 1;
+        return CastleOptions((encoded_ >> shift)& CASTLE_OPTIONS_MASK);
+    }
+
+    void setCastleOptions(player_t player, CastleOptions castleOptions)
+    {
+        const int shift = (player * 2) + 1;
+        const encoded_position_flags_t mask = CASTLE_OPTIONS_MASK << shift;
+        encoded_ &= ~mask;
+        encoded_ |= castleOptions.getEncodedValue() << shift;
+    }
+
 private:
     static constexpr encoded_position_flags_t PLAYER_MASK = 1;
+    static constexpr encoded_position_flags_t CASTLE_OPTIONS_MASK = 3;
     static constexpr int EN_PASSANT_COLUMN_SHIFT = 6;
     static constexpr encoded_position_flags_t EN_PASSANT_COLUMN_MASK = 15 << EN_PASSANT_COLUMN_SHIFT;
 

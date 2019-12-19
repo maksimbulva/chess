@@ -9,7 +9,9 @@ namespace chesslib {
 Position createPosition(
     std::vector<PieceOnBoard> pieces,
     player_t playerToMove,
-    OptionalColumn enPassantColumn)
+    OptionalColumn enPassantColumn,
+    CastleOptions whiteCastleOptions,
+    CastleOptions blackCastleOptions)
 {
     auto blackKingIt = std::find_if(pieces.begin(), pieces.end(),
         [] (const auto& piece) { return piece.pieceType == King && piece.player == Black; });
@@ -28,6 +30,10 @@ Position createPosition(
     }
 
     position.setEnPassantColumn(enPassantColumn);
+    position.setCastleOptions(White, whiteCastleOptions);
+    position.setCastleOptions(Black, blackCastleOptions);
+
+    position.optimizeCastleOptions();
 
     REQUIRE(!position.isKingCanBeCaptured());
     return position;
