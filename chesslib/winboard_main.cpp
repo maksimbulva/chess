@@ -1,3 +1,5 @@
+#ifdef CHESSLIB_WINBOARD_MAIN
+
 #include "fen.h"
 #include "Position.h"
 #include "string_repr.h"
@@ -46,3 +48,5 @@ int main()
 
     return 0;
 }
+
+#endif  // CHESSLIB_WINBOARD_MAIN

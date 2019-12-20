@@ -87,6 +87,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,11 +127,15 @@
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="board_utils.cpp" />
     <ClCompile Include="fen.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="moves_generator.cpp" />
+    <ClCompile Include="notation.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="position_factory.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="string_repr.cpp" />
     <ClCompile Include="string_utils.cpp" />
+    <ClCompile Include="uci_main.cpp" />
     <ClCompile Include="winboard_main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -138,11 +143,14 @@
     <ClInclude Include="Board.h" />
     <ClInclude Include="board_utils.h" />
     <ClInclude Include="CastleOptions.h" />
+    <ClInclude Include="Engine.h" />
     <ClInclude Include="exceptions.h" />
     <ClInclude Include="fen.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="MoveBuilder.h" />
     <ClInclude Include="MovesCollection.h" />
+    <ClInclude Include="notation.h" />
     <ClInclude Include="OptionalColumn.h" />
     <ClInclude Include="PieceOnBoard.h" />
     <ClInclude Include="Position.h" />
