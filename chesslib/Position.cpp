@@ -28,10 +28,12 @@ void Position::playMove(const Move& move)
     const square_t originSquare = move.getOriginSquare();
     const square_t originRow = getRow(originSquare);
     const square_t destSquare = move.getDestSquare();
+    piece_type_t capturedPieceType = NoPiece;
 
     // TODO
     if (move.isCapture())
     {
+        capturedPieceType = move.getCapturedPieceType();
         if (move.isEnPassantCapture())
         {
             const auto capturedPieceSquare = encodeSquare(
@@ -47,11 +49,7 @@ void Position::playMove(const Move& move)
     }
     else {
         board_.updatePieceSquare(originSquare, destSquare);
-        if (move.isPromotion()) {
-            // TODO
-            FAIL();
-        }
-        else if (move.isLongCastle()) {
+        if (move.isLongCastle()) {
             square_t rookOriginSquare = encodeSquare(originRow, COLUMN_A);
             square_t rookDestSquare = encodeSquare(originRow, COLUMN_D);
             board_.updatePieceSquare(rookOriginSquare, rookDestSquare);
@@ -61,6 +59,10 @@ void Position::playMove(const Move& move)
             square_t rookDestSquare = encodeSquare(originRow, COLUMN_F);
             board_.updatePieceSquare(rookOriginSquare, rookDestSquare);
         }
+    }
+
+    if (move.isPromotion()) {
+        board_.promotePawn(destSquare, move.getPromoteToPieceType());
     }
 
     CastleOptions castleOptions = getCastleOptions(playerToMove);
@@ -77,6 +79,20 @@ void Position::playMove(const Move& move)
         }
     }
     positionFlags_.setCastleOptions(playerToMove, castleOptions);
+
+    if (capturedPieceType == Rook) {
+        // TODO: Optimize me
+        const square_t otherBaseRow = playerToMove == Black ? 0 : MAX_ROW;
+        const player_t otherPlayer = getOtherPlayer();
+        CastleOptions otherCastleOptions = getCastleOptions(otherPlayer);
+        if (otherCastleOptions.isCanCastleLong() && destSquare == encodeSquare(otherBaseRow, COLUMN_A)) {
+            otherCastleOptions.setCanCastleLong(false);
+        }
+        else if (otherCastleOptions.isCanCastleShort() && destSquare == encodeSquare(otherBaseRow, COLUMN_H)) {
+            otherCastleOptions.setCanCastleShort(false);
+        }
+        positionFlags_.setCastleOptions(otherPlayer, otherCastleOptions);
+    }
 
     positionFlags_.setEnPassantColumn(
         move.isPawnDoubleMove() ? OptionalColumn::fromColumn(getColumn(originSquare)) : OptionalColumn());
@@ -113,10 +129,7 @@ void Position::undoMove()
     }
     else {
         board_.updatePieceSquare(destSquare, originSquare);
-        if (move.isPromotion()) {
-            // TODO
-            FAIL();
-        } else if (move.isLongCastle()) {
+        if (move.isLongCastle()) {
             square_t rookOriginSquare = encodeSquare(originRow, COLUMN_A);
             square_t rookDestSquare = encodeSquare(originRow, COLUMN_D);
             board_.updatePieceSquare(rookDestSquare, rookOriginSquare);
@@ -125,6 +138,10 @@ void Position::undoMove()
             square_t rookDestSquare = encodeSquare(originRow, COLUMN_F);
             board_.updatePieceSquare(rookDestSquare, rookOriginSquare);
         }
+    }
+
+    if (move.isPromotion()) {
+        board_.demoteToPawn(originSquare);
     }
 
     positionFlags_ = historyToUndo.getPositionFlags();

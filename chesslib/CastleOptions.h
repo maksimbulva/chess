@@ -7,7 +7,10 @@ namespace chesslib {
 struct CastleOptions {
     CastleOptions() : encodedValue_(0) { }
 
-    constexpr CastleOptions(encoded_position_flags_t encodedValue) : encodedValue_(encodedValue) { }
+    explicit constexpr CastleOptions(encoded_position_flags_t encodedValue)
+        : encodedValue_(encodedValue)
+    {
+    }
 
     bool isCannotCastle() const
     {

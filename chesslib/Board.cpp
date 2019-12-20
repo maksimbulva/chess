@@ -68,6 +68,18 @@ void Board::updatePieceSquare(const square_t oldSquare, const square_t newSquare
     }
 }
 
+void Board::promotePawn(square_t square, piece_type_t promoteTo)
+{
+    BoardSquare& boardSquare = squares_[square];
+    boardSquare.setPiece(boardSquare.getPlayer(), promoteTo);
+}
+
+void Board::demoteToPawn(square_t square)
+{
+    BoardSquare& boardSquare = squares_[square];
+    boardSquare.setPiece(boardSquare.getPlayer(), Pawn);
+}
+
 void Board::removeFromList(BoardSquare& square)
 {
     if (square.prevNode != BoardSquare::NO_NODE) {

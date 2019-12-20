@@ -37,7 +37,7 @@ private:
     static constexpr encoded_position_flags_t FLAG_HAS_VALUE = 8;
 
 private:
-    OptionalColumn(encoded_position_flags_t encoded)
+    explicit OptionalColumn(encoded_position_flags_t encoded)
         : encoded_(encoded)
     {
     }

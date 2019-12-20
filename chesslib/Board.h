@@ -64,6 +64,10 @@ public:
 
     void updatePieceSquare(const square_t oldSquare, const square_t newSquare);
 
+    void promotePawn(square_t square, piece_type_t promoteTo);
+
+    void demoteToPawn(square_t square);
+
 public:
     class PieceIterator {
         friend class Board;

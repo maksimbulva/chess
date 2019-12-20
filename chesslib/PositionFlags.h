@@ -40,7 +40,7 @@ public:
     CastleOptions getCastleOptions(player_t player) const
     {
         const int shift = (player * 2) + 1;
-        return CastleOptions((encoded_ >> shift)& CASTLE_OPTIONS_MASK);
+        return CastleOptions((encoded_ >> shift) & CASTLE_OPTIONS_MASK);
     }
 
     void setCastleOptions(player_t player, CastleOptions castleOptions)

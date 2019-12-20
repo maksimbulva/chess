@@ -7,7 +7,7 @@ namespace chesslib {
 struct Move {
 public:
     // Use MoveBuilder class to get encoded value
-    Move(const encoded_move_t encoded)
+    explicit Move(const encoded_move_t encoded)
         : encoded_(encoded)
     {        
     }
