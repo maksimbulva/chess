@@ -17,8 +17,16 @@ def evaluate_position(engine, fen: str):
     score = info['score'].white().score()
     if score is not None:
         score /= 100.0
-    print('Score: {0}'.format(score))
-    return score
+
+    bestmove, is_bestmove_capture, is_bestmove_check, is_check = None, None, None, None
+    if ('pv' in info) and len(info['pv']) > 0:
+        bestmove = info['pv'][0]
+        is_bestmove_capture = board.is_capture(bestmove)
+        is_bestmove_check = board.is_into_check(bestmove)
+        is_check = board.is_check()
+
+    print('Score: {0}, bestmove {1}'.format(score, bestmove))
+    return (score, bestmove, is_bestmove_capture, is_bestmove_check, is_check)
 
 def main():
     counter = positions_db.count_not_evaluated_positions()
@@ -36,8 +44,15 @@ def main():
         if record is None:
             break
         position_id, fen = record
-        score = evaluate_position(engine, fen)
-        positions_db.update_position_evaluation(position_id, score)
+
+        (score, bestmove, is_bestmove_capture, is_bestmove_check, is_check) = evaluate_position(engine, fen)
+        positions_db.update_position_evaluation(
+            position_id,
+            score,
+            bestmove,
+            is_bestmove_capture,
+            is_bestmove_check,
+            is_check)
 
     engine.quit()
 
