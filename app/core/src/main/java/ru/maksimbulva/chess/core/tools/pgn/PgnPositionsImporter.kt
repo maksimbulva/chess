@@ -1,7 +1,7 @@
-package tools.pgn
+package ru.maksimbulva.chess.core.tools.pgn
 
-import chess.engine.Engine
-import chess.engine.fen.FenEncoder
+import ru.maksimbulva.chess.core.engine.Engine
+import ru.maksimbulva.chess.core.engine.fen.FenEncoder
 
 object PgnPositionsImporter {
 

@@ -1,4 +1,4 @@
-package pgn
+package ru.maksimbulva.chess.core.pgn
 
 object PgnParser {
 

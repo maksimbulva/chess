@@ -1,7 +1,7 @@
-package tools.pgn
+package ru.maksimbulva.chess.core.tools.pgn
 
-import pgn.PgnGame
-import pgn.PgnParser
+import ru.maksimbulva.chess.core.pgn.PgnGame
+import ru.maksimbulva.chess.core.pgn.PgnParser
 import java.io.File
 
 object PgnGamesImporter {

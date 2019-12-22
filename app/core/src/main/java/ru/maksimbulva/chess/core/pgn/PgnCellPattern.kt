@@ -1,4 +1,4 @@
-package pgn
+package ru.maksimbulva.chess.core.pgn
 
 import chess.engine.core.board.Cell
 import chess.engine.core.board.columnOf
