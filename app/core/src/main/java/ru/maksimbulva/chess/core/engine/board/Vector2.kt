@@ -1,6 +1,6 @@
-package chess.engine.core.board
+package ru.maksimbulva.chess.core.engine.board
 
-import chess.engine.core.Player
+import ru.maksimbulva.chess.core.engine.Player
 import kotlin.math.abs
 import kotlin.math.sign
 

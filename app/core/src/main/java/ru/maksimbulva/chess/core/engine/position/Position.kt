@@ -1,11 +1,11 @@
-package chess.engine.core.position
+package ru.maksimbulva.chess.core.engine.position
 
-import chess.engine.core.Piece
-import chess.engine.core.Player
-import chess.engine.core.board.Board
-import chess.engine.core.board.Cell
-import chess.engine.core.move.Move
-import chess.engine.core.otherPlayer
+import ru.maksimbulva.chess.core.engine.Piece
+import ru.maksimbulva.chess.core.engine.Player
+import ru.maksimbulva.chess.core.engine.board.Board
+import ru.maksimbulva.chess.core.engine.board.Cell
+import ru.maksimbulva.chess.core.engine.move.Move
+import ru.maksimbulva.chess.core.engine.otherPlayer
 import kotlin.math.abs
 
 class Position(

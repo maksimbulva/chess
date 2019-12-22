@@ -1,9 +1,9 @@
-package chess.engine.core.board
+package ru.maksimbulva.chess.core.engine.board
 
-import chess.engine.core.ColoredPiece
-import chess.engine.core.Piece
-import chess.engine.core.Player
-import chess.engine.core.move.Move
+import ru.maksimbulva.chess.core.engine.ColoredPiece
+import ru.maksimbulva.chess.core.engine.Piece
+import ru.maksimbulva.chess.core.engine.Player
+import ru.maksimbulva.chess.core.engine.move.Move
 
 class Board(private val cells: Array<ColoredPiece?>) {
 

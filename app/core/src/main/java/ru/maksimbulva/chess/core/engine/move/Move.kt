@@ -1,8 +1,8 @@
-package chess.engine.core.move
+package ru.maksimbulva.chess.core.engine.move
 
-import chess.engine.core.Piece
-import chess.engine.core.Player
-import chess.engine.core.board.Cell
+import ru.maksimbulva.chess.core.engine.Piece
+import ru.maksimbulva.chess.core.engine.Player
+import ru.maksimbulva.chess.core.engine.board.Cell
 
 data class Move(
     val fromCell: Cell,

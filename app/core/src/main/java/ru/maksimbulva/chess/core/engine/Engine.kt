@@ -1,9 +1,9 @@
-package chess.engine
+package ru.maksimbulva.chess.core.engine
 
-import chess.engine.core.move.Move
-import chess.engine.core.move.MoveGenerator
-import chess.engine.core.position.Position
-import chess.engine.fen.FenDecoder
+import ru.maksimbulva.chess.core.engine.fen.FenDecoder
+import ru.maksimbulva.chess.core.engine.move.Move
+import ru.maksimbulva.chess.core.engine.move.MoveGenerator
+import ru.maksimbulva.chess.core.engine.position.Position
 
 class Engine {
 

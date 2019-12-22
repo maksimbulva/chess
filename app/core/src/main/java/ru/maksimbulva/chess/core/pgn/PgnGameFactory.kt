@@ -1,6 +1,6 @@
 package ru.maksimbulva.chess.core.pgn
 
-import chess.engine.Engine
+import ru.maksimbulva.chess.core.engine.Engine
 
 internal object PgnGameFactory {
 

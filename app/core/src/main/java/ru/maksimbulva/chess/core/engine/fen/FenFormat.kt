@@ -1,4 +1,4 @@
-package chess.engine.fen
+package ru.maksimbulva.chess.core.engine.fen
 
 object FenFormat {
     const val rowSeparator = "/"

@@ -1,6 +1,6 @@
 package ru.maksimbulva.chess.core.pgn
 
-import chess.engine.core.Piece
+import ru.maksimbulva.chess.core.engine.Piece
 
 object PgnMoveParser {
 

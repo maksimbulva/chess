@@ -1,8 +1,8 @@
 package ru.maksimbulva.chess.core.pgn
 
-import chess.engine.core.Piece
-import chess.engine.core.move.Move
-import chess.engine.core.position.Position
+import ru.maksimbulva.chess.core.engine.Piece
+import ru.maksimbulva.chess.core.engine.move.Move
+import ru.maksimbulva.chess.core.engine.position.Position
 
 sealed class PgnMove {
 

@@ -1,4 +1,4 @@
-package chess.engine.core
+package ru.maksimbulva.chess.core.engine
 
 enum class Piece {
     Pawn,

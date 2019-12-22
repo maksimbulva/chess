@@ -1,4 +1,4 @@
-package chess.engine.core
+package ru.maksimbulva.chess.core.engine
 
 private val _rowToString: Array<String> = (1..8).map { it.toString() }.toTypedArray()
 private val _columnToString: Array<String> = (0..7).map { ('a' + it).toString() }.toTypedArray()

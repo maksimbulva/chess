@@ -1,6 +1,6 @@
 package ru.maksimbulva.chess.core.pgn
 
-import chess.engine.core.move.Move
+import ru.maksimbulva.chess.core.engine.move.Move
 
 class PgnGame(
     val tags: Map<String, String>,

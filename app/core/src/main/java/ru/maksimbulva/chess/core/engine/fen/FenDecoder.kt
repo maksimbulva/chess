@@ -1,13 +1,13 @@
-package chess.engine.fen
+package ru.maksimbulva.chess.core.engine.fen
 
-import chess.engine.core.ColoredPiece
-import chess.engine.core.Piece
-import chess.engine.core.Player
-import chess.engine.core.board.Board
-import chess.engine.core.board.Cell
-import chess.engine.core.position.CastlingAvailability
-import chess.engine.core.position.Position
-import extensions.toUpperCaseIf
+import ru.maksimbulva.chess.core.engine.ColoredPiece
+import ru.maksimbulva.chess.core.engine.Piece
+import ru.maksimbulva.chess.core.engine.Player
+import ru.maksimbulva.chess.core.engine.board.Board
+import ru.maksimbulva.chess.core.engine.board.Cell
+import ru.maksimbulva.chess.core.engine.position.CastlingAvailability
+import ru.maksimbulva.chess.core.engine.position.Position
+import ru.maksimbulva.chess.core.extensions.toUpperCaseIf
 
 object FenDecoder {
 

@@ -1,7 +1,7 @@
-package chess.engine.core.board
+package ru.maksimbulva.chess.core.engine.board
 
-import chess.engine.core.columnToString
-import chess.engine.core.rowToString
+import ru.maksimbulva.chess.core.engine.columnToString
+import ru.maksimbulva.chess.core.engine.rowToString
 
 data class Cell(val row: Int, val column: Int) {
     val index: Int = row * 8 + column

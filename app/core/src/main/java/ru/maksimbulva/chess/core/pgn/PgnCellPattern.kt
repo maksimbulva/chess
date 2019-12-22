@@ -1,8 +1,8 @@
 package ru.maksimbulva.chess.core.pgn
 
-import chess.engine.core.board.Cell
-import chess.engine.core.board.columnOf
-import chess.engine.core.board.rowOf
+import ru.maksimbulva.chess.core.engine.board.Cell
+import ru.maksimbulva.chess.core.engine.board.columnOf
+import ru.maksimbulva.chess.core.engine.board.rowOf
 
 class PgnCellPattern(val row: Int? = null, val column: Int? = null) {
 

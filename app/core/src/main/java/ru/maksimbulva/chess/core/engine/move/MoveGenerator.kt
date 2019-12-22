@@ -1,13 +1,13 @@
-package chess.engine.core.move
+package ru.maksimbulva.chess.core.engine.move
 
-import chess.engine.core.ColoredPiece
-import chess.engine.core.Piece
-import chess.engine.core.Player
-import chess.engine.core.board.Board
-import chess.engine.core.board.Cell
-import chess.engine.core.board.Vector2
-import chess.engine.core.otherPlayer
-import chess.engine.core.position.Position
+import ru.maksimbulva.chess.core.engine.ColoredPiece
+import ru.maksimbulva.chess.core.engine.Piece
+import ru.maksimbulva.chess.core.engine.Player
+import ru.maksimbulva.chess.core.engine.board.Board
+import ru.maksimbulva.chess.core.engine.board.Cell
+import ru.maksimbulva.chess.core.engine.board.Vector2
+import ru.maksimbulva.chess.core.engine.otherPlayer
+import ru.maksimbulva.chess.core.engine.position.Position
 import kotlin.math.abs
 
 object MoveGenerator {

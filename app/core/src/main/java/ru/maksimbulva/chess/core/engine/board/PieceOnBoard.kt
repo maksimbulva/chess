@@ -1,5 +1,5 @@
-package chess.engine.core.board
+package ru.maksimbulva.chess.core.engine.board
 
-import chess.engine.core.ColoredPiece
+import ru.maksimbulva.chess.core.engine.ColoredPiece
 
 class PieceOnBoard(val coloredPiece: ColoredPiece, val cell: Cell)

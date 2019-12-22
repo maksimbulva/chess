@@ -1,3 +1,3 @@
-package chess.engine.core
+package ru.maksimbulva.chess.core.engine
 
 data class ColoredPiece(val player: Player, val piece: Piece)
