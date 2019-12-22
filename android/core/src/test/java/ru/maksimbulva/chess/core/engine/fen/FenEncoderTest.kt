@@ -1,10 +1,10 @@
-package chess.engine.fen
+package ru.maksimbulva.chess.core.engine.fen
 
-import chess.engine.Engine
-import chess.engine.core.board.Cell
-import chess.engine.core.move.Move
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import org.junit.Assert.*
+import ru.maksimbulva.chess.core.engine.Engine
+import ru.maksimbulva.chess.core.engine.board.Cell
+import ru.maksimbulva.chess.core.engine.move.Move
 
 internal class FenEncoderTest {
 

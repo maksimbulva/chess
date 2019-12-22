@@ -1,11 +1,11 @@
-package chess.engine.fen
+package ru.maksimbulva.chess.core.engine.fen
 
-import chess.engine.core.ColoredPiece
-import chess.engine.core.Piece
-import chess.engine.core.Player
-import chess.engine.core.board.Cell
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import org.junit.Assert.*
+import ru.maksimbulva.chess.core.engine.ColoredPiece
+import ru.maksimbulva.chess.core.engine.Piece
+import ru.maksimbulva.chess.core.engine.Player
+import ru.maksimbulva.chess.core.engine.board.Cell
 
 internal class FenDecoderTest {
 

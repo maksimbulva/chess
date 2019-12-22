@@ -1,9 +1,9 @@
-package chess.engine.core.move
+package ru.maksimbulva.chess.core.engine.move
 
-import chess.engine.core.position.Position
-import chess.engine.fen.FenDecoder
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import org.junit.Assert.*
+import ru.maksimbulva.chess.core.engine.fen.FenDecoder
+import ru.maksimbulva.chess.core.engine.position.Position
 
 internal class MoveGeneratorTest {
 
