@@ -36,3 +36,4 @@ hs_err_pid*
 /chesslib/.vs/
 /chesslib/Debug/
 /chesslib/Release/
+/chesslib/x64/

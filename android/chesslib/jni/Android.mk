@@ -18,8 +18,7 @@ LOCAL_SRC_FILES := \
 	../../../chesslib/position_factory.cpp \
 	../../../chesslib/Position.cpp \
 	../../../chesslib/string_repr.cpp \
-	../../../chesslib/string_utils.cpp
-
-# board_utils.cpp Board.cpp Engine.cpp fen.cpp Game.cpp moves_generator.cpp notation.cpp position_factory.cpp Position.cpp string_repr.cpp string_utils.cpp uci_main.cpp winboard_main.cpp
+	../../../chesslib/string_utils.cpp \
+	../src/main/jni/libchess-jni.c
 
 include $(BUILD_SHARED_LIBRARY)
