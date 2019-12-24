@@ -13,6 +13,6 @@ class MainActivity : AppCompatActivity() {
 
         val chesslibWrapper = ChesslibWrapper()
         val myText: TextView = findViewById(R.id.text)
-        myText.text = chesslibWrapper.msgFromJni
+        myText.text = chesslibWrapper.calculateLegalMovesCount("", 0).toString()
     }
 }

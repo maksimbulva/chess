@@ -6,5 +6,5 @@ public class ChesslibWrapper {
         System.loadLibrary("chess-jni");
     }
 
-    public native String getMsgFromJni();
+    public native long calculateLegalMovesCount(String fen, int depthPly);
 }

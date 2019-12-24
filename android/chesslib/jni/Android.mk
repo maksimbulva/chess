@@ -7,6 +7,8 @@ LOCAL_MODULE := chess-jni
 LOCAL_CPP_FEATURES := exceptions
 LOCAL_CPPFLAGS += -std=c++14
 
+LOCAL_LDLIBS := -llog
+
 LOCAL_SRC_FILES := \
 	../../../chesslib/board_utils.cpp \
 	../../../chesslib/Board.cpp \
@@ -19,6 +21,8 @@ LOCAL_SRC_FILES := \
 	../../../chesslib/Position.cpp \
 	../../../chesslib/string_repr.cpp \
 	../../../chesslib/string_utils.cpp \
-	../src/main/jni/libchess-jni.c
+	../../../chesslib/testing_utils.cpp \
+	../src/main/jni/ChesslibWrapper.cpp \
+	../src/main/jni/jni_utils.cpp
 
 include $(BUILD_SHARED_LIBRARY)

@@ -135,6 +135,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="string_repr.cpp" />
     <ClCompile Include="string_utils.cpp" />
+    <ClCompile Include="testing_utils.cpp" />
     <ClCompile Include="uci_main.cpp" />
     <ClCompile Include="winboard_main.cpp" />
   </ItemGroup>
@@ -161,6 +162,7 @@
     <ClInclude Include="squares.h" />
     <ClInclude Include="string_repr.h" />
     <ClInclude Include="string_utils.h" />
+    <ClInclude Include="testing_utils.h" />
     <ClInclude Include="types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
