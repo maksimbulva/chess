@@ -11,7 +11,9 @@ Position createPosition(
     player_t playerToMove,
     OptionalColumn enPassantColumn,
     CastleOptions whiteCastleOptions,
-    CastleOptions blackCastleOptions)
+    CastleOptions blackCastleOptions,
+    uint32_t halfmoveClock,
+    uint32_t fullmoveNumber)
 {
     auto blackKingIt = std::find_if(pieces.begin(), pieces.end(),
         [] (const auto& piece) { return piece.pieceType == King && piece.player == Black; });
@@ -21,7 +23,12 @@ Position createPosition(
 
     REQUIRE(blackKingIt != pieces.end() && whiteKingIt != pieces.end());
 
-    auto position = Position(blackKingIt->square, whiteKingIt->square, playerToMove);
+    auto position = Position(
+        blackKingIt->square,
+        whiteKingIt->square,
+        playerToMove,
+        halfmoveClock,
+        fullmoveNumber);
 
     for (const auto& piece : pieces) {
         if (piece.pieceType != King) {

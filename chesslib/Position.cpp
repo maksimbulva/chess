@@ -9,8 +9,11 @@ namespace chesslib {
 Position::Position(
     square_t blackKingSquare,
     square_t whiteKingSquare,
-    player_t playerToMove)
+    player_t playerToMove,
+    uint32_t halfmoveClock,
+    uint32_t fullmoveNumber)
     : board_(blackKingSquare, whiteKingSquare)
+    , moveCounters_(halfmoveClock, fullmoveNumber)
 {
     positionFlags_.setPlayerToMove(playerToMove);
 }
@@ -99,7 +102,11 @@ void Position::playMove(const Move& move)
 
     positionFlags_.setPlayerToMove(getOtherPlayer());
 
-    history_.emplace_back(move, oldPositionFlags);
+    history_.emplace_back(move, oldPositionFlags, moveCounters_);
+
+    uint32_t newHalfmoveClock = (move.isCapture() || pieceToMove == Pawn) ? 0 : moveCounters_.getHalfmoveClock() + 1;
+    uint32_t newFullmoveNumber = moveCounters_.getFullmoveNumber() + (playerToMove == Black ? 1 : 0);
+    moveCounters_ = PositionMoveCounters(newHalfmoveClock, newFullmoveNumber);
 }
 
 void Position::undoMove()
@@ -145,6 +152,7 @@ void Position::undoMove()
     }
 
     positionFlags_ = historyToUndo.getPositionFlags();
+    moveCounters_ = historyToUndo.getPositionMoveCounters();
 
     history_.pop_back();
 }

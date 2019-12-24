@@ -6,6 +6,9 @@
 #include <sstream>
 #include <string>
 
+// TODO
+#include "testing_utils.h"
+
 // TODO: Unbuffered output
 
 namespace chesslib {
@@ -73,6 +76,10 @@ using namespace chesslib;
 
 int main()
 {
+    std::string fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    std::cout << countLegalMoves(fenString, 4) << std::endl;
+    return 0;
+
     Engine engine;
     mainLoop(engine);
 

@@ -10,6 +10,7 @@ namespace chesslib {
 struct ParsedMove {
     const square_t originSquare;
     const square_t destSquare;
+    const piece_type_t promoteToPieceType;
 };
 
 square_t parseSquare(std::string squareString);

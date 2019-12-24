@@ -6,6 +6,7 @@
 #include "OptionalColumn.h"
 #include "PositionFlags.h"
 #include "PositionHistory.h"
+#include "PositionMoveCounters.h"
 
 #include <vector>
 
@@ -17,9 +18,9 @@ public:
     Position(
         square_t blackKingSquare,
         square_t whiteKingSquare,
-        player_t playerToMove);
-
-    void fillWithLegalMoves(MovesCollection& moves) const;
+        player_t playerToMove,
+        uint32_t halfmoveClock,
+        uint32_t fullmoveNumber);
 
     void fillWithPseudoLegalMoves(MovesCollection& moves) const;
 
@@ -89,6 +90,7 @@ private:
 private:
     Board board_;
     PositionFlags positionFlags_;
+    PositionMoveCounters moveCounters_;
 
     // TODO: consider another type of container if needed
     std::vector<PositionHistory> history_;

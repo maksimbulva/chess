@@ -5,6 +5,30 @@
 
 namespace chesslib {
 
+namespace {
+
+constexpr std::size_t MOVE_WITHOUT_CAPTURE_STRING_LENGTH = 4;
+constexpr std::size_t MOVE_WITH_CAPTURE_STRING_LENGTH = 5;
+
+piece_type_t parsePieceType(char pieceTypeChar)
+{
+    switch (std::tolower(pieceTypeChar)) {
+    case 'n':
+        return Knight;
+    case 'b':
+        return Bishop;
+    case 'r':
+        return Rook;
+    case 'q':
+        return Queen;
+    default:
+        FAIL();
+        return NoPiece;
+    }
+}
+
+}
+
 square_t parseSquare(std::string squareString)
 {
     REQUIRE(squareString.size() == 2);
@@ -16,11 +40,19 @@ square_t parseSquare(std::string squareString)
 
 ParsedMove parseCoordinateNotation(std::string moveString)
 {
-    // TODO: promotions
-    REQUIRE(moveString.size() == 4);
     const auto originSquare = parseSquare(moveString.substr(0, 2));
     const auto destSquare = parseSquare(moveString.substr(2, 2));
-    return { originSquare, destSquare };
+    if (moveString.size() == MOVE_WITHOUT_CAPTURE_STRING_LENGTH) {
+        return { originSquare, destSquare, NoPiece };
+    }
+    else if (moveString.size() == MOVE_WITH_CAPTURE_STRING_LENGTH) {
+        const auto promoteToPieceType = parsePieceType(moveString[4]);
+        return { originSquare, destSquare, promoteToPieceType };
+    }
+    else {
+        FAIL();
+        return { 0, 0, NoPiece };
+    }
 }
 
 std::string toCoordinateNotation(Move move)

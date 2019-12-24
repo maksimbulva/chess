@@ -137,11 +137,11 @@
     <ClCompile Include="string_utils.cpp" />
     <ClCompile Include="testing_utils.cpp" />
     <ClCompile Include="uci_main.cpp" />
-    <ClCompile Include="winboard_main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitboard.h" />
     <ClInclude Include="Board.h" />
+    <ClInclude Include="BoardSquare.h" />
     <ClInclude Include="board_utils.h" />
     <ClInclude Include="CastleOptions.h" />
     <ClInclude Include="Engine.h" />
@@ -157,6 +157,7 @@
     <ClInclude Include="Position.h" />
     <ClInclude Include="PositionFlags.h" />
     <ClInclude Include="PositionHistory.h" />
+    <ClInclude Include="PositionMoveCounters.h" />
     <ClInclude Include="position_factory.h" />
     <ClInclude Include="require.h" />
     <ClInclude Include="squares.h" />

@@ -67,12 +67,6 @@ void fillWithDeltaMoves(piece_type_t pieceType, square_t origin, const Position&
 
 }  // namespace
 
-void Position::fillWithLegalMoves(MovesCollection& moves) const
-{
-    // TODO
-    fillWithPseudoLegalMoves(moves);
-}
-
 void Position::fillWithPseudoLegalMoves(MovesCollection& moves) const
 {
     assert(moves.empty());

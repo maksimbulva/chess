@@ -117,14 +117,14 @@ OptionalColumn decodeEnPassantColumn(const std::string& encoded)
     }
 }
 
-encoded_position_flags_t decodeHalfmoveClock(const std::string& encoded)
+uint32_t decodeHalfmoveClock(const std::string& encoded)
 {
-    return std::stoi(encoded);
+    return static_cast<uint32_t>(std::stoi(encoded));
 }
 
-encoded_position_flags_t decodeFullmoveNumber(const std::string& encoded)
+uint32_t decodeFullmoveNumber(const std::string& encoded)
 {
-    return std::stoi(encoded);
+    return static_cast<uint32_t>(std::stoi(encoded));
 }
 
 }  // namespace
@@ -142,16 +142,14 @@ Position decodeFen(const std::string& fenString)
     auto halfmoveClock = tokens.size() > 4 ? decodeHalfmoveClock(tokens[4]) : 0;
     auto fullmoveNumber = tokens.size() > 5 ? decodeFullmoveNumber(tokens[5]) : 0;
 
-    // TODO
-    (void)halfmoveClock;
-    (void)fullmoveNumber;
-
     return createPosition(
         std::move(pieces),
         playerToMove,
         enPassantColumn,
         castleOptions[White],
-        castleOptions[Black]);
+        castleOptions[Black],
+        halfmoveClock,
+        fullmoveNumber);
 }
 
 }  // namespace chesslib

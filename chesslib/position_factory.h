@@ -13,6 +13,8 @@ Position createPosition(
     player_t playerToMove,
     OptionalColumn enPassantColumn,
     CastleOptions whiteCastleOptions,
-    CastleOptions blackCastleOptions);
+    CastleOptions blackCastleOptions,
+    uint32_t halfmoveClock,
+    uint32_t fullmoveNumber);
 
 }
