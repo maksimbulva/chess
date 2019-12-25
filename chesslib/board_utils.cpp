@@ -1,6 +1,7 @@
 #include "board_utils.h"
 
 #include "Board.h"
+#include "MoveDelta.h"
 
 #include <algorithm>
 
@@ -18,8 +19,6 @@ constexpr fastint FLAG_DIRECTION_UP_RIGHT = 1 << 5;
 constexpr fastint FLAG_DIRECTION_DOWN_LEFT = 1 << 6;
 constexpr fastint FLAG_DIRECTION_DOWN_RIGHT = 1 << 7;
 
-}
-
 bool isSlideAttack(
     square_t target,
     square_t reversedDirection,
@@ -31,12 +30,13 @@ bool isSlideAttack(
     while (true) {
         currentSquare += reversedDirection;
         if (board.isNotEmpty(currentSquare)) {
-            return board.isPlayerPiece(currentSquare, attacker, pieceType)
-                || board.isPlayerPiece(currentSquare, attacker, Queen);
+            return board.isPlayerSlider(currentSquare, attacker, pieceType);
         }
     }
     return false;
 }
+
+}  // namespace
 
 bool isSquareAttacked(square_t target, const Board& board, player_t attacker)
 {
@@ -65,8 +65,11 @@ bool isSquareAttacked(square_t target, const Board& board, player_t attacker)
 
     while (true) {
         const square_t attackOrigin = piecesIt.getSquare();
+        // TODO: get rid of these low-level logic
         const square_t attackOriginRow = getRow(attackOrigin);
         const square_t attackOriginColumn = getColumn(attackOrigin);
+
+        const MoveDelta moveDelta(attackOrigin, target);
 
         const piece_type_t pieceType = piecesIt.getPieceType();
         switch (pieceType) {
@@ -75,23 +78,15 @@ bool isSquareAttacked(square_t target, const Board& board, player_t attacker)
             break;
         case Knight:
         {
-            const auto deltaRow = std::abs(targetRow - attackOriginRow);
-            if (deltaRow == 1 || deltaRow == 2) {
-                const auto deltaColumn = std::abs(targetColumn - attackOriginColumn);
-                if (deltaRow + deltaColumn == 3) {
-                    return true;
-                }
+            if (moveDelta.isKnightDelta()) {
+                return true;
             }
         }
             break;
         case King:
         {
-            const auto deltaRow = std::abs(targetRow - attackOriginRow);
-            if (deltaRow <= 1) {
-                const auto deltaColumn = std::abs(targetColumn - attackOriginColumn);
-                if (deltaColumn <= 1) {
-                    return true;
-                }
+            if (moveDelta.isKingDelta()) {
+                return true;
             }
         }
         default:
@@ -149,6 +144,71 @@ bool isSquareAttacked(square_t target, const Board& board, player_t attacker)
             && isSlideAttack(target, DIRECTION_DOWN_LEFT, board, attacker, Bishop))
         || ((checkDirFlags & FLAG_DIRECTION_DOWN_RIGHT)
             && isSlideAttack(target, DIRECTION_DOWN_RIGHT, board, attacker, Bishop)));
+}
+
+bool isSquareAttackedFromSpecificSquare(
+    square_t origin,
+    square_t target,
+    const Board& board,
+    player_t attacker)
+{
+    const piece_type_t pieceType = board.getPieceTypeAt(origin);
+    const MoveDelta moveDelta(origin, target);
+
+    switch (pieceType) {
+    case Pawn:
+        return moveDelta.isPawnDelta(attacker);
+    case Knight:
+        return moveDelta.isKnightDelta();
+    case King:
+        return moveDelta.isKingDelta();
+    }
+
+    square_t direction = DIRECTION_NONE;
+    if ((pieceType == Bishop) || (pieceType == Queen)) {
+        direction = moveDelta.toBishiopDirection();
+    }
+    if (direction == DIRECTION_NONE && (pieceType == Rook || pieceType == Queen)) {
+        direction = moveDelta.toRookDirection();
+    }
+
+    if (direction == DIRECTION_NONE) {
+        return false;
+    }
+
+    // Check if there is any blocker between attacker and target
+    for (square_t currentSquare = origin + direction; currentSquare != target; currentSquare += direction) {
+        if (!board.isEmpty(currentSquare)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool isSquareSlideAttackedThroughSpecificSquare(
+    square_t intermediateSquare,
+    square_t target,
+    const Board& board,
+    player_t attacker)
+{
+    MoveDelta reversedMoveDelta(target, intermediateSquare);
+    RayIterator rayIter = createRayIterator(target, reversedMoveDelta);
+
+    if (!rayIter.hasNext()) {
+        return false;
+    }
+
+    const piece_type_t rayPieceType = rayIter.getPieceType();
+    
+    ++rayIter;
+    for (auto currentSquare = rayIter.currentSquare(); rayIter.hasNext(); ++rayIter) {
+        if (board.isNotEmpty(currentSquare)) {
+            return board.isPlayerSlider(currentSquare, attacker, rayPieceType);
+        }
+    }
+
+    return false;
 }
 
 }

@@ -37,6 +37,16 @@ public:
         return squares_[square].coloredPiece == encoded;
     }
 
+    bool isPlayerSlider(square_t square, player_t player, piece_type_t pieceType) const
+    {
+        const BoardSquare& boardSquare = squares_[square];
+        if (boardSquare.getPlayer() == player) {
+            const piece_type_t squarePieceType = boardSquare.getPieceType();
+            return squarePieceType == pieceType || squarePieceType == Queen;
+        }
+        return false;
+    }
+
     piece_type_t getPieceTypeAt(square_t square) const
     {
         return squares_[square].getPieceType();

@@ -144,12 +144,14 @@
     <ClInclude Include="BoardSquare.h" />
     <ClInclude Include="board_utils.h" />
     <ClInclude Include="CastleOptions.h" />
+    <ClInclude Include="directions.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="exceptions.h" />
     <ClInclude Include="fen.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="MoveBuilder.h" />
+    <ClInclude Include="MoveDelta.h" />
     <ClInclude Include="MovesCollection.h" />
     <ClInclude Include="notation.h" />
     <ClInclude Include="OptionalColumn.h" />
@@ -159,6 +161,7 @@
     <ClInclude Include="PositionHistory.h" />
     <ClInclude Include="PositionMoveCounters.h" />
     <ClInclude Include="position_factory.h" />
+    <ClInclude Include="RayIterator.h" />
     <ClInclude Include="require.h" />
     <ClInclude Include="squares.h" />
     <ClInclude Include="string_repr.h" />
