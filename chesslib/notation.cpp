@@ -27,6 +27,23 @@ piece_type_t parsePieceType(char pieceTypeChar)
     }
 }
 
+char pieceTypeToChar(piece_type_t pieceType)
+{
+    switch (pieceType) {
+    case Knight:
+        return 'n';
+    case Bishop:
+        return 'b';
+    case Rook:
+        return 'r';
+    case Queen:
+        return 'q';
+    default:
+        FAIL();
+        return '?';
+    }
+}
+
 }
 
 square_t parseSquare(std::string squareString)
@@ -57,10 +74,11 @@ ParsedMove parseCoordinateNotation(std::string moveString)
 
 std::string toCoordinateNotation(Move move)
 {
-    // TODO: promotions
-    REQUIRE(!move.isPromotion());
     std::string result = squareToString(move.getOriginSquare());
     result += squareToString(move.getDestSquare());
+    if (move.isPromotion()) {
+        result.push_back(pieceTypeToChar(move.getPromoteToPieceType()));
+    }
     return result;
 }
 
