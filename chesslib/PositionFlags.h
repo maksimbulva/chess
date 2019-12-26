@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CastleOptions.h"
+#include "OptionalBoolean.h"
 #include "OptionalColumn.h"
 #include "types.h"
 
@@ -51,11 +52,29 @@ public:
         encoded_ |= castleOptions.getEncodedValue() << shift;
     }
 
+    OptionalBoolean getIsInCheck() const
+    {
+        return OptionalBoolean((encoded_ & IS_IN_CHECK_MASK) >> IS_IN_CHECK_SHIFT);
+    }
+
+    void setIsInCheck(bool value)
+    {
+        encoded_ &= ~IS_IN_CHECK_MASK;
+        encoded_ |= (OptionalBoolean(value).getEncodedValue()) << IS_IN_CHECK_SHIFT;
+    }
+
+    void onMovePlayed()
+    {
+        encoded_ &= ~IS_IN_CHECK_MASK;
+    }
+
 private:
     static constexpr encoded_position_flags_t PLAYER_MASK = 1;
     static constexpr encoded_position_flags_t CASTLE_OPTIONS_MASK = 3;
     static constexpr int EN_PASSANT_COLUMN_SHIFT = 6;
     static constexpr encoded_position_flags_t EN_PASSANT_COLUMN_MASK = 15 << EN_PASSANT_COLUMN_SHIFT;
+    static constexpr int IS_IN_CHECK_SHIFT = 10;
+    static constexpr encoded_position_flags_t IS_IN_CHECK_MASK = 3 << IS_IN_CHECK_SHIFT;
 
     encoded_position_flags_t encoded_;
 };

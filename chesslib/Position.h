@@ -22,7 +22,8 @@ public:
         uint32_t halfmoveClock,
         uint32_t fullmoveNumber);
 
-    void fillWithPseudoLegalMoves(MovesCollection& moves) const;
+    void fillWithPseudoLegalMoves(MovesCollection& moves);
+    void fillWithPseudoLegalMoves(MovesCollection& moves, bool isInCheck) const;
 
     player_t getPlayerToMove() const
     {
@@ -63,7 +64,7 @@ public:
 
     bool isKingCanBeCaptured() const;
 
-    bool isInCheck() const;
+    bool isInCheck();
 
     void addPiece(const PieceOnBoard& piece);
 
@@ -80,12 +81,14 @@ private:
 
     void fillWithPawnMoves(square_t pawnSquare, MovesCollection& moves) const;
     void fillWithKnightMoves(square_t knightSquare, MovesCollection& moves) const;
-    void fillWithKingMoves(square_t kingSquare, MovesCollection& moves) const;
+    void fillWithKingMoves(square_t kingSquare, MovesCollection& moves, bool isInCheck) const;
 
     void fillWithSlideMoves(
         piece_type_t pieceType,
         RayIterator RayIterator,
         MovesCollection& moves) const;
+
+    bool isRecentMovePutsEnemyKingInCheck(Move recentMove) const;
 
 private:
     Board board_;

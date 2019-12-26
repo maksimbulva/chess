@@ -67,7 +67,12 @@ void fillWithDeltaMoves(piece_type_t pieceType, square_t origin, const Position&
 
 }  // namespace
 
-void Position::fillWithPseudoLegalMoves(MovesCollection& moves) const
+void Position::fillWithPseudoLegalMoves(MovesCollection& moves)
+{
+    return fillWithPseudoLegalMoves(moves, isInCheck());
+}
+
+void Position::fillWithPseudoLegalMoves(MovesCollection& moves, bool isInCheck) const
 {
     assert(moves.empty());
 
@@ -87,7 +92,7 @@ void Position::fillWithPseudoLegalMoves(MovesCollection& moves) const
             fillWithKnightMoves(origin, moves);
             break;
         case King:
-            fillWithKingMoves(origin, moves);
+            fillWithKingMoves(origin, moves, isInCheck);
             break;
         default:
             if (pieceType == Rook || pieceType == Queen) {
@@ -220,7 +225,7 @@ void Position::fillWithKnightMoves(square_t knightSquare, MovesCollection& moves
     fillWithDeltaMoves(Knight, knightSquare, *this, moves);
 }
 
-void Position::fillWithKingMoves(square_t kingSquare, MovesCollection& moves) const
+void Position::fillWithKingMoves(square_t kingSquare, MovesCollection& moves, bool isInCheck) const
 {
     fillWithDeltaMoves(King, kingSquare, *this, moves);
 
@@ -228,7 +233,7 @@ void Position::fillWithKingMoves(square_t kingSquare, MovesCollection& moves) co
 
     // Castle
     const CastleOptions castleOptions = getCastleOptions(getPlayerToMove());
-    if (castleOptions.isCannotCastle() || isInCheck()) {
+    if (castleOptions.isCannotCastle() || isInCheck) {
         return;
     }
 

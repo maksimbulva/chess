@@ -154,6 +154,7 @@
     <ClInclude Include="MoveDelta.h" />
     <ClInclude Include="MovesCollection.h" />
     <ClInclude Include="notation.h" />
+    <ClInclude Include="OptionalBoolean.h" />
     <ClInclude Include="OptionalColumn.h" />
     <ClInclude Include="PieceOnBoard.h" />
     <ClInclude Include="Position.h" />

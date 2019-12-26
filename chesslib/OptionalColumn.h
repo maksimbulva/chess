@@ -5,6 +5,7 @@
 namespace chesslib {
 
 struct OptionalColumn {
+public:
     OptionalColumn() : encoded_(0) { }
 
     static OptionalColumn fromColumn(square_t column)

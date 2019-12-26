@@ -68,6 +68,8 @@ void Position::playMove(const Move& move)
         board_.promotePawn(destSquare, move.getPromoteToPieceType());
     }
 
+    positionFlags_.onMovePlayed();
+
     CastleOptions castleOptions = getCastleOptions(playerToMove);
     const piece_type_t pieceToMove = move.getPieceType();
     if (pieceToMove == King) {
@@ -167,11 +169,33 @@ bool Position::isKingCanBeCaptured() const
     return isSquareAttacked(kingSquare, board_, attacker);
 }
 
-bool Position::isInCheck() const
+bool Position::isInCheck()
 {
-    // TODO: Optimize me, store the result for re-use
+    const OptionalBoolean cachedResult = positionFlags_.getIsInCheck();
+    if (cachedResult.hasValue()) {
+        return cachedResult.getValue();
+    }
+
+    bool result;
+    if (history_.empty()) {
+        const square_t kingSquare = board_.getKingSquare(getPlayerToMove());
+        result = isSquareAttacked(kingSquare, board_, getOtherPlayer());
+    }
+    else {
+        result = isRecentMovePutsEnemyKingInCheck(history_.back().getMove());
+    }
+
+    positionFlags_.setIsInCheck(result);
+    return result;
+}
+
+bool Position::isRecentMovePutsEnemyKingInCheck(Move recentMove) const
+{
+    const player_t otherPlayer = getOtherPlayer();
     const square_t kingSquare = board_.getKingSquare(getPlayerToMove());
-    return isSquareAttacked(kingSquare, board_, getOtherPlayer());
+    return isSquareAttackedFromSpecificSquare(recentMove.getDestSquare(), kingSquare, board_, otherPlayer)
+        || isSquareSlideAttackedThroughSpecificSquare(
+            recentMove.getOriginSquare(), kingSquare, board_, otherPlayer);
 }
 
 namespace {
