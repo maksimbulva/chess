@@ -159,14 +159,26 @@ void Position::undoMove()
     history_.pop_back();
 }
 
-bool Position::isKingCanBeCaptured() const
+bool Position::isValid() const
 {
-    // TODO: Add various optimizations
-    // TODO: Check if this is perf-critical (most likely yes)
+    const player_t me = getOtherPlayer();
     const player_t attacker = getPlayerToMove();
-    const player_t otherPlayer = getOtherPlayer();
-    const square_t kingSquare = board_.getKingSquare(otherPlayer);
-    return isSquareAttacked(kingSquare, board_, attacker);
+    const square_t myKingSquare = board_.getKingSquare(me);
+
+    if (!history_.empty()) {
+        const auto parentIsInCheck = history_.back().getPositionFlags().getIsInCheck();
+        if (parentIsInCheck.isEquals(false)) {
+            const Move lastMove = history_.back().getMove();
+            if (lastMove.getPieceType() != King) {
+                const bool isMyKingBecameExposed = isSquareSlideAttackedThroughSpecificSquare(
+                    lastMove.getOriginSquare(), myKingSquare, board_, attacker);
+                return !isMyKingBecameExposed;
+            }
+        }
+    }
+
+    const bool isMyKingCanBeCaptured = isSquareAttacked(myKingSquare, board_, attacker);
+    return !isMyKingCanBeCaptured;
 }
 
 bool Position::isInCheck()

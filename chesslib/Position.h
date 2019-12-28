@@ -62,7 +62,7 @@ public:
         return board_;
     }
 
-    bool isKingCanBeCaptured() const;
+    bool isValid() const;
 
     bool isInCheck();
 

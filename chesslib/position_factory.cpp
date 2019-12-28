@@ -42,7 +42,7 @@ Position createPosition(
 
     position.optimizeCastleOptions();
 
-    REQUIRE(!position.isKingCanBeCaptured());
+    REQUIRE(position.isValid());
     return position;
 }
 

@@ -20,7 +20,7 @@ uint64_t countLegalMovesRecursively(Position& position, int depthPly)
 
     for (const Move& move : moves) {
         position.playMove(move);
-        if (!position.isKingCanBeCaptured()) {
+        if (position.isValid()) {
             if (depthPly == 1) {
                 ++result;
             }

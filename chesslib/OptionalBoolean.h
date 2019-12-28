@@ -28,6 +28,11 @@ public:
         return encoded_ & VALUE_MASK;
     }
 
+    bool isEquals(bool value) const
+    {
+        return encoded_ == (FLAG_HAS_VALUE | (value ? 1 : 0));
+    }
+
     encoded_position_flags_t getEncodedValue() const
     {
         return encoded_;

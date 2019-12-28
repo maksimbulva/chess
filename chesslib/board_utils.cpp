@@ -195,14 +195,11 @@ bool isSquareSlideAttackedThroughSpecificSquare(
     MoveDelta reversedMoveDelta(target, intermediateSquare);
     RayIterator rayIter = createRayIterator(target, reversedMoveDelta);
 
-    if (!rayIter.hasNext()) {
-        return false;
-    }
-
     const piece_type_t rayPieceType = rayIter.getPieceType();
     
-    ++rayIter;
-    for (auto currentSquare = rayIter.currentSquare(); rayIter.hasNext(); ++rayIter) {
+    while (rayIter.hasNext()) {
+        ++rayIter;
+        auto currentSquare = rayIter.currentSquare();
         if (board.isNotEmpty(currentSquare)) {
             return board.isPlayerSlider(currentSquare, attacker, rayPieceType);
         }

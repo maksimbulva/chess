@@ -39,7 +39,7 @@ void Game::updateLegalMoves()
     // TODO: optimize me
     for (Move move : pseudoLegalMoves) {
         tmpPosition.playMove(move);
-        if (!tmpPosition.isKingCanBeCaptured()) {
+        if (tmpPosition.isValid()) {
             legalMoves_.push_back(move);
         }
         tmpPosition.undoMove();
