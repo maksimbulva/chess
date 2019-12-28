@@ -64,7 +64,7 @@ void mainLoop(Engine& engine) {
         }
         else if (token == "go") {
             // TODO
-            const Move move = engine.getGame().getRandomMove();
+            const Move move = engine.findBestMove();
             std::cout << "bestmove " << toCoordinateNotation(move) << std::endl;
         }
     }

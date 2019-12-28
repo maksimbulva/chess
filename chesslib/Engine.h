@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Game.h"
+#include "Move.h"
 
 #include <string>
 
@@ -20,6 +21,8 @@ public:
     void resetGame();
 
     bool playMove(square_t originSquare, square_t destSquare);
+
+    Move findBestMove();
 
 private:
     Game game_;

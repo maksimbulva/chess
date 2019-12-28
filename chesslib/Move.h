@@ -7,7 +7,7 @@ namespace chesslib {
 struct Move {
 public:
     // Use MoveBuilder class to get encoded value
-    explicit Move(const encoded_move_t encoded)
+    constexpr explicit Move(const encoded_move_t encoded)
         : encoded_(encoded)
     {        
     }
@@ -74,6 +74,11 @@ public:
     static constexpr encoded_move_t ShortCastle = (static_cast<encoded_move_t>(1)) << 24;
     static constexpr encoded_move_t LongCastle = (static_cast<encoded_move_t>(1)) << 25;
     static constexpr encoded_move_t PawnDoubleMove = (static_cast<encoded_move_t>(1)) << 26;
+
+    static constexpr Move NullMove()
+    {
+        return Move(0);
+    }
 
 private:
     encoded_move_t encode(piece_type_t pieceType, square_t originSquare, square_t destSquare)
