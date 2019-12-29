@@ -170,10 +170,12 @@
     <ClInclude Include="position_factory.h" />
     <ClInclude Include="RayIterator.h" />
     <ClInclude Include="require.h" />
+    <ClInclude Include="SearchInfo.h" />
     <ClInclude Include="SearchNode.h" />
     <ClInclude Include="SearchTree.h" />
     <ClInclude Include="search_algorithms.h" />
     <ClInclude Include="squares.h" />
+    <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="string_repr.h" />
     <ClInclude Include="string_utils.h" />
     <ClInclude Include="testing_utils.h" />

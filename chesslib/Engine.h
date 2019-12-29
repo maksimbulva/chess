@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Game.h"
+#include "SearchInfo.h"
 #include "Variation.h"
 
 #include <string>
@@ -24,8 +25,14 @@ public:
 
     Variation findBestVariation();
 
+    SearchInfo getSearchInfo() const
+    {
+        return searchInfo_;
+    }
+
 private:
     Game game_;
+    SearchInfo searchInfo_;
 };
 
 }

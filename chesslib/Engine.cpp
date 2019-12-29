@@ -3,6 +3,7 @@
 #include "fen.h"
 #include "search_algorithms.h"
 #include "SearchTree.h"
+#include "Stopwatch.h"
 
 namespace chesslib {
 
@@ -51,8 +52,14 @@ Variation Engine::findBestVariation()
 {
     const Position& currentPosition = game_.getCurrentPosition();
 
+    Stopwatch stopwatch;
+
     SearchTree searchTree{ currentPosition };
     runNegatedMinMax(searchTree.getRoot(), searchTree, currentPosition);
+
+    searchInfo_.bestVariation = searchTree.getBestVariation();
+    searchInfo_.searchTreeSize = searchTree.getNodeCount();
+    searchInfo_.searchTimeMs = stopwatch.getElapsedMilliseconds();
 
     return searchTree.getBestVariation();
 }

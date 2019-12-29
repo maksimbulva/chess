@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "notation.h"
 #include "require.h"
+#include "SearchInfo.h"
 #include "Variation.h"
 
 #include <iostream>
@@ -63,6 +64,14 @@ void mainLoop(Engine& engine) {
         else if (token == "go") {
             // TODO
             Variation bestVariation = engine.findBestVariation();
+
+            const SearchInfo& searchInfo = engine.getSearchInfo();
+            std::cout << "info"
+                << " depth " << searchInfo.bestVariation.getMoves().size()
+                << " nodes " << searchInfo.searchTreeSize
+                << " nps " << searchInfo.getNodesPerSecond()
+                << std::endl;
+
             const Move bestMove = bestVariation.getMoves().empty() ? Move::NullMove() : bestVariation.getMoves()[0];
             std::cout << "bestmove " << toCoordinateNotation(bestMove) << std::endl;
         }

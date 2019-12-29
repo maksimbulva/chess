@@ -24,6 +24,11 @@ public:
         return Variation(root_.getBestChild());
     }
 
+    uint64_t getNodeCount() const
+    {
+        return nodeCount_;
+    }
+
     void createBestChildNode(SearchNode& parent, Move move);
 
     void createSuboptimalChildNode(SearchNode& parent, Move move);
