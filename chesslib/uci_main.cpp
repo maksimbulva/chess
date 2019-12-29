@@ -1,13 +1,11 @@
 #include "Engine.h"
 #include "notation.h"
 #include "require.h"
+#include "Variation.h"
 
 #include <iostream>
 #include <sstream>
 #include <string>
-
-// TODO
-#include "testing_utils.h"
 
 // TODO: Unbuffered output
 
@@ -64,8 +62,9 @@ void mainLoop(Engine& engine) {
         }
         else if (token == "go") {
             // TODO
-            const Move move = engine.findBestMove();
-            std::cout << "bestmove " << toCoordinateNotation(move) << std::endl;
+            Variation bestVariation = engine.findBestVariation();
+            const Move bestMove = bestVariation.getMoves().empty() ? Move::NullMove() : bestVariation.getMoves()[0];
+            std::cout << "bestmove " << toCoordinateNotation(bestMove) << std::endl;
         }
     }
 }
@@ -76,9 +75,9 @@ using namespace chesslib;
 
 int main()
 {
-    std::string fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    std::cout << countLegalMoves(fenString, 4) << std::endl;
-    return 0;
+    //std::string fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    //std::cout << countLegalMoves(fenString, 4) << std::endl;
+    //return 0;
 
     Engine engine;
     mainLoop(engine);

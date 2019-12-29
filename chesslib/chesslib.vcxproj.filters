@@ -63,7 +63,10 @@
     <ClCompile Include="SearchTree.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="minmax.cpp">
+    <ClCompile Include="search_algorithms.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Variation.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,7 +170,10 @@
     <ClInclude Include="SearchTree.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="minmax.h">
+    <ClInclude Include="search_algorithms.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Variation.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

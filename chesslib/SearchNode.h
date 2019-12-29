@@ -10,6 +10,7 @@ class SearchNode;
 using SearchNodeRef = std::shared_ptr<SearchNode>;
 
 class SearchNode {
+    friend class SearchTree;
 public:
     SearchNode(Move move)
         : move_(move)
@@ -31,21 +32,14 @@ public:
         return move_;
     }
 
-    const SearchNode* getChild() const
+    const SearchNode* const getBestChild() const
     {
         return child_.get();
     }
 
-    const SearchNode* getSibling() const
+    bool hasChildren() const
     {
-        return sibling_.get();
-    }
-
-    SearchNodeRef addChild(Move move)
-    {
-        auto child = createRef(move, child_);
-        child_ = child;
-        return child;
+        return child_ != nullptr;
     }
 
     bool isEvaluated() const

@@ -129,7 +129,6 @@
     <ClCompile Include="evaluate.cpp" />
     <ClCompile Include="fen.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="minmax.cpp" />
     <ClCompile Include="moves_generator.cpp" />
     <ClCompile Include="notation.cpp" />
     <ClCompile Include="Position.cpp" />
@@ -137,10 +136,12 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="SearchNode.cpp" />
     <ClCompile Include="SearchTree.cpp" />
+    <ClCompile Include="search_algorithms.cpp" />
     <ClCompile Include="string_repr.cpp" />
     <ClCompile Include="string_utils.cpp" />
     <ClCompile Include="testing_utils.cpp" />
     <ClCompile Include="uci_main.cpp" />
+    <ClCompile Include="Variation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitboard.h" />
@@ -154,7 +155,6 @@
     <ClInclude Include="exceptions.h" />
     <ClInclude Include="fen.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="minmax.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="MoveBuilder.h" />
     <ClInclude Include="MoveDelta.h" />
@@ -172,11 +172,13 @@
     <ClInclude Include="require.h" />
     <ClInclude Include="SearchNode.h" />
     <ClInclude Include="SearchTree.h" />
+    <ClInclude Include="search_algorithms.h" />
     <ClInclude Include="squares.h" />
     <ClInclude Include="string_repr.h" />
     <ClInclude Include="string_utils.h" />
     <ClInclude Include="testing_utils.h" />
     <ClInclude Include="types.h" />
+    <ClInclude Include="Variation.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

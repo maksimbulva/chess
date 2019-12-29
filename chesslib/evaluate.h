@@ -6,4 +6,6 @@ class Position;
 
 double evaluate(const Position& position);
 
+double evaluateNoLegalMovesPosition(Position& position);
+
 }

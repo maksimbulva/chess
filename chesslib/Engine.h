@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Game.h"
-#include "Move.h"
+#include "Variation.h"
 
 #include <string>
 
@@ -22,7 +22,7 @@ public:
 
     bool playMove(square_t originSquare, square_t destSquare);
 
-    Move findBestMove();
+    Variation findBestVariation();
 
 private:
     Game game_;

@@ -8,6 +8,9 @@ namespace chesslib {
 
 namespace {
 
+constexpr double CheckmateValue = 1000.0;
+constexpr double StalemateValue = 0.0;
+
 static std::array<fastint, King + 1> MATERIAL_VALUE = {
     /* NoPiece */ 0,
     /* Pawn*/     1,
@@ -143,6 +146,11 @@ double evaluate(const Position& position)
     return static_cast<double>(materialValueDiff)
         + evaluateTableValues(position, White)
         - evaluateTableValues(position, Black);
+}
+
+double evaluateNoLegalMovesPosition(Position& position)
+{
+    return position.isInCheck() ? CheckmateValue : StalemateValue;
 }
 
 }

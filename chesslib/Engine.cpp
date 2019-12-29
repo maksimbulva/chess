@@ -1,33 +1,14 @@
 #include "Engine.h"
 
-#include "evaluate.h"
 #include "fen.h"
-#include "minmax.h"
+#include "search_algorithms.h"
 #include "SearchTree.h"
-
-#include <algorithm>
 
 namespace chesslib {
 
 namespace {
 
 const char* const initialPositonFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
-void generateChildren(SearchNode& parent, Position& position)
-{
-    MovesCollection pseudoLegalMoves;
-    position.fillWithPseudoLegalMoves(pseudoLegalMoves);
-    for (Move move : pseudoLegalMoves) {
-        position.playMove(move);
-        if (position.isValid()) {
-            auto addedNode = parent.addChild(move);
-            // TODO: temporary logic - just evaluate all generated nodes
-            double evaluation = evaluate(position);
-            addedNode->setEvaluation(evaluation);
-        }
-        position.undoMove();
-    }
-}
 
 }   // namespace
 
@@ -66,16 +47,14 @@ bool Engine::playMove(square_t originSquare, square_t destSquare)
     }
 }
 
-Move Engine::findBestMove()
+Variation Engine::findBestVariation()
 {
-    auto currentPosition = game_.getCurrentPosition();
+    const Position& currentPosition = game_.getCurrentPosition();
+
     SearchTree searchTree{ currentPosition };
-    generateChildren(searchTree.getRoot(), currentPosition);
-    const SearchNode* bestNode = findBestChildNode(searchTree.getRoot(), currentPosition.getPlayerToMove());
-    if (bestNode == nullptr) {
-        return Move::NullMove();
-    }
-    return bestNode->getMove();
+    runNegatedMinMax(searchTree.getRoot(), searchTree, currentPosition);
+
+    return searchTree.getBestVariation();
 }
 
 }
