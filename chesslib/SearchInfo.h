@@ -7,6 +7,12 @@
 namespace chesslib {
 
 struct SearchInfo {
+    SearchInfo()
+        : searchTreeSize(0)
+        , searchTimeMs(0)
+    {
+    }
+
     uint64_t getNodesPerSecond() const
     {
         return searchTimeMs >= 1000 ? searchTreeSize * 1000 / searchTimeMs : searchTreeSize;

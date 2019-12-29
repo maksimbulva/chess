@@ -29,9 +29,14 @@ public:
         return nodeCount_;
     }
 
-    void createBestChildNode(SearchNode& parent, Move move);
+    void createBestChildNode(SearchNode& parent, Move move, double evaluation);
 
-    void createSuboptimalChildNode(SearchNode& parent, Move move);
+    void insertAsBestChildNode(SearchNode& parent, SearchNodeRef nodeToInsert);
+
+    SearchNodeRef createIsolatedNode(Move move)
+    {
+        return SearchNode::createRef(move);
+    }
 
 private:
     Position initialPosition_;

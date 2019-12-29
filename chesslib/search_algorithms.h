@@ -9,6 +9,7 @@ class SearchTree;
 double runNegatedMinMax(
     SearchNode& startingNode,
     SearchTree& searchTree,
-    const Position& startingPosition);
+    const Position& startingPosition,
+    int depthPly);
 
 }

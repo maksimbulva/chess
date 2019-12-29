@@ -67,6 +67,11 @@ public:
         return encoded_ & PawnDoubleMove;
     }
 
+    bool isNullMove() const
+    {
+        return encoded_ == 0;
+    }
+
 public:
     static constexpr encoded_move_t Capture = (static_cast<encoded_move_t>(1)) << 21;
     static constexpr encoded_move_t EnPassantCapture = (static_cast<encoded_move_t>(1)) << 22;
@@ -95,7 +100,7 @@ private:
      * bits 15..17 - promote to piece type (pawn promotion)
      * bits 18..20 - captured piece type (for move undos)
      */ 
-    const encoded_move_t encoded_;
+    encoded_move_t encoded_;
 };
 
 }

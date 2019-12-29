@@ -55,7 +55,7 @@ Variation Engine::findBestVariation()
     Stopwatch stopwatch;
 
     SearchTree searchTree{ currentPosition };
-    runNegatedMinMax(searchTree.getRoot(), searchTree, currentPosition);
+    runNegatedMinMax(searchTree.getRoot(), searchTree, currentPosition, 2);
 
     searchInfo_.bestVariation = searchTree.getBestVariation();
     searchInfo_.searchTreeSize = searchTree.getNodeCount();

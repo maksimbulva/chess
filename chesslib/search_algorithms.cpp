@@ -10,44 +10,82 @@
 
 namespace chesslib {
 
+namespace {
+
+double runRecursiveNegatedMinMax(
+    SearchNode& startingNode,
+    SearchTree& searchTree,
+    Position& position,
+    int depthPly)
+{
+    MovesCollection pseudoLegalMoves;
+    position.fillWithPseudoLegalMoves(pseudoLegalMoves);
+
+    double bestEvaluation = std::numeric_limits<double>::lowest();
+    Move bestMove = Move::NullMove();
+
+    if (depthPly == 1) {
+        const double evaluationSideMultiplier = position.getPlayerToMove() == Black ? -1.0 : 1.0;
+        for (const Move move : pseudoLegalMoves) {
+            position.playMove(move);
+            if (position.isValid()) {
+                const double evaluation = evaluationSideMultiplier * evaluate(position);
+                if (evaluation > bestEvaluation) {
+                    bestEvaluation = evaluation;
+                    bestMove = move;
+                }
+            }
+            position.undoMove();
+        }
+        if (bestMove.isNullMove()) {
+            return evaluateNoLegalMovesPosition(position);
+        }
+        searchTree.createBestChildNode(startingNode, bestMove, bestEvaluation);
+    }
+    else {
+        SearchNodeRef bestSubtreeRoot;
+        for (const Move move : pseudoLegalMoves) {
+            position.playMove(move);
+            if (position.isValid()) {
+                SearchNodeRef subtreeRoot = searchTree.createIsolatedNode(move);
+                const double evaluation = -runRecursiveNegatedMinMax(
+                    *subtreeRoot,
+                    searchTree,
+                    position,
+                    depthPly - 1);
+                if (evaluation > bestEvaluation) {
+                    bestEvaluation = evaluation;
+                    bestSubtreeRoot = std::move(subtreeRoot);
+                }
+            }
+            position.undoMove();
+        }
+        if (!bestSubtreeRoot) {
+            return evaluateNoLegalMovesPosition(position);
+        }
+        searchTree.insertAsBestChildNode(startingNode, std::move(bestSubtreeRoot));
+    }
+
+    return bestEvaluation;
+}
+
+}  // namespace
+
 double runNegatedMinMax(
     SearchNode& startingNode,
     SearchTree& searchTree,
-    const Position& startingPosition)
+    const Position& startingPosition,
+    int depthPly)
 {
     // TODO: adapt for iterative deepening
     REQUIRE(!startingNode.hasChildren());
 
-    MovesCollection pseudoLegalMoves;
+    if (depthPly < 1) {
+        return 0.0;
+    }
+
     Position position = startingPosition;
-    position.fillWithPseudoLegalMoves(pseudoLegalMoves);
-
-    double bestEvaluation = std::numeric_limits<double>::lowest();
-    const double evaluationSideMultiplier = position.getPlayerToMove() == Black ? -1.0 : 1.0;
-
-    for (const Move move : pseudoLegalMoves) {
-        position.playMove(move);
-        if (position.isValid()) {
-            const double evaluation = evaluationSideMultiplier * evaluate(position);
-            // TODO: consider not generating SearchNode instances for the deepest level
-            if (evaluation > bestEvaluation) {
-                searchTree.createBestChildNode(startingNode, move);
-                bestEvaluation = evaluation;
-            }
-            else {
-                searchTree.createSuboptimalChildNode(startingNode, move);
-            }
-        }
-        position.undoMove();
-    }
-
-    if (!startingNode.hasChildren()) {
-        bestEvaluation = evaluateNoLegalMovesPosition(position);
-    }
-
-    startingNode.setEvaluation(bestEvaluation);
-
-    return bestEvaluation;
+    return runRecursiveNegatedMinMax(startingNode, searchTree, position, depthPly);
 }
 
 }

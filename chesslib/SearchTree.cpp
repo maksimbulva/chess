@@ -13,27 +13,19 @@ SearchTree::SearchTree(const Position& initialPosition)
 {
 }
 
-void SearchTree::createBestChildNode(SearchNode& parent, Move move)
+void SearchTree::createBestChildNode(SearchNode& parent, Move move, double evaluation)
 {
     auto oldFirstChild = std::move(parent.child_);
-    auto newChild = SearchNode::createRef(move, std::move(oldFirstChild));
+    auto newChild = SearchNode::createRef(move, std::move(oldFirstChild), evaluation);
     parent.child_ = std::move(newChild);
-    nodeCount_++;
+    ++nodeCount_;
 }
 
-void SearchTree::createSuboptimalChildNode(SearchNode& parent, Move move)
+void SearchTree::insertAsBestChildNode(SearchNode& parent, SearchNodeRef nodeToInsert)
 {
-    auto& firstChild = parent.child_;
-    if (firstChild != nullptr) {
-        auto oldSecondChild = std::move(firstChild->sibling_);
-        auto newChild = SearchNode::createRef(move, std::move(oldSecondChild));
-        firstChild->sibling_ = std::move(newChild);
-        nodeCount_++;
-    }
-    else {
-        createBestChildNode(parent, move);
-    }
+    auto oldFirstChild = std::move(parent.child_);
+    parent.child_ = std::move(nodeToInsert);
+    ++nodeCount_;
 }
-
 
 }

@@ -12,6 +12,7 @@ using SearchNodeRef = std::shared_ptr<SearchNode>;
 class SearchNode {
     friend class SearchTree;
 public:
+    // TODO: probably, constuctors can be private
     SearchNode(Move move)
         : move_(move)
         , isEvaluated_(false)
@@ -23,6 +24,14 @@ public:
         : move_(move)
         , isEvaluated_(false)
         , evaluation_(0.0)
+        , sibling_(std::move(sibling))
+    {
+    }
+
+    SearchNode(Move move, SearchNodeRef sibling, double evaluation)
+        : move_(move)
+        , isEvaluated_(true)
+        , evaluation_(evaluation)
         , sibling_(std::move(sibling))
     {
     }
@@ -59,9 +68,19 @@ public:
     }
 
 private:
+    static SearchNodeRef createRef(Move move)
+    {
+        return std::make_shared<SearchNode>(move);
+    }
+
     static SearchNodeRef createRef(Move move, SearchNodeRef sibling)
     {
         return std::make_shared<SearchNode>(move, std::move(sibling));
+    }
+
+    static SearchNodeRef createRef(Move move, SearchNodeRef sibling, double evaluation)
+    {
+        return std::make_shared<SearchNode>(move, std::move(sibling), evaluation);
     }
 
 private:
