@@ -1,6 +1,6 @@
 #include "search_algorithms.h"
 
-#include "evaluate.h"
+#include "Evaluator.h"
 #include "Position.h"
 #include "require.h"
 #include "SearchNode.h"
@@ -16,6 +16,7 @@ double runRecursiveNegatedMinMax(
     SearchNode& startingNode,
     SearchTree& searchTree,
     Position& position,
+    Evaluator& evaluator,
     int depthPly)
 {
     MovesCollection pseudoLegalMoves;
@@ -29,7 +30,7 @@ double runRecursiveNegatedMinMax(
         for (const Move move : pseudoLegalMoves) {
             position.playMove(move);
             if (position.isValid()) {
-                const double evaluation = evaluationSideMultiplier * evaluate(position);
+                const double evaluation = evaluationSideMultiplier * evaluator.evaluate(position);
                 if (evaluation > bestEvaluation) {
                     bestEvaluation = evaluation;
                     bestMove = move;
@@ -38,7 +39,7 @@ double runRecursiveNegatedMinMax(
             position.undoMove();
         }
         if (bestMove.isNullMove()) {
-            return evaluateNoLegalMovesPosition(position);
+            return evaluator.evaluateNoLegalMovesPosition(position);
         }
         searchTree.createBestChildNode(startingNode, bestMove, bestEvaluation);
     }
@@ -52,6 +53,7 @@ double runRecursiveNegatedMinMax(
                     *subtreeRoot,
                     searchTree,
                     position,
+                    evaluator,
                     depthPly - 1);
                 if (evaluation > bestEvaluation) {
                     bestEvaluation = evaluation;
@@ -61,8 +63,9 @@ double runRecursiveNegatedMinMax(
             position.undoMove();
         }
         if (!bestSubtreeRoot) {
-            return evaluateNoLegalMovesPosition(position);
+            return evaluator.evaluateNoLegalMovesPosition(position);
         }
+        bestSubtreeRoot->setEvaluation(bestEvaluation);
         searchTree.insertAsBestChildNode(startingNode, std::move(bestSubtreeRoot));
     }
 
@@ -75,6 +78,7 @@ double runNegatedMinMax(
     SearchNode& startingNode,
     SearchTree& searchTree,
     const Position& startingPosition,
+    Evaluator& evaluator,
     int depthPly)
 {
     // TODO: adapt for iterative deepening
@@ -85,7 +89,7 @@ double runNegatedMinMax(
     }
 
     Position position = startingPosition;
-    return runRecursiveNegatedMinMax(startingNode, searchTree, position, depthPly);
+    return runRecursiveNegatedMinMax(startingNode, searchTree, position, evaluator, depthPly);
 }
 
 }

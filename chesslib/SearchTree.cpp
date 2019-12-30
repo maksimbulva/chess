@@ -1,7 +1,5 @@
 #include "SearchTree.h"
 
-#include "evaluate.h"
-
 #include <limits>
 
 namespace chesslib {

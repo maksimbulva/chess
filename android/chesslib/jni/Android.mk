@@ -13,7 +13,7 @@ LOCAL_SRC_FILES := \
 	../../../chesslib/board_utils.cpp \
 	../../../chesslib/Board.cpp \
 	../../../chesslib/Engine.cpp \
-	../../../chesslib/evaluate.cpp \
+	../../../chesslib/Evaluator.cpp \
 	../../../chesslib/fen.cpp \
 	../../../chesslib/Game.cpp \
 	../../../chesslib/moves_generator.cpp \

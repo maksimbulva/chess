@@ -1,4 +1,4 @@
-#include "evaluate.h"
+#include "Evaluator.h"
 
 #include "Position.h"
 
@@ -122,7 +122,7 @@ double evaluateTableValues(const Position& position, player_t player)
     auto piecesIt = position.getBoard().getPieceIterator(player);
     while (true) {
         square_t square = piecesIt.getSquare();
-        if (square == Black) {
+        if (player == Black) {
             square = encodeSquare(MAX_ROW - getRow(square), getColumn(square));
         }
         auto* table = TABLE_VALUES[piecesIt.getPieceType()];
@@ -140,16 +140,18 @@ double evaluateTableValues(const Position& position, player_t player)
 }  // namespace
 
 // TODO: this is temporary method. Replace with some ML evaluations
-double evaluate(const Position& position)
+double Evaluator::evaluate(const Position& position)
 {
+    ++evaluatedPositionCount_;
     auto materialValueDiff = evaluateMaterial(position, White) - evaluateMaterial(position, Black);
     return static_cast<double>(materialValueDiff)
         + evaluateTableValues(position, White)
         - evaluateTableValues(position, Black);
 }
 
-double evaluateNoLegalMovesPosition(Position& position)
+double Evaluator::evaluateNoLegalMovesPosition(Position& position)
 {
+    ++evaluatedPositionCount_;
     return position.isInCheck() ? CheckmateValue : StalemateValue;
 }
 

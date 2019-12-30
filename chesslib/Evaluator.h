@@ -1,11 +1,31 @@
 #pragma once
 
+#include <atomic>
+#include <cstdint>
+
 namespace chesslib {
 
 class Position;
 
-double evaluate(const Position& position);
+class Evaluator {
+public:
+    Evaluator()
+        : evaluatedPositionCount_(0)
+    {
+    }
 
-double evaluateNoLegalMovesPosition(Position& position);
+    uint64_t getEvaluatedPositionCount() const
+    {
+        return evaluatedPositionCount_;
+    }
+
+    double evaluate(const Position& position);
+
+    double evaluateNoLegalMovesPosition(Position& position);
+
+private:
+    // TODO: consider using std::atomic_uint64_t
+    std::atomic<uint64_t> evaluatedPositionCount_;
+};
 
 }

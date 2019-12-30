@@ -68,9 +68,18 @@ void mainLoop(Engine& engine) {
             const SearchInfo& searchInfo = engine.getSearchInfo();
             std::cout << "info"
                 << " depth " << searchInfo.bestVariation.getMoves().size()
-                << " nodes " << searchInfo.searchTreeSize
+                << " nodes " << searchInfo.evaluatedPositionCount
                 << " nps " << searchInfo.getNodesPerSecond()
                 << std::endl;
+
+            std::cout << "info"
+                << " score cp " << searchInfo.getEvaluationInCentipawns()
+                << " time " << searchInfo.searchTimeMs
+                << " pv ";
+            for (Move move : searchInfo.bestVariation.getMoves()) {
+                std::cout << toCoordinateNotation(move) << " ";
+            }
+            std::cout << std::endl;
 
             const Move bestMove = bestVariation.getMoves().empty() ? Move::NullMove() : bestVariation.getMoves()[0];
             std::cout << "bestmove " << toCoordinateNotation(bestMove) << std::endl;

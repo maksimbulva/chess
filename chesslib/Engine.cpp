@@ -1,5 +1,6 @@
 #include "Engine.h"
 
+#include "Evaluator.h"
 #include "fen.h"
 #include "search_algorithms.h"
 #include "SearchTree.h"
@@ -50,15 +51,19 @@ bool Engine::playMove(square_t originSquare, square_t destSquare)
 
 Variation Engine::findBestVariation()
 {
-    const Position& currentPosition = game_.getCurrentPosition();
-
     Stopwatch stopwatch;
 
+    const Position& currentPosition = game_.getCurrentPosition();
+    searchInfo_.playerToMove = currentPosition.getPlayerToMove();
+
+    Evaluator evaluator;
+
     SearchTree searchTree{ currentPosition };
-    runNegatedMinMax(searchTree.getRoot(), searchTree, currentPosition, 2);
+    runNegatedMinMax(searchTree.getRoot(), searchTree, currentPosition, evaluator, 4);
 
     searchInfo_.bestVariation = searchTree.getBestVariation();
     searchInfo_.searchTreeSize = searchTree.getNodeCount();
+    searchInfo_.evaluatedPositionCount = evaluator.getEvaluatedPositionCount();
     searchInfo_.searchTimeMs = stopwatch.getElapsedMilliseconds();
 
     return searchTree.getBestVariation();

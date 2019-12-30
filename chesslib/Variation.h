@@ -17,6 +17,11 @@ public:
     {
     }
 
+    double getEvaluation() const
+    {
+        return evaluation_;
+    }
+
     const std::vector<Move>& getMoves() const
     {
         return moves_;
