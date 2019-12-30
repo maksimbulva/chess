@@ -205,9 +205,18 @@ bool Position::isRecentMovePutsEnemyKingInCheck(Move recentMove) const
 {
     const player_t otherPlayer = getOtherPlayer();
     const square_t kingSquare = board_.getKingSquare(getPlayerToMove());
-    return isSquareAttackedFromSpecificSquare(recentMove.getDestSquare(), kingSquare, board_, otherPlayer)
-        || isSquareSlideAttackedThroughSpecificSquare(
-            recentMove.getOriginSquare(), kingSquare, board_, otherPlayer);
+    const square_t originSquare = recentMove.getOriginSquare();
+    const square_t destSquare = recentMove.getDestSquare();
+    if (recentMove.isCastle()) {
+        const square_t rookDestColumn = (getColumn(originSquare) + getColumn(destSquare)) >> 1;
+        const square_t rookDestSquare = encodeSquare(getRow(destSquare), rookDestColumn);
+        return isSquareAttackedFromSpecificSquare(rookDestSquare, kingSquare, board_, otherPlayer);
+    }
+    else {
+        return isSquareAttackedFromSpecificSquare(destSquare, kingSquare, board_, otherPlayer)
+            || isSquareSlideAttackedThroughSpecificSquare(
+                originSquare, kingSquare, board_, otherPlayer);
+    }
 }
 
 namespace {

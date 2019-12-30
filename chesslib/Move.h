@@ -62,6 +62,11 @@ public:
         return encoded_ & LongCastle;
     }
 
+    bool isCastle() const
+    {
+        return encoded_ & AnyCastle;
+    }
+
     bool isPawnDoubleMove() const
     {
         return encoded_ & PawnDoubleMove;
@@ -79,6 +84,8 @@ public:
     static constexpr encoded_move_t ShortCastle = (static_cast<encoded_move_t>(1)) << 24;
     static constexpr encoded_move_t LongCastle = (static_cast<encoded_move_t>(1)) << 25;
     static constexpr encoded_move_t PawnDoubleMove = (static_cast<encoded_move_t>(1)) << 26;
+
+    static constexpr encoded_move_t AnyCastle = ShortCastle | LongCastle;
 
     static constexpr Move NullMove()
     {
