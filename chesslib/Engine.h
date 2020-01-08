@@ -21,7 +21,10 @@ public:
 
     void resetGame();
 
-    bool playMove(square_t originSquare, square_t destSquare);
+    bool playMove(
+        square_t originSquare,
+        square_t destSquare,
+        piece_type_t promoteToPieceType = NoPiece);
 
     Variation findBestVariation();
 

@@ -17,6 +17,12 @@ public:
     {
     }
 
+    Variation(double evaluation, std::vector<Move> moves)
+        : evaluation_(evaluation)
+        , moves_(std::move(moves))
+    {
+    }
+
     double getEvaluation() const
     {
         return evaluation_;

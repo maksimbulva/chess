@@ -134,9 +134,9 @@
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="position_factory.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="SearchEngine.cpp" />
     <ClCompile Include="SearchNode.cpp" />
     <ClCompile Include="SearchTree.cpp" />
-    <ClCompile Include="search_algorithms.cpp" />
     <ClCompile Include="string_repr.cpp" />
     <ClCompile Include="string_utils.cpp" />
     <ClCompile Include="testing_utils.cpp" />
@@ -170,10 +170,10 @@
     <ClInclude Include="position_factory.h" />
     <ClInclude Include="RayIterator.h" />
     <ClInclude Include="require.h" />
+    <ClInclude Include="SearchEngine.h" />
     <ClInclude Include="SearchInfo.h" />
     <ClInclude Include="SearchNode.h" />
     <ClInclude Include="SearchTree.h" />
-    <ClInclude Include="search_algorithms.h" />
     <ClInclude Include="squares.h" />
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="string_repr.h" />

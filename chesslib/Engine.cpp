@@ -2,7 +2,7 @@
 
 #include "Evaluator.h"
 #include "fen.h"
-#include "search_algorithms.h"
+#include "SearchEngine.h"
 #include "SearchTree.h"
 #include "Stopwatch.h"
 
@@ -29,15 +29,16 @@ void Engine::resetGame()
     game_ = Game{ decodeFen(initialPositonFen) };
 }
 
-bool Engine::playMove(square_t originSquare, square_t destSquare)
+bool Engine::playMove(square_t originSquare, square_t destSquare, piece_type_t promoteToPieceType)
 {
     const auto& legalMoves = game_.getLegalMoves();
     const auto moveIter = std::find_if(legalMoves.begin(), legalMoves.end(),
-        [originSquare, destSquare] (const Move& move)
+        [originSquare, destSquare, promoteToPieceType] (const Move& move)
         {
             return move.getOriginSquare() == originSquare
                 && move.getDestSquare() == destSquare
-                && !move.isPromotion();
+                && (move.isPromotion() && promoteToPieceType == move.getPromoteToPieceType()
+                    || !move.isPromotion() && promoteToPieceType == NoPiece);
         });
 
     if (moveIter != legalMoves.end()) {
@@ -58,15 +59,14 @@ Variation Engine::findBestVariation()
 
     Evaluator evaluator;
 
-    SearchTree searchTree{ currentPosition };
-    runNegatedMinMax(searchTree.getRoot(), searchTree, currentPosition, evaluator, 4);
-
-    searchInfo_.bestVariation = searchTree.getBestVariation();
-    searchInfo_.searchTreeSize = searchTree.getNodeCount();
+    SearchEngine searchEngine;
+    searchInfo_.bestVariation = searchEngine.runSearch(currentPosition, evaluator, 4);
+    
+    searchInfo_.searchTreeSize = 0; // TODO searchTree.getNodeCount();
     searchInfo_.evaluatedPositionCount = evaluator.getEvaluatedPositionCount();
     searchInfo_.searchTimeMs = stopwatch.getElapsedMilliseconds();
 
-    return searchTree.getBestVariation();
+    return searchInfo_.bestVariation;
 }
 
 }
