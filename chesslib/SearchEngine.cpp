@@ -7,6 +7,9 @@
 
 #include <limits>
 
+// TODO
+#include "string_repr.h"
+
 namespace chesslib {
 
 Variation SearchEngine::runSearch(Position position, Evaluator& evaluator, int depthPly)
@@ -52,7 +55,12 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
  
             evaluation_t evaluation;
             if (depthPly == 1) {
-                evaluation = evaluationSideMultiplier * evaluator_->evaluate(position);
+                if (move.isCapture() || move.isPromotion()) {
+                    evaluation = -runQuiescentSearch(position, -beta, -alpha);
+                }
+                else {
+                    evaluation = evaluationSideMultiplier * evaluator_->evaluate(position);
+                }
             }
             else {
                 currentSubtreeRoot = SearchNode::createRef(move);
@@ -98,6 +106,50 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
             bestSubtreeRoot->setEvaluation(alpha);
             parent.setChild(std::move(bestSubtreeRoot));
         }
+    }
+
+    return alpha;
+}
+
+evaluation_t SearchEngine::runQuiescentSearch(
+    Position& position,
+    evaluation_t alpha,
+    evaluation_t beta)
+{
+    const evaluation_t evaluationSideMultiplier = position.getPlayerToMove() == Black ? -1 : 1;
+    const evaluation_t evaluation = evaluationSideMultiplier * evaluator_->evaluate(position);
+
+    if (evaluation >= beta) {
+        return beta;
+    }
+
+    if (evaluation > alpha) {
+        alpha = evaluation;
+    }
+
+    MovesCollection pseudoLegalMoves;
+    // TODO: optimize by looking for captures only
+    position.fillWithPseudoLegalMoves(pseudoLegalMoves);
+
+    for (const Move move : pseudoLegalMoves) {
+        if (!move.isCapture()) {
+            continue;
+        }
+
+        position.playMove(move);
+        if (position.isValid()) {
+            evaluation_t subtreeEvaluation = -runQuiescentSearch(position, -beta, -alpha);
+
+            if (subtreeEvaluation >= beta) {
+                position.undoMove();
+                return beta;
+            }
+
+            if (subtreeEvaluation > alpha) {
+                alpha = subtreeEvaluation;
+            }
+        }
+        position.undoMove();
     }
 
     return alpha;

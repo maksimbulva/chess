@@ -24,6 +24,11 @@ private:
         evaluation_t alpha,
         evaluation_t beta);
 
+    evaluation_t runQuiescentSearch(
+        Position& position,
+        evaluation_t alpha,
+        evaluation_t beta);
+
 private:
     Evaluator* evaluator_;
 };
