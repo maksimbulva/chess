@@ -154,7 +154,8 @@ evaluation_t Evaluator::evaluate(const Position& position)
 evaluation_t Evaluator::evaluateNoLegalMovesPosition(Position& position)
 {
     ++evaluatedPositionCount_;
-    return position.isInCheck() ? CheckmateValue : StalemateValue;
+    // Either we are checkmated or it is a stalemate
+    return position.isInCheck() ? -CheckmateValue : StalemateValue;
 }
 
 }
