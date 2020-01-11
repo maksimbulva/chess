@@ -15,6 +15,12 @@ namespace chesslib {
 class Position
 {
 public:
+    enum class MoveGenerationFilter {
+        AllMoves,
+        CapturesOnly
+    };
+
+public:
     Position(
         square_t blackKingSquare,
         square_t whiteKingSquare,
@@ -22,8 +28,7 @@ public:
         uint32_t halfmoveClock,
         uint32_t fullmoveNumber);
 
-    void fillWithPseudoLegalMoves(MovesCollection& moves);
-    void fillWithPseudoLegalMoves(MovesCollection& moves, bool isInCheck) const;
+    void fillWithPseudoLegalMoves(MovesCollection& moves, MoveGenerationFilter movesFilter);
 
     player_t getPlayerToMove() const
     {
@@ -79,14 +84,32 @@ public:
 
 private:
 
-    void fillWithPawnMoves(square_t pawnSquare, MovesCollection& moves) const;
-    void fillWithKnightMoves(square_t knightSquare, MovesCollection& moves) const;
-    void fillWithKingMoves(square_t kingSquare, MovesCollection& moves, bool isInCheck) const;
+    void fillWithPseudoLegalMoves(
+        MovesCollection& moves,
+        MoveGenerationFilter movesFilter,
+        bool isInCheck) const;
+
+    void fillWithPawnMoves(
+        square_t pawnSquare,
+        MovesCollection& moves,
+        MoveGenerationFilter movesFilter) const;
+
+    void fillWithKnightMoves(
+        square_t knightSquare,
+        MovesCollection& moves,
+        MoveGenerationFilter movesFilter) const;
+
+    void fillWithKingMoves(
+        square_t kingSquare,
+        MovesCollection& moves,
+        MoveGenerationFilter movesFilter,
+        bool isInCheck) const;
 
     void fillWithSlideMoves(
         piece_type_t pieceType,
         RayIterator RayIterator,
-        MovesCollection& moves) const;
+        MovesCollection& moves,
+        MoveGenerationFilter movesFilter) const;
 
     bool isRecentMovePutsEnemyKingInCheck(Move recentMove) const;
 

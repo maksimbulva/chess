@@ -32,7 +32,9 @@ void Game::updateLegalMoves()
     legalMoves_.clear();
 
     MovesCollection pseudoLegalMoves;
-    currentPosition_.fillWithPseudoLegalMoves(pseudoLegalMoves);
+    currentPosition_.fillWithPseudoLegalMoves(
+        pseudoLegalMoves,
+        Position::MoveGenerationFilter::AllMoves);
 
     Position tmpPosition = currentPosition_;
 

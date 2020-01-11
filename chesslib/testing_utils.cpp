@@ -16,7 +16,7 @@ uint64_t countLegalMovesRecursively(Position& position, int depthPly)
     uint64_t result = 0;
 
     MovesCollection moves;
-    position.fillWithPseudoLegalMoves(moves);
+    position.fillWithPseudoLegalMoves(moves, Position::MoveGenerationFilter::AllMoves);
 
     for (const Move& move : moves) {
         position.playMove(move);

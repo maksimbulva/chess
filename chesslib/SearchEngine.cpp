@@ -34,7 +34,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     evaluation_t beta)
 {
     MovesCollection pseudoLegalMoves;
-    position.fillWithPseudoLegalMoves(pseudoLegalMoves);
+    position.fillWithPseudoLegalMoves(pseudoLegalMoves, Position::MoveGenerationFilter::AllMoves);
 
     const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(position.getPlayerToMove());
 
@@ -126,8 +126,7 @@ evaluation_t SearchEngine::runQuiescentSearch(
     }
 
     MovesCollection pseudoLegalMoves;
-    // TODO: optimize by looking for captures only
-    position.fillWithPseudoLegalMoves(pseudoLegalMoves);
+    position.fillWithPseudoLegalMoves(pseudoLegalMoves, Position::MoveGenerationFilter::CapturesOnly);
 
     for (const Move move : pseudoLegalMoves) {
         if (!move.isCapture()) {
