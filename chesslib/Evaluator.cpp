@@ -8,22 +8,22 @@ namespace chesslib {
 
 namespace {
 
-constexpr double CheckmateValue = 1000.0;
-constexpr double StalemateValue = 0.0;
+constexpr evaluation_t CheckmateValue = 100000;
+constexpr evaluation_t StalemateValue = 0;
 
-static std::array<fastint, King + 1> MATERIAL_VALUE = {
+static std::array<evaluation_t, King + 1> MATERIAL_VALUE = {
     /* NoPiece */ 0,
-    /* Pawn*/     1,
-    /* Knight */  3,
-    /* Bishop */  3,
-    /* Rook */    5,
-    /* Queen */   9,
+    /* Pawn*/     100,
+    /* Knight */  300,
+    /* Bishop */  300,
+    /* Rook */    500,
+    /* Queen */   900,
     /* King */    0
 };
 
-fastint evaluateMaterial(const Position& position, player_t player)
+evaluation_t evaluateMaterial(const Position& position, player_t player)
 {
-    fastint result = 0;
+    evaluation_t result = 0;
     auto piecesIt = position.getBoard().getPieceIterator(player);
     while (true) {
         result += MATERIAL_VALUE[piecesIt.getPieceType()];
@@ -37,76 +37,78 @@ fastint evaluateMaterial(const Position& position, player_t player)
     return result;
 }
 
+using TableValues = std::array<evaluation_t, SQUARE_COUNT>;
+
 // For evaluation based on https://www.chessprogramming.org/Simplified_Evaluation_Function
-std::array<double, SQUARE_COUNT> TABLE_PAWN_VALUES = {
-    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-    0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-    0.1, 0.1, 0.2, 0.3, 0.3, 0.2, 0.1, 0.1,
-    0.05, 0.05, 0.1, 0.25, 0.25, 0.1, 0.05, 0.05,
-    0.0, 0.0, 0.0, 0.2, 0.2, 0.0, 0.0, 0.0,
-    0.05, -0.05, -0.1, 0.0, 0.0, -0.1, -0.05, 0.05,
-    0.5, 0.1, 0.1, -0.2, -0.2, 0.1, 0.1, 0.5,
-    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+TableValues TABLE_PAWN_VALUES = {
+    0, 0, 0, 0, 0, 0, 0, 0,
+    50, 50, 50, 50, 50, 50, 50, 50,
+    10, 10, 20, 30, 30, 20, 10, 10,
+    5, 5, 10, 25, 25, 10, 5, 5,
+    0, 0, 0, 20, 20, 0, 0, 0,
+    5, -5, -10, 0, 0, -10, -5, 5,
+    50, 10, 10, -20, -20, 10, 10, 50,
+    0, 0, 0, 0, 0, 0, 0, 0
 };
 
-std::array<double, SQUARE_COUNT> TABLE_KNIGHT_VALUES = {
-    -0.5, -0.4, -0.3, -0.3, -0.3, -0.3, -0.4, -0.5,
-    -0.4, -0.2, 0.0, 0.0, 0.0, 0.0, -0.2, -0.4,
-    -0.3, 0.0, 0.1, 0.15, 0.15, 0.1, 0.0, -0.3,
-    -0.3, 0.05, 0.15, 0.2, 0.2, 0.15, 0.05, -0.3,
-    -0.3, 0.0, 0.15, 0.2, 0.2, 0.15, 0.0, -0.3,
-    -0.3, 0.05, 0.1, 0.15, 0.15, 0.10, 0.05, -0.3,
-    -0.4, -0.2, 0.0, 0.05, 0.05, 0.0, -0.2, -0.4,
-    -0.5, -0.4, -0.3, -0.3, -0.3, -0.3, -0.4, -0.5
+TableValues TABLE_KNIGHT_VALUES = {
+    -50, -40, -30, -30, -30, -30, -40, -50,
+    -40, -20, 0, 0, 0, 0, -20, -40,
+    -30, 0, 10, 15, 15, 10, 0, -30,
+    -30, 5, 15, 20, 20, 15, 5, -30,
+    -30, 0, 15, 20, 20, 15, 0, -30,
+    -30, 5, 10, 15, 15, 0.10, 5, -30,
+    -40, -20, 0, 5, 5, 0, -20, -40,
+    -50, -40, -30, -30, -30, -30, -40, -50
 };
 
-std::array<double, SQUARE_COUNT> TABLE_BISHOP_VALUES = {
-    -0.2, -0.1, -0.1, -0.1, -0.1, -0.1, -0.1, -0.2,
-    -0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.1,
-    -0.1, 0.0, 0.05, 0.1, 0.1, 0.05, 0.0, -0.1,
-    -0.1, 0.05, 0.05, 0.1, 0.1, 0.05, 0.05, -0.1,
-    -0.1, 0.0, 0.1, 0.1, 0.1, 0.1, 0.0, -0.1,
-    -0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, -0.1,
-    -0.1, 0.05, 0.0, 0.0, 0.0, 0.0, 0.05, -0.1,
-    -0.2, -0.1, -0.1, -0.1, -0.1, -0.1, -0.1, -0.2
+TableValues TABLE_BISHOP_VALUES = {
+    -20, -10, -10, -10, -10, -10, -10, -20,
+    -10, 0, 0, 0, 0, 0, 0, -10,
+    -10, 0, 5, 10, 10, 5, 0, -10,
+    -10, 5, 5, 10, 10, 5, 5, -10,
+    -10, 0, 10, 10, 10, 10, 0, -10,
+    -10, 10, 10, 10, 10, 10, 10, -10,
+    -10, 5, 0, 0, 0, 0, 5, -10,
+    -20, -10, -10, -10, -10, -10, -10, -20
 };
 
-std::array<double, SQUARE_COUNT> TABLE_ROOK_VALUES = {
-    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-    0.05, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.05,
-    -0.05, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.05,
-    -0.05, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.05,
-    -0.05, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.05,
-    -0.05, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.05,
-    -0.05, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.05,
-    0.0, 0.0, 0.0, 0.05, 0.05, 0.0, 0.0, 0.0
+TableValues TABLE_ROOK_VALUES = {
+    0, 0, 0, 0, 0, 0, 0, 0,
+    5, 10, 10, 10, 10, 10, 10, 5,
+    -5, 0, 0, 0, 0, 0, 0, -5,
+    -5, 0, 0, 0, 0, 0, 0, -5,
+    -5, 0, 0, 0, 0, 0, 0, -5,
+    -5, 0, 0, 0, 0, 0, 0, -5,
+    -5, 0, 0, 0, 0, 0, 0, -5,
+    0, 0, 0, 5, 5, 0, 0, 0
 };
 
-std::array<double, SQUARE_COUNT> TABLE_QUEEN_VALUES = {
-    -0.2, -0.1, -0.1, -0.05, -0.05, -0.1, -0.1, -0.2,
-    -0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.1,
-    -0.1, 0.0, 0.05, 0.05, 0.05, 0.05, 0.0, -0.1,
-    -0.05, 0.0, 0.05, 0.05, 0.05, 0.05, 0.0, -0.05,
-    0.0, 0.0, 0.05, 0.05, 0.05, 0.05, 0.0, -0.05,
-    -0.1, 0.05, 0.05, 0.05, 0.05, 0.05, 0.0, -0.1,
-    -0.1, 0.0, 0.05, 0.0, 0.0, 0.0, 0.0, -0.1,
-    -0.2, -0.1, -0.1, -0.05, -0.05, -0.1, -0.1, -0.2,
+TableValues TABLE_QUEEN_VALUES = {
+    -20, -10, -10, -5, -5, -10, -10, -20,
+    -10, 0, 0, 0, 0, 0, 0, -10,
+    -10, 0, 5, 5, 5, 5, 0, -10,
+    -5, 0, 5, 5, 5, 5, 0, -5,
+    0, 0, 5, 5, 5, 5, 0, -5,
+    -10, 5, 5, 5, 5, 5, 0, -10,
+    -10, 0, 5, 0, 0, 0, 0, -10,
+    -20, -10, -10, -5, -5, -10, -10, -20
 };
 
-std::array<double, SQUARE_COUNT> TABLE_KING_VALUES = {
-    -0.3, -0.4, -0.4, -0.5, -0.5, -0.4, -0.4, -0.3,
-    -0.3, -0.4, -0.4, -0.5, -0.5, -0.4, -0.4, -0.3,
-    -0.3, -0.4, -0.4, -0.5, -0.5, -0.4, -0.4, -0.3,
-    -0.3, -0.4, -0.4, -0.5, -0.5, -0.4, -0.4, -0.3,
-    -0.2, -0.3, -0.3, -0.4, -0.4, -0.3, -0.3, -0.2,
-    -0.1, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.1,
-    0.2, 0.2, 0.0, 0.0, 0.0, 0.0, 0.2, 0.2,
-    0.2, 0.3, 0.1, 0.0, 0.0, 0.1, 0.3, 0.2
+TableValues TABLE_KING_VALUES = {
+    -30, -40, -40, -50, -50, -40, -40, -30,
+    -30, -40, -40, -50, -50, -40, -40, -30,
+    -30, -40, -40, -50, -50, -40, -40, -30,
+    -30, -40, -40, -50, -50, -40, -40, -30,
+    -20, -30, -30, -40, -40, -30, -30, -20,
+    -10, -20, -20, -20, -20, -20, -20, -10,
+    20, 20, 0, 0, 0, 0, 20, 20,
+    20, 30, 10, 0, 0, 10, 30, 20
 };
 
 // TODO: For endgame or midgame we can consider another king table value
 
-std::array<std::array<double, SQUARE_COUNT>*, King + 1> TABLE_VALUES = {
+std::array<TableValues*, King + 1> TABLE_VALUES = {
     /* NoPiece */ nullptr,
     &TABLE_PAWN_VALUES,
     &TABLE_KNIGHT_VALUES,
@@ -116,9 +118,9 @@ std::array<std::array<double, SQUARE_COUNT>*, King + 1> TABLE_VALUES = {
     &TABLE_KING_VALUES
 };
 
-double evaluateTableValues(const Position& position, player_t player)
+evaluation_t evaluateTableValues(const Position& position, player_t player)
 {
-    double result = 0.0;
+    evaluation_t result = 0;
     auto piecesIt = position.getBoard().getPieceIterator(player);
     while (true) {
         square_t square = piecesIt.getSquare();
@@ -140,16 +142,16 @@ double evaluateTableValues(const Position& position, player_t player)
 }  // namespace
 
 // TODO: this is temporary method. Replace with some ML evaluations
-double Evaluator::evaluate(const Position& position)
+evaluation_t Evaluator::evaluate(const Position& position)
 {
     ++evaluatedPositionCount_;
     auto materialValueDiff = evaluateMaterial(position, White) - evaluateMaterial(position, Black);
-    return static_cast<double>(materialValueDiff)
+    return static_cast<evaluation_t>(materialValueDiff)
         + evaluateTableValues(position, White)
         - evaluateTableValues(position, Black);
 }
 
-double Evaluator::evaluateNoLegalMovesPosition(Position& position)
+evaluation_t Evaluator::evaluateNoLegalMovesPosition(Position& position)
 {
     ++evaluatedPositionCount_;
     return position.isInCheck() ? CheckmateValue : StalemateValue;

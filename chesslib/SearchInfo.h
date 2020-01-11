@@ -21,15 +21,15 @@ struct SearchInfo {
         return searchTimeMs >= 1000 ? evaluatedPositionCount * 1000 / searchTimeMs : evaluatedPositionCount;
     }
 
-    double getEvaluation() const
+    evaluation_t getEvaluation() const
     {
-        const double evaluationSideMultiplier = playerToMove == Black ? -1.0 : 1.0;
+        const evaluation_t evaluationSideMultiplier = playerToMove == Black ? -1 : 1;
         return evaluationSideMultiplier * bestVariation.getEvaluation();
     }
 
     int64_t getEvaluationInCentipawns() const
     {
-        return static_cast<int64_t>(getEvaluation() * 100.0);
+        return getEvaluation();
     }
 
     Variation bestVariation;

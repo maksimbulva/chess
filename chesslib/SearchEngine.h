@@ -16,12 +16,13 @@ public:
     Variation runSearch(Position position, Evaluator& evaluator, int depthPly);
 
 private:
-    double runAlphaBetaSearch(
+    // TODO: move position to object field
+    evaluation_t runAlphaBetaSearch(
         Position& position,
         SearchNode& parent,
         int depthPly,
-        double alpha,
-        double beta);
+        evaluation_t alpha,
+        evaluation_t beta);
 
 private:
     Evaluator* evaluator_;

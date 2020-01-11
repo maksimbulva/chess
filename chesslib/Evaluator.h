@@ -1,7 +1,8 @@
 #pragma once
 
+#include "types.h"
+
 #include <atomic>
-#include <cstdint>
 
 namespace chesslib {
 
@@ -19,9 +20,9 @@ public:
         return evaluatedPositionCount_;
     }
 
-    double evaluate(const Position& position);
+    evaluation_t evaluate(const Position& position);
 
-    double evaluateNoLegalMovesPosition(Position& position);
+    evaluation_t evaluateNoLegalMovesPosition(Position& position);
 
 private:
     // TODO: consider using std::atomic_uint64_t

@@ -15,25 +15,24 @@ public:
     // TODO: probably, constuctors can be private
     SearchNode(Move move)
         : move_(move)
-        , isEvaluated_(false)
-        , evaluation_(0.0)
+        , evaluation_(0)
     {
     }
 
-    SearchNode(Move move, SearchNodeRef sibling)
+    SearchNode(Move move, evaluation_t evaluation)
         : move_(move)
-        , isEvaluated_(false)
-        , evaluation_(0.0)
-        , sibling_(std::move(sibling))
-    {
-    }
-
-    SearchNode(Move move, SearchNodeRef sibling, double evaluation)
-        : move_(move)
-        , isEvaluated_(true)
         , evaluation_(evaluation)
-        , sibling_(std::move(sibling))
     {
+    }
+
+    static SearchNodeRef createRef(Move move)
+    {
+        return std::make_shared<SearchNode>(move);
+    }
+
+    static SearchNodeRef createRef(Move move, evaluation_t evaluation)
+    {
+        return std::make_shared<SearchNode>(move, evaluation);
     }
 
     Move getMove() const
@@ -46,49 +45,25 @@ public:
         return child_.get();
     }
 
-    bool hasChildren() const
+    void setChild(SearchNodeRef child)
     {
-        return child_ != nullptr;
+        child_ = std::move(child);
     }
 
-    bool isEvaluated() const
-    {
-        return isEvaluated_;
-    }
-
-    double getEvaluation() const
+    evaluation_t getEvaluation() const
     {
         return evaluation_;
     }
 
-    void setEvaluation(double value)
+    void setEvaluation(evaluation_t value)
     {
-        isEvaluated_ = true;
         evaluation_ = value;
     }
 
 private:
-    static SearchNodeRef createRef(Move move)
-    {
-        return std::make_shared<SearchNode>(move);
-    }
-
-    static SearchNodeRef createRef(Move move, SearchNodeRef sibling)
-    {
-        return std::make_shared<SearchNode>(move, std::move(sibling));
-    }
-
-    static SearchNodeRef createRef(Move move, SearchNodeRef sibling, double evaluation)
-    {
-        return std::make_shared<SearchNode>(move, std::move(sibling), evaluation);
-    }
-
-private:
     Move move_;
-    bool isEvaluated_;
-    double evaluation_;
+    evaluation_t evaluation_;
     SearchNodeRef child_;
-    SearchNodeRef sibling_;
 };
 
 }

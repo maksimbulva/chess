@@ -15,28 +15,28 @@ Variation SearchEngine::runSearch(Position position, Evaluator& evaluator, int d
 
     evaluator_ = &evaluator;
 
-    constexpr double alpha = std::numeric_limits<double>::lowest();
-    constexpr double beta = std::numeric_limits<double>::max();
+    constexpr evaluation_t beta = std::numeric_limits<evaluation_t>::max();
+    constexpr evaluation_t alpha = -beta;
 
     SearchTree searchTree(position);
-    const double evaluation = runAlphaBetaSearch(position, searchTree.getRoot(), depthPly, alpha, beta);
+    const evaluation_t evaluation = runAlphaBetaSearch(position, searchTree.getRoot(), depthPly, alpha, beta);
 
     evaluator_ = nullptr;
 
     return searchTree.getBestVariation();
 }
 
-double SearchEngine::runAlphaBetaSearch(
+evaluation_t SearchEngine::runAlphaBetaSearch(
     Position& position,
     SearchNode& parent,
     int depthPly,
-    double alpha,
-    double beta)
+    evaluation_t alpha,
+    evaluation_t beta)
 {
     MovesCollection pseudoLegalMoves;
     position.fillWithPseudoLegalMoves(pseudoLegalMoves);
 
-    const double evaluationSideMultiplier = position.getPlayerToMove() == Black ? -1.0 : 1.0;
+    const evaluation_t evaluationSideMultiplier = position.getPlayerToMove() == Black ? -1 : 1;
 
     Move bestMove = Move::NullMove();
     bool hasLegalMoves = false;
@@ -50,7 +50,7 @@ double SearchEngine::runAlphaBetaSearch(
 
             hasLegalMoves = true;
  
-            double evaluation;
+            evaluation_t evaluation;
             if (depthPly == 1) {
                 evaluation = evaluationSideMultiplier * evaluator_->evaluate(position);
             }
@@ -64,7 +64,7 @@ double SearchEngine::runAlphaBetaSearch(
                     -alpha);
             }
 
-            if (evaluation > beta) {
+            if (evaluation >= beta) {
                 position.undoMove();
                 return beta;
             } 
@@ -79,14 +79,14 @@ double SearchEngine::runAlphaBetaSearch(
     }
 
     if (!hasLegalMoves) {
-        const double evaluation = evaluator_->evaluateNoLegalMovesPosition(position);
+        const evaluation_t evaluation = evaluator_->evaluateNoLegalMovesPosition(position);
         if (evaluation > beta) {
             return beta;
         }
         else if (evaluation < alpha) {
             return alpha;
         }
-    }
+    } 
 
     if (depthPly == 1) {
         if (!bestMove.isNullMove()) {

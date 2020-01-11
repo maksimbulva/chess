@@ -13,17 +13,17 @@ class Variation
     friend class SearchTree;
 public:
     Variation()
-        : evaluation_(0.0)
+        : evaluation_(0)
     {
     }
 
-    Variation(double evaluation, std::vector<Move> moves)
+    Variation(evaluation_t evaluation, std::vector<Move> moves)
         : evaluation_(evaluation)
         , moves_(std::move(moves))
     {
     }
 
-    double getEvaluation() const
+    evaluation_t getEvaluation() const
     {
         return evaluation_;
     }
@@ -37,7 +37,7 @@ private:
     Variation(const SearchNode* startingNode);
 
 private:
-    double evaluation_;
+    evaluation_t evaluation_;
     std::vector<Move> moves_;
 };
 
