@@ -17,12 +17,6 @@ public:
     {
     }
 
-    Variation(evaluation_t evaluation, std::vector<Move> moves)
-        : evaluation_(evaluation)
-        , moves_(std::move(moves))
-    {
-    }
-
     evaluation_t getEvaluation() const
     {
         return evaluation_;

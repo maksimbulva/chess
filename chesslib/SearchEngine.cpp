@@ -7,9 +7,6 @@
 
 #include <limits>
 
-// TODO
-#include "string_repr.h"
-
 namespace chesslib {
 
 Variation SearchEngine::runSearch(Position position, Evaluator& evaluator, int depthPly)
@@ -39,7 +36,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     MovesCollection pseudoLegalMoves;
     position.fillWithPseudoLegalMoves(pseudoLegalMoves);
 
-    const evaluation_t evaluationSideMultiplier = position.getPlayerToMove() == Black ? -1 : 1;
+    const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(position.getPlayerToMove());
 
     Move bestMove = Move::NullMove();
     bool hasLegalMoves = false;
@@ -96,14 +93,15 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
         }
     } 
 
+    evaluation_t nodeEvaluation = evaluationSideMultiplier * alpha;
     if (depthPly == 1) {
         if (!bestMove.isNullMove()) {
-            parent.setChild(SearchNode::createRef(bestMove, alpha));
+            parent.setChild(SearchNode::createRef(bestMove, nodeEvaluation));
         }
     }
     else {
         if (bestSubtreeRoot) {
-            bestSubtreeRoot->setEvaluation(alpha);
+            bestSubtreeRoot->setEvaluation(nodeEvaluation);
             parent.setChild(std::move(bestSubtreeRoot));
         }
     }
@@ -116,7 +114,7 @@ evaluation_t SearchEngine::runQuiescentSearch(
     evaluation_t alpha,
     evaluation_t beta)
 {
-    const evaluation_t evaluationSideMultiplier = position.getPlayerToMove() == Black ? -1 : 1;
+    const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(position.getPlayerToMove());
     const evaluation_t evaluation = evaluationSideMultiplier * evaluator_->evaluate(position);
 
     if (evaluation >= beta) {

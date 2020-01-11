@@ -24,6 +24,11 @@ public:
 
     evaluation_t evaluateNoLegalMovesPosition(Position& position);
 
+    static evaluation_t getSideMultiplier(player_t playerToMove)
+    {
+        return playerToMove == Black ? -1 : 1;
+    }
+
 private:
     // TODO: consider using std::atomic_uint64_t
     std::atomic<uint64_t> evaluatedPositionCount_;
