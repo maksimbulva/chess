@@ -6,6 +6,15 @@ namespace chesslib {
 
 struct Move {
 public:
+
+#pragma warning(push)
+#pragma warning(disable:26495)
+    // Default ctor for use in MovesCollection only
+    Move()
+    {
+    }
+#pragma warning(pop)
+
     // Use MoveBuilder class to get encoded value
     constexpr explicit Move(const encoded_move_t encoded)
         : encoded_(encoded)

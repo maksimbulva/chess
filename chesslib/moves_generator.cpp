@@ -61,10 +61,10 @@ void fillWithDeltaMoves(
                 const square_t destSquare = origin + delta.delta;
                 MoveBuilder mb = moveBuilder.setDestSquare(destSquare);
                 if (board.isEmpty(destSquare)) {
-                    moves.push_back(mb.build());
+                    moves.pushBack(mb.build());
                 }
                 else if (board.getPlayer(destSquare) != myPlayer) {
-                    moves.push_back(mb.setCapture(board).build());
+                    moves.pushBack(mb.setCapture(board).build());
                 }
             }
         }
@@ -74,7 +74,7 @@ void fillWithDeltaMoves(
             const square_t destSquare = origin + delta.delta;
             if ((delta.origins & originBit) && board.isNotEmpty(destSquare)
                 && board.getPlayer(destSquare) != myPlayer) {
-                moves.push_back(moveBuilder
+                moves.pushBack(moveBuilder
                     .setDestSquare(destSquare)
                     .setCapture(board)
                     .build());
@@ -95,7 +95,7 @@ void Position::fillWithPseudoLegalMoves(
     MoveGenerationFilter movesFilter,
     bool isInCheck) const
 {
-    assert(moves.empty());
+    assert(moves.isEmpty());
 
     const player_t myPlayer = getPlayerToMove();
     auto myPiecesIt = board_.getPieceIterator(myPlayer);
@@ -146,7 +146,7 @@ constexpr std::array<piece_type_t, 4> PROMOTION_PIECES = { Knight, Bishop, Rook,
 void generatePromotions(MoveBuilder moveBuilder, MovesCollection& moves)
 {
     for (auto promotionPiece : PROMOTION_PIECES) {
-        moves.push_back(moveBuilder.setPromoteToPieceType(promotionPiece).build());
+        moves.pushBack(moveBuilder.setPromoteToPieceType(promotionPiece).build());
     }
 }
 
@@ -188,11 +188,11 @@ void Position::fillWithPawnMoves(
                 generatePromotions(moveBuilder.setDestSquare(singleMoveForwardSquare), moves);
             }
             else {
-                moves.push_back(moveBuilder.setDestSquare(singleMoveForwardSquare).build());
+                moves.pushBack(moveBuilder.setDestSquare(singleMoveForwardSquare).build());
                 if (pawnRow == initialRow) {
                     const auto doubleMoveForwardSquare = pawnSquare + 2 * forward;
                     if (board_.isEmpty(doubleMoveForwardSquare)) {
-                        moves.push_back(
+                        moves.pushBack(
                             moveBuilder.setDestSquare(doubleMoveForwardSquare)
                             .setPawnDoubleMove()
                             .build());
@@ -218,7 +218,7 @@ void Position::fillWithPawnMoves(
                 generatePromotions(mb, moves);
             }
             else {
-                moves.push_back(mb.build());
+                moves.pushBack(mb.build());
             }
         }
     }
@@ -235,7 +235,7 @@ void Position::fillWithPawnMoves(
                     const auto captureSquare = encodeSquare(
                         getRow(singleMoveForwardSquare),
                         enPassantColumn.getColumn());
-                    moves.push_back(
+                    moves.pushBack(
                         moveBuilder
                             .setDestSquare(captureSquare)
                             .setEnPassantCapture()
@@ -288,7 +288,7 @@ void Position::fillWithKingMoves(
         }
         if (isEmptySquares
             && !isSquareAttacked(encodeSquare(kingRow, COLUMN_D), board_, otherPlayer)) {
-            moves.push_back(
+            moves.pushBack(
                 moveBuilder
                 .setDestSquare(encodeSquare(kingRow, COLUMN_C))
                 .setLongCastle()
@@ -306,7 +306,7 @@ void Position::fillWithKingMoves(
         }
         if (isEmptySquares
             && !isSquareAttacked(encodeSquare(kingRow, COLUMN_F), board_, otherPlayer)) {
-            moves.push_back(
+            moves.pushBack(
                 moveBuilder
                 .setDestSquare(encodeSquare(kingRow, COLUMN_G))
                 .setShortCastle()
@@ -331,11 +331,11 @@ void Position::fillWithSlideMoves(
             const square_t currentSquare = rayIterator.currentSquare();
             MoveBuilder mb = moveBuilder.setDestSquare(currentSquare);
             if (board_.isEmpty(currentSquare)) {
-                moves.push_back(mb.build());
+                moves.pushBack(mb.build());
             }
             else {
                 if (board_.getPlayer(currentSquare) != myPlayer) {
-                    moves.push_back(mb.setCapture(board_).build());
+                    moves.pushBack(mb.setCapture(board_).build());
                 }
                 break;
             }
@@ -347,7 +347,7 @@ void Position::fillWithSlideMoves(
             const square_t currentSquare = rayIterator.currentSquare();
             if (board_.isNotEmpty(currentSquare)) {
                 if (board_.getPlayer(currentSquare) != myPlayer) {
-                    moves.push_back(moveBuilder
+                    moves.pushBack(moveBuilder
                         .setDestSquare(currentSquare)
                         .setCapture(board_)
                         .build());

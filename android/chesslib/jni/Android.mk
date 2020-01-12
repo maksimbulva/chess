@@ -20,9 +20,9 @@ LOCAL_SRC_FILES := \
 	../../../chesslib/notation.cpp \
 	../../../chesslib/position_factory.cpp \
 	../../../chesslib/Position.cpp \
+	../../../chesslib/SearchEngine.cpp \
 	../../../chesslib/SearchNode.cpp \
 	../../../chesslib/SearchTree.cpp \
-	../../../chesslib/search_algorithms.cpp \
 	../../../chesslib/string_repr.cpp \
 	../../../chesslib/string_utils.cpp \
 	../../../chesslib/testing_utils.cpp \
