@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Move.h"
 #include "types.h"
 
 #include <atomic>
@@ -28,6 +29,10 @@ public:
     {
         return playerToMove == Black ? -1 : 1;
     }
+
+    static evaluation_t getMaterialGain(Move move);
+
+    static evaluation_t getTableValueDelta(Move move, player_t playerToMove);
 
 private:
     // TODO: consider using std::atomic_uint64_t

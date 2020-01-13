@@ -35,6 +35,11 @@ enum PieceType : piece_type_t {
 constexpr player_t Black = 0;
 constexpr player_t White = 1;
 
+constexpr player_t getOtherPlayer(player_t player)
+{
+    return 1 - player;
+}
+
 constexpr std::size_t PLAYER_COUNT = 2;
 constexpr std::size_t SQUARE_COUNT = 64;
 

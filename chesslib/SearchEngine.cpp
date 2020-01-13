@@ -33,10 +33,12 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     evaluation_t alpha,
     evaluation_t beta)
 {
+    const player_t playerToMove = position.getPlayerToMove();
+    const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(position.getPlayerToMove());
+
     MovesCollection pseudoLegalMoves;
     position.fillWithPseudoLegalMoves(pseudoLegalMoves, Position::MoveGenerationFilter::AllMoves);
-
-    const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(position.getPlayerToMove());
+    pseudoLegalMoves.scoreByTableValueDelta(playerToMove);
 
     Move bestMove = Move::NullMove();
     bool hasLegalMoves = false;
@@ -44,7 +46,8 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     SearchNodeRef bestSubtreeRoot;
     SearchNodeRef currentSubtreeRoot;
 
-    for (const Move move : pseudoLegalMoves) {
+    for (const auto& scoredMove : pseudoLegalMoves) {
+        const Move move = scoredMove.getMove();
         position.playMove(move);
         if (position.isValid()) {
 
@@ -127,13 +130,14 @@ evaluation_t SearchEngine::runQuiescentSearch(
 
     MovesCollection pseudoLegalMoves;
     position.fillWithPseudoLegalMoves(pseudoLegalMoves, Position::MoveGenerationFilter::CapturesOnly);
+    pseudoLegalMoves.scoreByMaterialGain();
 
-    for (const Move move : pseudoLegalMoves) {
-        if (!move.isCapture()) {
+    for (const auto& scoredMove : pseudoLegalMoves) {
+        if (!scoredMove.getMove().isCapture()) {
             continue;
         }
 
-        position.playMove(move);
+        position.playMove(scoredMove.getMove());
         if (position.isValid()) {
             evaluation_t subtreeEvaluation = -runQuiescentSearch(position, -beta, -alpha);
 

@@ -18,8 +18,8 @@ uint64_t countLegalMovesRecursively(Position& position, int depthPly)
     MovesCollection moves;
     position.fillWithPseudoLegalMoves(moves, Position::MoveGenerationFilter::AllMoves);
 
-    for (const Move& move : moves) {
-        position.playMove(move);
+    for (const auto& scoredMove : moves) {
+        position.playMove(scoredMove.getMove());
         if (position.isValid()) {
             if (depthPly == 1) {
                 ++result;
