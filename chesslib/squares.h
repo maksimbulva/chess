@@ -4,13 +4,17 @@
 
 namespace chesslib {
 
-constexpr square_t COLUMN_A = 0;
-constexpr square_t COLUMN_B = 1;
-constexpr square_t COLUMN_C = 2;
-constexpr square_t COLUMN_D = 3;
-constexpr square_t COLUMN_E = 4;
-constexpr square_t COLUMN_F = 5;
-constexpr square_t COLUMN_G = 6;
-constexpr square_t COLUMN_H = 7;
+constexpr square_t ROW_1 = 0;
+
+enum Columns : square_t {
+    COLUMN_A = 0,
+    COLUMN_B,
+    COLUMN_C,
+    COLUMN_D,
+    COLUMN_E,
+    COLUMN_F,
+    COLUMN_G,
+    COLUMN_H
+};
 
 }

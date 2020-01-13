@@ -39,10 +39,10 @@ void Game::updateLegalMoves()
     Position tmpPosition = currentPosition_;
 
     // TODO: optimize me
-    for (Move move : pseudoLegalMoves) {
-        tmpPosition.playMove(move);
+    for (const auto& scoredMove : pseudoLegalMoves) {
+        tmpPosition.playMove(scoredMove.getMove());
         if (tmpPosition.isValid()) {
-            legalMoves_.push_back(move);
+            legalMoves_.push_back(scoredMove.getMove());
         }
         tmpPosition.undoMove();
     }

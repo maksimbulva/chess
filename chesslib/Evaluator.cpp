@@ -1,6 +1,7 @@
 #include "Evaluator.h"
 
 #include "Position.h"
+#include "squares.h"
 
 #include <array>
 
@@ -118,17 +119,32 @@ std::array<TableValues*, King + 1> TABLE_VALUES = {
     &TABLE_KING_VALUES
 };
 
+const evaluation_t ShortCastleRookTableDelta =
+    TABLE_ROOK_VALUES[encodeSquare(ROW_1, COLUMN_F)] - TABLE_ROOK_VALUES[encodeSquare(ROW_1, COLUMN_H)];
+
+const evaluation_t LongCastleRookTableDelta =
+    TABLE_ROOK_VALUES[encodeSquare(ROW_1, COLUMN_D)] - TABLE_ROOK_VALUES[encodeSquare(ROW_1, COLUMN_A)];
+
+evaluation_t getTableValue(piece_type_t pieceType, square_t adjustedSquare)
+{
+    return (*TABLE_VALUES[pieceType])[adjustedSquare];
+}
+
+evaluation_t getTableValue(piece_type_t pieceType, player_t player, square_t square)
+{
+    const square_t adjustedSquare = player == White
+        ? encodeSquare(MAX_ROW - getRow(square), getColumn(square))
+        : square;
+    return (*TABLE_VALUES[pieceType])[adjustedSquare];
+}
+
 evaluation_t evaluateTableValues(const Position& position, player_t player)
 {
     evaluation_t result = 0;
     auto piecesIt = position.getBoard().getPieceIterator(player);
     while (true) {
         square_t square = piecesIt.getSquare();
-        if (player == White) {
-            square = encodeSquare(MAX_ROW - getRow(square), getColumn(square));
-        }
-        auto* table = TABLE_VALUES[piecesIt.getPieceType()];
-        result += (*table)[square];
+        result += getTableValue(piecesIt.getPieceType(), player, square);
         if (piecesIt.hasNext()) {
             ++piecesIt;
         }
@@ -156,6 +172,53 @@ evaluation_t Evaluator::evaluateNoLegalMovesPosition(Position& position)
     ++evaluatedPositionCount_;
     // Either we are checkmated or it is a stalemate
     return position.isInCheck() ? -CheckmateValue : StalemateValue;
+}
+
+evaluation_t Evaluator::getMaterialGain(Move move)
+{
+    evaluation_t result = 0;
+    if (move.isCapture()) {
+        result += MATERIAL_VALUE[move.getCapturedPieceType()];
+    }
+    if (move.isPromotion()) {
+        result += MATERIAL_VALUE[move.getPromoteToPieceType()] - MATERIAL_VALUE[Pawn];
+    }
+    return result;
+}
+
+evaluation_t Evaluator::getTableValueDelta(Move move, player_t playerToMove)
+{
+    const piece_type_t pieceType = move.getPieceType();
+    const square_t originSquare = move.getOriginSquare();
+    const square_t destSquare = move.getDestSquare();
+
+    // Player lose value from piece's origin square
+    evaluation_t result = -getTableValue(pieceType, playerToMove, originSquare);
+
+    // Player gains value for piece's dest square
+    if (move.isPromotion()) {
+        const piece_type_t finalPieceType = move.getPromoteToPieceType();
+        result += getTableValue(finalPieceType, playerToMove, destSquare);
+        result += MATERIAL_VALUE[move.getPromoteToPieceType()] - MATERIAL_VALUE[Pawn];
+    }
+    else {
+        result += getTableValue(pieceType, playerToMove, destSquare);
+    }
+
+    if (move.isCapture()) {
+        const piece_type_t capturedPieceType = move.getCapturedPieceType();
+        const player_t otherPlayer = getOtherPlayer(playerToMove);
+        square_t capturedSquare = move.isEnPassantCapture()
+            ? encodeSquare(getRow(originSquare), getColumn(destSquare))
+            : destSquare;
+        result += getTableValue(capturedPieceType, otherPlayer, capturedSquare);
+        result += MATERIAL_VALUE[capturedPieceType];
+    }
+    else if (move.isCastle()) {
+        result += move.isShortCastle() ? ShortCastleRookTableDelta : LongCastleRookTableDelta;
+    }
+
+    return result;
 }
 
 }

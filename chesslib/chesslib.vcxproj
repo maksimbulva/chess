@@ -129,6 +129,7 @@
     <ClCompile Include="Evaluator.cpp" />
     <ClCompile Include="fen.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="MovesCollection.cpp" />
     <ClCompile Include="moves_generator.cpp" />
     <ClCompile Include="notation.cpp" />
     <ClCompile Include="Position.cpp" />
