@@ -17,6 +17,7 @@ LOCAL_SRC_FILES := \
 	../../../chesslib/fen.cpp \
 	../../../chesslib/Game.cpp \
 	../../../chesslib/moves_generator.cpp \
+	../../../chesslib/MovesCollection.cpp \
 	../../../chesslib/notation.cpp \
 	../../../chesslib/position_factory.cpp \
 	../../../chesslib/Position.cpp \

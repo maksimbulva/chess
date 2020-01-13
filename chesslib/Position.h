@@ -7,6 +7,7 @@
 #include "PositionFlags.h"
 #include "PositionHistory.h"
 #include "PositionMoveCounters.h"
+#include "squares.h"
 
 #include <vector>
 

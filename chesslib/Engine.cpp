@@ -37,8 +37,8 @@ bool Engine::playMove(square_t originSquare, square_t destSquare, piece_type_t p
         {
             return move.getOriginSquare() == originSquare
                 && move.getDestSquare() == destSquare
-                && (move.isPromotion() && promoteToPieceType == move.getPromoteToPieceType()
-                    || !move.isPromotion() && promoteToPieceType == NoPiece);
+                && ((move.isPromotion() && promoteToPieceType == move.getPromoteToPieceType())
+                    || (!move.isPromotion() && promoteToPieceType == NoPiece));
         });
 
     if (moveIter != legalMoves.end()) {
@@ -59,10 +59,9 @@ Variation Engine::findBestVariation()
 
     Evaluator evaluator;
 
-    SearchEngine searchEngine;
-    searchInfo_.bestVariation = searchEngine.runSearch(currentPosition, evaluator, 4);
+    SearchEngine searchEngine(currentPosition, evaluator);
+    searchInfo_.bestVariation = searchEngine.runSearch(4);
     
-    searchInfo_.searchTreeSize = 0; // TODO searchTree.getNodeCount();
     searchInfo_.evaluatedPositionCount = evaluator.getEvaluatedPositionCount();
     searchInfo_.searchTimeMs = stopwatch.getElapsedMilliseconds();
 

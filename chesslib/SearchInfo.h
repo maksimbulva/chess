@@ -9,8 +9,7 @@ namespace chesslib {
 
 struct SearchInfo {
     SearchInfo()
-        : searchTreeSize(0)
-        , evaluatedPositionCount(0)
+        : evaluatedPositionCount(0)
         , searchTimeMs(0)
         , playerToMove(Black)
     {
@@ -33,7 +32,6 @@ struct SearchInfo {
     }
 
     Variation bestVariation;
-    uint64_t searchTreeSize;
     uint64_t evaluatedPositionCount;
     int64_t searchTimeMs;
     player_t playerToMove;

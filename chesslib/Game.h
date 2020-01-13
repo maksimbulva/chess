@@ -12,7 +12,6 @@ public:
 
     const Position& getCurrentPosition() const
     {
-        // TODO:
         return currentPosition_;
     }
 

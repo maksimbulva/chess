@@ -13,24 +13,24 @@ class SearchNode;
 class SearchEngine
 {
 public:
-    Variation runSearch(Position position, Evaluator& evaluator, int depthPly);
+    SearchEngine(Position position, Evaluator& evaluator);
+
+    Variation runSearch(int depthPly);
 
 private:
-    // TODO: move position to object field
     evaluation_t runAlphaBetaSearch(
-        Position& position,
         SearchNode& parent,
         int depthPly,
         evaluation_t alpha,
         evaluation_t beta);
 
     evaluation_t runQuiescentSearch(
-        Position& position,
         evaluation_t alpha,
         evaluation_t beta);
 
 private:
-    Evaluator* evaluator_;
+    Position position_;
+    Evaluator* const evaluator_;
 };
 
 }
