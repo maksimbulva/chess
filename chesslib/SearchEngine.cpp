@@ -41,16 +41,16 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     const player_t playerToMove = position_.getPlayerToMove();
     const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(playerToMove);
 
-    MovesCollection childBestMovesSequence;
+    auto childBestMovesSequence = memoryPool_.getMovesCollection();
 
-    MovesCollection pseudoLegalMoves;
-    position_.fillWithPseudoLegalMoves(pseudoLegalMoves, Position::MoveGenerationFilter::AllMoves);
-    pseudoLegalMoves.scoreByTableValueDelta(playerToMove);
+    auto pseudoLegalMoves = memoryPool_.getMovesCollection();
+    position_.fillWithPseudoLegalMoves(*pseudoLegalMoves, Position::MoveGenerationFilter::AllMoves);
+    pseudoLegalMoves->scoreByTableValueDelta(playerToMove);
 
     Move bestMove = Move::NullMove();
     bool hasLegalMoves = false;
 
-    for (const auto& scoredMove : pseudoLegalMoves) {
+    for (const auto& scoredMove : *pseudoLegalMoves) {
         const Move move = scoredMove.getMove();
         position_.playMove(move);
         if (position_.isValid()) {
@@ -67,9 +67,9 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
                 }
             }
             else {
-                childBestMovesSequence.clear();
+                childBestMovesSequence->clear();
                 evaluation = -runAlphaBetaSearch(
-                    childBestMovesSequence,
+                    *childBestMovesSequence,
                     depthPly - 1,
                     -beta,
                     -alpha);
@@ -85,7 +85,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
                 bestMove = move;
                 bestMovesSequence.clear();
                 bestMovesSequence.pushBack(bestMove);
-                bestMovesSequence.append(childBestMovesSequence);
+                bestMovesSequence.append(*childBestMovesSequence);
             }
         }
         position_.undoMove();
@@ -119,11 +119,11 @@ evaluation_t SearchEngine::runQuiescentSearch(
         alpha = evaluation;
     }
 
-    MovesCollection pseudoLegalMoves;
-    position_.fillWithPseudoLegalMoves(pseudoLegalMoves, Position::MoveGenerationFilter::CapturesOnly);
-    pseudoLegalMoves.scoreByMaterialGain();
+    auto pseudoLegalMoves = memoryPool_.getMovesCollection();
+    position_.fillWithPseudoLegalMoves(*pseudoLegalMoves, Position::MoveGenerationFilter::CapturesOnly);
+    pseudoLegalMoves->scoreByMaterialGain();
 
-    for (const auto& scoredMove : pseudoLegalMoves) {
+    for (const auto& scoredMove : *pseudoLegalMoves) {
         if (!scoredMove.getMove().isCapture()) {
             continue;
         }

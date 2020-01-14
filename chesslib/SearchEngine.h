@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MemoryPool.h"
 #include "Position.h"
 #include "Variation.h"
 
@@ -32,6 +33,7 @@ private:
     Evaluator* const evaluator_;
     int searchDepthPly_;
     MovesCollection bestMovesSequence_;
+    MemoryPool memoryPool_;
 };
 
 }

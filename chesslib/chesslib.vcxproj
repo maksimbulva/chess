@@ -129,6 +129,7 @@
     <ClCompile Include="Evaluator.cpp" />
     <ClCompile Include="fen.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="MovesCollection.cpp" />
     <ClCompile Include="moves_generator.cpp" />
     <ClCompile Include="notation.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="exceptions.h" />
     <ClInclude Include="fen.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="MoveBuilder.h" />
     <ClInclude Include="MoveDelta.h" />
