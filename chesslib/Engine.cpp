@@ -3,7 +3,6 @@
 #include "Evaluator.h"
 #include "fen.h"
 #include "SearchEngine.h"
-#include "SearchTree.h"
 #include "Stopwatch.h"
 
 namespace chesslib {

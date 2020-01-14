@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Move.h"
+#include "MovesCollection.h"
 
 #include <vector>
 
@@ -10,12 +11,13 @@ class SearchNode;
 
 class Variation
 {
-    friend class SearchTree;
 public:
     Variation()
         : evaluation_(0)
     {
     }
+
+    Variation(evaluation_t evaluation, const MovesCollection& moves);
 
     evaluation_t getEvaluation() const
     {
@@ -26,9 +28,6 @@ public:
     {
         return moves_;
     }
-
-private:
-    Variation(const SearchNode* startingNode);
 
 private:
     evaluation_t evaluation_;

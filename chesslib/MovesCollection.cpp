@@ -6,6 +6,12 @@
 
 namespace chesslib {
 
+void MovesCollection::append(const MovesCollection& other)
+{
+    std::copy(other.begin(), other.end(), end());
+    bufferSize_ += other.bufferSize_;
+}
+
 void MovesCollection::scoreByMaterialGain()
 {
     for (ScoredMove& scoredMove : *this) {

@@ -1,19 +1,13 @@
 #include "Variation.h"
 
-#include "SearchNode.h"
-
 namespace chesslib {
 
-Variation::Variation(const SearchNode* startingNode)
-    : evaluation_(startingNode->getEvaluation())
+Variation::Variation(evaluation_t evaluation, const MovesCollection& moves)
+    : evaluation_(evaluation)
 {
-    // TODO: Search tree must be locked at the moment
-    moves_.reserve(32);
-
-    const SearchNode* currentNode = startingNode;
-    while (currentNode != nullptr) {
-        moves_.push_back(currentNode->getMove());
-        currentNode = currentNode->getBestChild();
+    moves_.reserve(moves.size());
+    for (const auto& scoredMove : moves) {
+        moves_.push_back(scoredMove.getMove());
     }
 }
 

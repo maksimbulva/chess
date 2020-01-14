@@ -3,7 +3,6 @@
 #include "Evaluator.h"
 #include "MovesCollection.h"
 #include "require.h"
-#include "SearchTree.h"
 
 #include <limits>
 
@@ -12,24 +11,29 @@ namespace chesslib {
 SearchEngine::SearchEngine(Position position, Evaluator& evaluator)
     : position_(position)
     , evaluator_(&evaluator)
+    , searchDepthPly_(0)
 {
 }
 
 Variation SearchEngine::runSearch(int depthPly)
 {
-    REQUIRE(depthPly > 0);
+    REQUIRE(depthPly > 0 && depthPly < MovesCollection::maxCapacity());
+
+    searchDepthPly_ = depthPly;
+    bestMovesSequence_.clear();
 
     constexpr evaluation_t beta = std::numeric_limits<evaluation_t>::max();
     constexpr evaluation_t alpha = -beta;
 
-    SearchTree searchTree(position_);
-    const evaluation_t evaluation = runAlphaBetaSearch(searchTree.getRoot(), depthPly, alpha, beta);
+    const evaluation_t sideMultiplier = position_.getPlayerToMove() == Black ? -1 : 1;
+    const evaluation_t evaluation =
+        sideMultiplier * runAlphaBetaSearch(bestMovesSequence_, depthPly, alpha, beta);
 
-    return searchTree.getBestVariation();
+    return Variation(evaluation, bestMovesSequence_);
 }
 
 evaluation_t SearchEngine::runAlphaBetaSearch(
-    SearchNode& parent,
+    MovesCollection& bestMovesSequence,
     int depthPly,
     evaluation_t alpha,
     evaluation_t beta)
@@ -37,15 +41,14 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     const player_t playerToMove = position_.getPlayerToMove();
     const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(playerToMove);
 
+    MovesCollection childBestMovesSequence;
+
     MovesCollection pseudoLegalMoves;
     position_.fillWithPseudoLegalMoves(pseudoLegalMoves, Position::MoveGenerationFilter::AllMoves);
     pseudoLegalMoves.scoreByTableValueDelta(playerToMove);
 
     Move bestMove = Move::NullMove();
     bool hasLegalMoves = false;
-
-    SearchNodeRef bestSubtreeRoot;
-    SearchNodeRef currentSubtreeRoot;
 
     for (const auto& scoredMove : pseudoLegalMoves) {
         const Move move = scoredMove.getMove();
@@ -64,9 +67,9 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
                 }
             }
             else {
-                currentSubtreeRoot = SearchNode::createRef(move);
+                childBestMovesSequence.clear();
                 evaluation = -runAlphaBetaSearch(
-                    *currentSubtreeRoot,
+                    childBestMovesSequence,
                     depthPly - 1,
                     -beta,
                     -alpha);
@@ -80,7 +83,9 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
             if (evaluation > alpha) {
                 alpha = evaluation;
                 bestMove = move;
-                bestSubtreeRoot = std::move(currentSubtreeRoot);
+                bestMovesSequence.clear();
+                bestMovesSequence.pushBack(bestMove);
+                bestMovesSequence.append(childBestMovesSequence);
             }
         }
         position_.undoMove();
@@ -95,19 +100,6 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
             return alpha;
         }
     } 
-
-    evaluation_t nodeEvaluation = evaluationSideMultiplier * alpha;
-    if (depthPly == 1) {
-        if (!bestMove.isNullMove()) {
-            parent.setChild(SearchNode::createRef(bestMove, nodeEvaluation));
-        }
-    }
-    else {
-        if (bestSubtreeRoot) {
-            bestSubtreeRoot->setEvaluation(nodeEvaluation);
-            parent.setChild(std::move(bestSubtreeRoot));
-        }
-    }
 
     return alpha;
 }

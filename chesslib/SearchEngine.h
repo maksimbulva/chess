@@ -8,7 +8,6 @@
 namespace chesslib {
 
 class Evaluator;
-class SearchNode;
 
 class SearchEngine
 {
@@ -19,7 +18,7 @@ public:
 
 private:
     evaluation_t runAlphaBetaSearch(
-        SearchNode& parent,
+        MovesCollection& bestMovesSequence,
         int depthPly,
         evaluation_t alpha,
         evaluation_t beta);
@@ -31,6 +30,8 @@ private:
 private:
     Position position_;
     Evaluator* const evaluator_;
+    int searchDepthPly_;
+    MovesCollection bestMovesSequence_;
 };
 
 }
