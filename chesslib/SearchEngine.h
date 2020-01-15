@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EvaluationFactors.h"
 #include "MemoryPool.h"
 #include "Position.h"
 #include "Variation.h"
@@ -20,11 +21,13 @@ public:
 private:
     evaluation_t runAlphaBetaSearch(
         MovesCollection& bestMovesSequence,
+        const EvaluationFactorsArray& parentEvaluationFactors,
         int depthPly,
         evaluation_t alpha,
         evaluation_t beta);
 
     evaluation_t runQuiescentSearch(
+        const EvaluationFactorsArray& parentEvaluationFactors,
         evaluation_t alpha,
         evaluation_t beta);
 

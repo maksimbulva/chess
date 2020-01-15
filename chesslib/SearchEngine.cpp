@@ -22,18 +22,24 @@ Variation SearchEngine::runSearch(int depthPly)
     searchDepthPly_ = depthPly;
     bestMovesSequence_.clear();
 
+    std::array<EvaluationFactors, PLAYER_COUNT> evaluationFactors = {
+        evaluator_->getEvaluationFactors(position_, Black),
+        evaluator_->getEvaluationFactors(position_, White)
+    };
+
     constexpr evaluation_t beta = std::numeric_limits<evaluation_t>::max();
     constexpr evaluation_t alpha = -beta;
 
     const evaluation_t sideMultiplier = position_.getPlayerToMove() == Black ? -1 : 1;
     const evaluation_t evaluation =
-        sideMultiplier * runAlphaBetaSearch(bestMovesSequence_, depthPly, alpha, beta);
+        sideMultiplier * runAlphaBetaSearch(bestMovesSequence_, evaluationFactors, depthPly, alpha, beta);
 
     return Variation(evaluation, bestMovesSequence_);
 }
 
 evaluation_t SearchEngine::runAlphaBetaSearch(
     MovesCollection& bestMovesSequence,
+    const EvaluationFactorsArray& parentEvaluationFactors,
     int depthPly,
     evaluation_t alpha,
     evaluation_t beta)
@@ -42,6 +48,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(playerToMove);
 
     auto childBestMovesSequence = memoryPool_.getMovesCollection();
+    EvaluationFactorsArray childEvaluationFactors;
 
     auto pseudoLegalMoves = memoryPool_.getMovesCollection();
     position_.fillWithPseudoLegalMoves(*pseudoLegalMoves, Position::MoveGenerationFilter::AllMoves);
@@ -56,20 +63,27 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
         if (position_.isValid()) {
 
             hasLegalMoves = true;
+
+            evaluator_->calculateChildEvaluationFactors(
+                childEvaluationFactors,
+                parentEvaluationFactors,
+                move,
+                playerToMove);
  
             evaluation_t evaluation;
             if (depthPly == 1) {
                 if (move.isCapture() || move.isPromotion()) {
-                    evaluation = -runQuiescentSearch(-beta, -alpha);
+                    evaluation = -runQuiescentSearch(childEvaluationFactors, -beta, -alpha);
                 }
                 else {
-                    evaluation = evaluationSideMultiplier * evaluator_->evaluate(position_);
+                    evaluation = evaluationSideMultiplier * evaluator_->evaluate(childEvaluationFactors);
                 }
             }
             else {
                 childBestMovesSequence->clear();
                 evaluation = -runAlphaBetaSearch(
                     *childBestMovesSequence,
+                    childEvaluationFactors,
                     depthPly - 1,
                     -beta,
                     -alpha);
@@ -105,11 +119,13 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
 }
 
 evaluation_t SearchEngine::runQuiescentSearch(
+    const EvaluationFactorsArray& parentEvaluationFactors,
     evaluation_t alpha,
     evaluation_t beta)
 {
-    const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(position_.getPlayerToMove());
-    const evaluation_t evaluation = evaluationSideMultiplier * evaluator_->evaluate(position_);
+    const player_t playerToMove = position_.getPlayerToMove();
+    const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(playerToMove);
+    const evaluation_t evaluation = evaluationSideMultiplier * evaluator_->evaluate(parentEvaluationFactors);
 
     if (evaluation >= beta) {
         return beta;
@@ -119,18 +135,23 @@ evaluation_t SearchEngine::runQuiescentSearch(
         alpha = evaluation;
     }
 
+    EvaluationFactorsArray childEvaluationFactors;
+
     auto pseudoLegalMoves = memoryPool_.getMovesCollection();
     position_.fillWithPseudoLegalMoves(*pseudoLegalMoves, Position::MoveGenerationFilter::CapturesOnly);
     pseudoLegalMoves->scoreByMaterialGain();
 
     for (const auto& scoredMove : *pseudoLegalMoves) {
-        if (!scoredMove.getMove().isCapture()) {
-            continue;
-        }
-
         position_.playMove(scoredMove.getMove());
         if (position_.isValid()) {
-            evaluation_t subtreeEvaluation = -runQuiescentSearch(-beta, -alpha);
+
+            evaluator_->calculateChildEvaluationFactors(
+                childEvaluationFactors,
+                parentEvaluationFactors,
+                scoredMove.getMove(),
+                playerToMove);
+
+            evaluation_t subtreeEvaluation = -runQuiescentSearch(childEvaluationFactors, -beta, -alpha);
 
             if (subtreeEvaluation >= beta) {
                 position_.undoMove();

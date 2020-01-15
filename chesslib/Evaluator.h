@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EvaluationFactors.h"
 #include "Move.h"
 #include "types.h"
 
@@ -21,7 +22,15 @@ public:
         return evaluatedPositionCount_;
     }
 
-    evaluation_t evaluate(const Position& position);
+    EvaluationFactors getEvaluationFactors(const Position& position, player_t player) const;
+
+    void calculateChildEvaluationFactors(
+        EvaluationFactorsArray& childFactors,
+        const EvaluationFactorsArray& parentFactors,
+        const Move movePlayed,
+        const player_t player) const;
+
+    evaluation_t evaluate(const EvaluationFactorsArray& factors);
 
     evaluation_t evaluateNoLegalMovesPosition(Position& position);
 

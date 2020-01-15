@@ -157,14 +157,66 @@ evaluation_t evaluateTableValues(const Position& position, player_t player)
 
 }  // namespace
 
+EvaluationFactors Evaluator::getEvaluationFactors(const Position& position, player_t player) const
+{
+    return EvaluationFactors(
+        evaluateMaterial(position, player),
+        evaluateTableValues(position, player));
+}
+
+void Evaluator::calculateChildEvaluationFactors(
+    EvaluationFactorsArray& childFactors,
+    const EvaluationFactorsArray& parentFactors,
+    const Move movePlayed,
+    const player_t player) const
+{
+    const auto& myParent = parentFactors[player];
+    const auto& otherParent = parentFactors[getOtherPlayer(player)];
+
+    evaluation_t myChildMaterial = myParent.getMaterial();
+    evaluation_t myChildTableValue = myParent.getTableValue();
+    evaluation_t otherChildMaterial = otherParent.getMaterial();
+    evaluation_t otherChildTableValue = otherParent.getTableValue();
+
+    const piece_type_t pieceType = movePlayed.getPieceType();
+    const square_t originSquare = movePlayed.getOriginSquare();
+    const square_t destSquare = movePlayed.getDestSquare();
+
+    // Player lose value from piece's origin square
+    myChildTableValue -= getTableValue(pieceType, player, originSquare);
+
+    // Player gains value for piece's dest square
+    if (movePlayed.isPromotion()) {
+        const piece_type_t finalPieceType = movePlayed.getPromoteToPieceType();
+        myChildTableValue += getTableValue(finalPieceType, player, destSquare);
+        myChildMaterial += MATERIAL_VALUE[finalPieceType] - MATERIAL_VALUE[Pawn];
+    }
+    else {
+        myChildTableValue += getTableValue(pieceType, player, destSquare);
+    }
+
+    if (movePlayed.isCapture()) {
+        const piece_type_t capturedPieceType = movePlayed.getCapturedPieceType();
+        square_t capturedSquare = movePlayed.isEnPassantCapture()
+            ? encodeSquare(getRow(originSquare), getColumn(destSquare))
+            : destSquare;
+        otherChildTableValue -= getTableValue(capturedPieceType, getOtherPlayer(player), capturedSquare);
+        otherChildMaterial -= MATERIAL_VALUE[capturedPieceType];
+    }
+    else if (movePlayed.isCastle()) {
+        myChildTableValue += movePlayed.isShortCastle() ? ShortCastleRookTableDelta : LongCastleRookTableDelta;
+    }
+
+    childFactors[player] = EvaluationFactors(myChildMaterial, myChildTableValue);
+    childFactors[getOtherPlayer(player)] = EvaluationFactors(otherChildMaterial, otherChildTableValue);
+}
+
 // TODO: this is temporary method. Replace with some ML evaluations
-evaluation_t Evaluator::evaluate(const Position& position)
+evaluation_t Evaluator::evaluate(const EvaluationFactorsArray& factors)
 {
     ++evaluatedPositionCount_;
-    auto materialValueDiff = evaluateMaterial(position, White) - evaluateMaterial(position, Black);
-    return static_cast<evaluation_t>(materialValueDiff)
-        + evaluateTableValues(position, White)
-        - evaluateTableValues(position, Black);
+    return factors[White].getMaterial() + factors[White].getTableValue()
+        - factors[Black].getMaterial() - factors[Black].getTableValue();
 }
 
 evaluation_t Evaluator::evaluateNoLegalMovesPosition(Position& position)
