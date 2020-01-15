@@ -107,12 +107,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
 
     if (!hasLegalMoves) {
         const evaluation_t evaluation = evaluator_->evaluateNoLegalMovesPosition(position_);
-        if (evaluation > beta) {
-            return beta;
-        }
-        else if (evaluation < alpha) {
-            return alpha;
-        }
+        return std::max(alpha, std::min(evaluation, beta));
     } 
 
     return alpha;
