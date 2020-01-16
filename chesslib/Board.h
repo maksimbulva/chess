@@ -4,6 +4,7 @@
 #include "PieceOnBoard.h"
 
 #include <array>
+#include <functional>
 
 namespace chesslib {
 
@@ -65,6 +66,20 @@ public:
     PieceIterator getPieceIterator(player_t player) const
     {
         return PieceIterator(player, *this);
+    }
+
+    void doForEachPiece(player_t player, std::function<void(piece_type_t pieceType, square_t square)> action) const
+    {
+        auto piecesIt = getPieceIterator(player);
+        while (true) {
+            action(piecesIt.getPieceType(), piecesIt.getSquare());
+            if (piecesIt.hasNext()) {
+                ++piecesIt;
+            }
+            else {
+                break;
+            }
+        }
     }
 
     void addPiece(const PieceOnBoard& piece);

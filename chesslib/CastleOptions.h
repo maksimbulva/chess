@@ -52,6 +52,9 @@ struct CastleOptions {
         return encodedValue_;
     }
 
+public:
+    static constexpr size_t MAX_ENCODED_VALUE = 3;
+
 private:
     static constexpr encoded_position_flags_t CAN_CASTLE_SHORT = 1;
     static constexpr encoded_position_flags_t CAN_CASTLE_LONG = 2;

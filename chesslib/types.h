@@ -21,6 +21,7 @@ static constexpr encoded_move_t SQUARE_MASK = 63;
 using encoded_position_flags_t = uint32_t;
 
 using evaluation_t = int32_t;
+using position_hash_t = uint64_t;
 
 enum PieceType : piece_type_t {
     NoPiece = 0,

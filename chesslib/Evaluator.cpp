@@ -157,6 +157,20 @@ evaluation_t evaluateTableValues(const Position& position, player_t player)
 
 }  // namespace
 
+Evaluator::Evaluator()
+    : evaluatedPositionCount_(0)
+{
+    shortCastleRookHash_[Black] = hasher_.getValue(Black, Squares::H8, Rook)
+        ^ hasher_.getValue(Black, Squares::F8, Rook);
+    shortCastleRookHash_[White] = hasher_.getValue(White, Squares::H1, Rook)
+        ^ hasher_.getValue(White, Squares::F1, Rook);
+
+    longCastleRookHash_[Black] = hasher_.getValue(Black, Squares::A8, Rook)
+        ^ hasher_.getValue(Black, Squares::D8, Rook);
+    longCastleRookHash_[White] = hasher_.getValue(White, Squares::A1, Rook)
+        ^ hasher_.getValue(White, Squares::D1, Rook);
+}
+
 EvaluationFactors Evaluator::getEvaluationFactors(const Position& position, player_t player) const
 {
     return EvaluationFactors(
@@ -166,6 +180,7 @@ EvaluationFactors Evaluator::getEvaluationFactors(const Position& position, play
 
 void Evaluator::calculateChildEvaluationFactors(
     EvaluationFactorsArray& childFactors,
+    position_hash_t& childPositionHash,
     const EvaluationFactorsArray& parentFactors,
     const Move movePlayed,
     const player_t player) const
@@ -184,15 +199,18 @@ void Evaluator::calculateChildEvaluationFactors(
 
     // Player lose value from piece's origin square
     myChildTableValue -= getTableValue(pieceType, player, originSquare);
+    childPositionHash ^= hasher_.getValue(player, originSquare, pieceType);
 
     // Player gains value for piece's dest square
     if (movePlayed.isPromotion()) {
         const piece_type_t finalPieceType = movePlayed.getPromoteToPieceType();
         myChildTableValue += getTableValue(finalPieceType, player, destSquare);
         myChildMaterial += MATERIAL_VALUE[finalPieceType] - MATERIAL_VALUE[Pawn];
+        childPositionHash ^= hasher_.getValue(player, destSquare, finalPieceType);
     }
     else {
         myChildTableValue += getTableValue(pieceType, player, destSquare);
+        childPositionHash ^= hasher_.getValue(player, destSquare, pieceType);
     }
 
     if (movePlayed.isCapture()) {
@@ -202,9 +220,17 @@ void Evaluator::calculateChildEvaluationFactors(
             : destSquare;
         otherChildTableValue -= getTableValue(capturedPieceType, getOtherPlayer(player), capturedSquare);
         otherChildMaterial -= MATERIAL_VALUE[capturedPieceType];
+        childPositionHash ^= hasher_.getValue(getOtherPlayer(player), capturedSquare, capturedPieceType);
     }
     else if (movePlayed.isCastle()) {
-        myChildTableValue += movePlayed.isShortCastle() ? ShortCastleRookTableDelta : LongCastleRookTableDelta;
+        if (movePlayed.isShortCastle()) {
+            myChildTableValue += ShortCastleRookTableDelta;
+            childPositionHash ^= shortCastleRookHash_[player];
+        }
+        else {
+            myChildTableValue += LongCastleRookTableDelta;
+            childPositionHash ^= longCastleRookHash_[player];
+        }
     }
 
     childFactors[player] = EvaluationFactors(myChildMaterial, myChildTableValue);
@@ -271,6 +297,11 @@ evaluation_t Evaluator::getTableValueDelta(Move move, player_t playerToMove)
     }
 
     return result;
+}
+
+position_hash_t Evaluator::getPositionHash(const Position& position) const
+{
+    return hasher_.getValue(position);
 }
 
 }

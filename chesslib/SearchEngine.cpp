@@ -30,9 +30,15 @@ Variation SearchEngine::runSearch(int depthPly)
     constexpr evaluation_t beta = std::numeric_limits<evaluation_t>::max();
     constexpr evaluation_t alpha = -beta;
 
+    const evaluation_t searchResult = runAlphaBetaSearch(
+        bestMovesSequence_,
+        evaluationFactors,
+        depthPly,
+        alpha,
+        beta);
+
     const evaluation_t sideMultiplier = position_.getPlayerToMove() == Black ? -1 : 1;
-    const evaluation_t evaluation =
-        sideMultiplier * runAlphaBetaSearch(bestMovesSequence_, evaluationFactors, depthPly, alpha, beta);
+    const evaluation_t evaluation = sideMultiplier * searchResult;
 
     return Variation(evaluation, bestMovesSequence_);
 }
@@ -63,9 +69,12 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
         if (position_.isValid()) {
 
             hasLegalMoves = true;
+            // TODO
+            position_hash_t childPositionHash = 0;
 
             evaluator_->calculateChildEvaluationFactors(
                 childEvaluationFactors,
+                childPositionHash,
                 parentEvaluationFactors,
                 move,
                 playerToMove);
@@ -140,8 +149,12 @@ evaluation_t SearchEngine::runQuiescentSearch(
         position_.playMove(scoredMove.getMove());
         if (position_.isValid()) {
 
+            // TODO
+            position_hash_t childPositionHash = 0;
+
             evaluator_->calculateChildEvaluationFactors(
                 childEvaluationFactors,
+                childPositionHash,
                 parentEvaluationFactors,
                 scoredMove.getMove(),
                 playerToMove);
