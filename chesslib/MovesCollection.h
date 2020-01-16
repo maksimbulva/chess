@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Move.h"
+#include "ScoredMove.h"
 #include "types.h"
 
 #include <array>
@@ -9,30 +9,7 @@
 namespace chesslib {
 
 class MovesCollection {
-
-    struct ScoredMove {
-        friend class MovesCollection;
-    public:
-        ScoredMove()
-            : score_(0)
-        {
-        }
-
-        Move getMove() const
-        {
-            return move_;
-        }
-
-        evaluation_t getScore() const
-        {
-            return score_;
-        }
-
-    private:
-        Move move_;
-        evaluation_t score_;
-    };
-
+public:
     static constexpr size_t MAX_CAPACITY = 300;
     using Buffer = std::array<ScoredMove, MAX_CAPACITY>;
 

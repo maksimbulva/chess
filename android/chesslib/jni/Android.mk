@@ -22,6 +22,7 @@ LOCAL_SRC_FILES := \
 	../../../chesslib/notation.cpp \
 	../../../chesslib/position_factory.cpp \
 	../../../chesslib/Position.cpp \
+	../../../chesslib/ScoredMove.cpp \
 	../../../chesslib/SearchEngine.cpp \
 	../../../chesslib/string_repr.cpp \
 	../../../chesslib/string_utils.cpp \
