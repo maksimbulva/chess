@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MemoryPool.h"
 #include "Position.h"
 
 #include <vector>
@@ -30,6 +31,7 @@ private:
     Position initialPosition_;
     Position currentPosition_;
 
+    MemoryPool memoryPool_;
     std::vector<Move> legalMoves_;
 };
 

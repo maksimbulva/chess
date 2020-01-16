@@ -137,6 +137,7 @@
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="position_factory.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="ScoredMove.cpp" />
     <ClCompile Include="SearchEngine.cpp" />
     <ClCompile Include="string_repr.cpp" />
     <ClCompile Include="string_utils.cpp" />

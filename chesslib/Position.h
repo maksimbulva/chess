@@ -2,6 +2,7 @@
 
 #include "Board.h"
 #include "board_utils.h"
+#include "MemoryPool.h"
 #include "MovesCollection.h"
 #include "OptionalColumn.h"
 #include "PositionFlags.h"
@@ -29,7 +30,7 @@ public:
         uint32_t halfmoveClock,
         uint32_t fullmoveNumber);
 
-    void fillWithPseudoLegalMoves(MovesCollection& moves, MoveGenerationFilter movesFilter);
+    MemoryPool::PooledPtr generatePseudoLegalMoves(MoveGenerationFilter movesFilter, MemoryPool& memoryPool);
 
     player_t getPlayerToMove() const
     {

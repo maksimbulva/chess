@@ -4,7 +4,6 @@
 #include "types.h"
 
 #include <array>
-#include <memory>
 
 namespace chesslib {
 
@@ -15,8 +14,7 @@ public:
 
 public:
     MovesCollection()
-        : buffer_(std::make_unique<Buffer>())
-        , bufferSize_(0)
+        : bufferSize_(0)
     {
     }
 
@@ -37,7 +35,7 @@ public:
 
     void pushBack(Move move)
     {
-        (*buffer_)[bufferSize_].move_ = move;
+        buffer_[bufferSize_].move_ = move;
         ++bufferSize_;
     }
 
@@ -45,12 +43,12 @@ public:
 
     Buffer::iterator begin()
     {
-        return buffer_->begin();
+        return buffer_.begin();
     }
 
     Buffer::const_iterator begin() const
     {
-        return buffer_->begin();
+        return buffer_.begin();
     }
 
     Buffer::iterator end()
@@ -75,7 +73,7 @@ public:
 private:
     void sortMoves();
 
-    std::unique_ptr<Buffer> buffer_;
+    Buffer buffer_;
     size_t bufferSize_;
 };
 

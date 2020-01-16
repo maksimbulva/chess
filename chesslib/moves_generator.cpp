@@ -85,9 +85,13 @@ void fillWithDeltaMoves(
 
 }  // namespace
 
-void Position::fillWithPseudoLegalMoves(MovesCollection& moves, MoveGenerationFilter movesFilter)
+MemoryPool::PooledPtr Position::generatePseudoLegalMoves(
+    MoveGenerationFilter movesFilter,
+    MemoryPool& memoryPool)
 {
-    return fillWithPseudoLegalMoves(moves, movesFilter, isInCheck());
+    auto movesCollection = memoryPool.getMovesCollection();
+    fillWithPseudoLegalMoves(*movesCollection, movesFilter, isInCheck());
+    return movesCollection;
 }
 
 void Position::fillWithPseudoLegalMoves(

@@ -56,8 +56,9 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     auto childBestMovesSequence = memoryPool_.getMovesCollection();
     EvaluationFactorsArray childEvaluationFactors;
 
-    auto pseudoLegalMoves = memoryPool_.getMovesCollection();
-    position_.fillWithPseudoLegalMoves(*pseudoLegalMoves, Position::MoveGenerationFilter::AllMoves);
+    auto pseudoLegalMoves = position_.generatePseudoLegalMoves(
+        Position::MoveGenerationFilter::AllMoves,
+        memoryPool_);
     pseudoLegalMoves->scoreByTableValueDelta(playerToMove);
 
     Move bestMove = Move::NullMove();
@@ -141,8 +142,9 @@ evaluation_t SearchEngine::runQuiescentSearch(
 
     EvaluationFactorsArray childEvaluationFactors;
 
-    auto pseudoLegalMoves = memoryPool_.getMovesCollection();
-    position_.fillWithPseudoLegalMoves(*pseudoLegalMoves, Position::MoveGenerationFilter::CapturesOnly);
+    auto pseudoLegalMoves = position_.generatePseudoLegalMoves(
+        Position::MoveGenerationFilter::CapturesOnly,
+        memoryPool_);
     pseudoLegalMoves->scoreByMaterialGain();
 
     for (const auto& scoredMove : *pseudoLegalMoves) {

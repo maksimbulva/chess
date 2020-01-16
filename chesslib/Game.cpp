@@ -8,6 +8,7 @@ namespace chesslib {
 Game::Game(const Position& position)
     : initialPosition_(position)
     , currentPosition_(position)
+    , memoryPool_(1)
 {
     legalMoves_.reserve(256);
     updateLegalMoves();
@@ -31,15 +32,14 @@ void Game::updateLegalMoves()
 {
     legalMoves_.clear();
 
-    MovesCollection pseudoLegalMoves;
-    currentPosition_.fillWithPseudoLegalMoves(
-        pseudoLegalMoves,
-        Position::MoveGenerationFilter::AllMoves);
+    auto pseudoLegalMoves = currentPosition_.generatePseudoLegalMoves(
+        Position::MoveGenerationFilter::AllMoves,
+        memoryPool_);
 
     Position tmpPosition = currentPosition_;
 
     // TODO: optimize me
-    for (const auto& scoredMove : pseudoLegalMoves) {
+    for (const auto& scoredMove : *pseudoLegalMoves) {
         tmpPosition.playMove(scoredMove.getMove());
         if (tmpPosition.isValid()) {
             legalMoves_.push_back(scoredMove.getMove());

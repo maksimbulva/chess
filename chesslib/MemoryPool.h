@@ -2,6 +2,7 @@
 
 #include "MovesCollection.h"
 
+#include <memory>
 #include <vector>
 
 namespace chesslib {
@@ -11,6 +12,8 @@ public:
     class PooledPtr {
         friend class MemoryPool;
     public:
+        PooledPtr(PooledPtr&&) noexcept = default;
+
         ~PooledPtr()
         {
             memoryPool_->releaseMovesCollection(std::move(movesCollection_));
@@ -18,39 +21,40 @@ public:
 
         MovesCollection* const operator->()
         {
-            return &movesCollection_;
+            return &*movesCollection_;
         }
 
         MovesCollection& operator*()
         {
-            return movesCollection_;
+            return *movesCollection_;
         }
 
     private:
-        PooledPtr(MemoryPool& memoryPool, MovesCollection movesCollection)
+        PooledPtr(MemoryPool& memoryPool, std::unique_ptr<MovesCollection> movesCollection)
             : memoryPool_(&memoryPool)
             , movesCollection_(std::move(movesCollection))
         {
-            movesCollection_.clear();
+            movesCollection_->clear();
         }
 
     private:
         MemoryPool* const memoryPool_;
-        MovesCollection movesCollection_;
+        std::unique_ptr<MovesCollection> movesCollection_;
     };
 
 public:
     MemoryPool();
+    MemoryPool(size_t initialCapacity);
 
     PooledPtr getMovesCollection();
 
 private:
     friend class PooledPtr;
 
-    void releaseMovesCollection(MovesCollection movesCollection);
+    void releaseMovesCollection(std::unique_ptr<MovesCollection> movesCollection);
 
 private:
-    std::vector<MovesCollection> movesCollections_;
+    std::vector<std::unique_ptr<MovesCollection>> movesCollections_;
 };
 
 }
