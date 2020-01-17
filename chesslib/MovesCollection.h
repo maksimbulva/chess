@@ -35,7 +35,7 @@ public:
 
     void pushBack(Move move)
     {
-        buffer_[bufferSize_].move_ = move;
+        buffer_[bufferSize_].setMove(move);
         ++bufferSize_;
     }
 
@@ -61,9 +61,7 @@ public:
         return begin() + bufferSize_;
     }
 
-    void scoreByMaterialGain();
-
-    void scoreByTableValueDelta(player_t playerToMove);
+    void scoreMoves(const Evaluator& evaluator, player_t playerToMove);
 
     static constexpr size_t maxCapacity()
     {

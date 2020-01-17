@@ -1,9 +1,8 @@
 #pragma once
 
 #include "EvaluationFactors.h"
-#include "Move.h"
+#include "ScoredMove.h"
 #include "types.h"
-#include "ZobristHasher.h"
 
 #include <array>
 #include <atomic>
@@ -21,36 +20,48 @@ public:
         return evaluatedPositionCount_;
     }
 
+    evaluation_t getMaterialValue(piece_type_t pieceType) const;
+
     EvaluationFactors getEvaluationFactors(const Position& position, player_t player) const;
 
     void calculateChildEvaluationFactors(
         EvaluationFactorsArray& childFactors,
-        position_hash_t& childPositionHash,
         const EvaluationFactorsArray& parentFactors,
-        const Move movePlayed,
+        const ScoredMove& movePlayed,
         const player_t player) const;
 
     evaluation_t evaluate(const EvaluationFactorsArray& factors);
 
     evaluation_t evaluateNoLegalMovesPosition(Position& position);
 
-    position_hash_t getPositionHash(const Position& position) const;
+    evaluation_t evaluateMaterial(const Position& position, player_t player) const;
 
     static evaluation_t getSideMultiplier(player_t playerToMove)
     {
         return playerToMove == Black ? -1 : 1;
     }
 
-    static evaluation_t getMaterialGain(Move move);
+    static evaluation_t getTableValue(piece_type_t pieceType, player_t player, square_t square)
+    {
+        const square_t adjustedSquare = player == White
+            ? encodeSquare(MAX_ROW - getRow(square), getColumn(square))
+            : square;
+        return (*TABLE_VALUES[pieceType])[adjustedSquare];
+    }
 
-    static evaluation_t getTableValueDelta(Move move, player_t playerToMove);
+    static evaluation_t getTableValue(piece_type_t pieceType, square_t adjustedSquare)
+    {
+        return (*TABLE_VALUES[pieceType])[adjustedSquare];
+    }
+
+    static evaluation_t evaluateTableValues(const Position& position, player_t player);
 
 private:
     // TODO: consider using std::atomic_uint64_t
     std::atomic<uint64_t> evaluatedPositionCount_;
-    ZobristHasher hasher_;
-    std::array<position_hash_t, PLAYER_COUNT> shortCastleRookHash_;
-    std::array<position_hash_t, PLAYER_COUNT> longCastleRookHash_;
+
+    using TableValues = std::array<evaluation_t, SQUARE_COUNT>;
+    static const std::array<TableValues*, King + 1> TABLE_VALUES;
 };
 
 }

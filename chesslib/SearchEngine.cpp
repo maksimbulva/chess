@@ -3,6 +3,7 @@
 #include "Evaluator.h"
 #include "MovesCollection.h"
 #include "require.h"
+#include "ZobristHasher.h"
 
 #include <limits>
 
@@ -33,6 +34,7 @@ Variation SearchEngine::runSearch(int depthPly)
     const evaluation_t searchResult = runAlphaBetaSearch(
         bestMovesSequence_,
         evaluationFactors,
+        ZobristHasher::getInstance().getValue(position_),
         depthPly,
         alpha,
         beta);
@@ -46,6 +48,7 @@ Variation SearchEngine::runSearch(int depthPly)
 evaluation_t SearchEngine::runAlphaBetaSearch(
     MovesCollection& bestMovesSequence,
     const EvaluationFactorsArray& parentEvaluationFactors,
+    position_hash_t parentHash,
     int depthPly,
     evaluation_t alpha,
     evaluation_t beta)
@@ -59,7 +62,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     auto pseudoLegalMoves = position_.generatePseudoLegalMoves(
         Position::MoveGenerationFilter::AllMoves,
         memoryPool_);
-    pseudoLegalMoves->scoreByTableValueDelta(playerToMove);
+    pseudoLegalMoves->scoreMoves(*evaluator_, playerToMove);
 
     Move bestMove = Move::NullMove();
     bool hasLegalMoves = false;
@@ -70,20 +73,19 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
         if (position_.isValid()) {
 
             hasLegalMoves = true;
-            // TODO
-            position_hash_t childPositionHash = 0;
 
             evaluator_->calculateChildEvaluationFactors(
                 childEvaluationFactors,
-                childPositionHash,
                 parentEvaluationFactors,
-                move,
+                scoredMove,
                 playerToMove);
+
+            const position_hash_t childHash = parentHash ^ scoredMove.getHash();
  
             evaluation_t evaluation;
             if (depthPly == 1) {
                 if (move.isCapture() || move.isPromotion()) {
-                    evaluation = -runQuiescentSearch(childEvaluationFactors, -beta, -alpha);
+                    evaluation = -runQuiescentSearch(childEvaluationFactors, childHash, -beta, -alpha);
                 }
                 else {
                     evaluation = evaluationSideMultiplier * evaluator_->evaluate(childEvaluationFactors);
@@ -94,6 +96,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
                 evaluation = -runAlphaBetaSearch(
                     *childBestMovesSequence,
                     childEvaluationFactors,
+                    childHash,
                     depthPly - 1,
                     -beta,
                     -alpha);
@@ -125,6 +128,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
 
 evaluation_t SearchEngine::runQuiescentSearch(
     const EvaluationFactorsArray& parentEvaluationFactors,
+    position_hash_t parentHash,
     evaluation_t alpha,
     evaluation_t beta)
 {
@@ -145,23 +149,20 @@ evaluation_t SearchEngine::runQuiescentSearch(
     auto pseudoLegalMoves = position_.generatePseudoLegalMoves(
         Position::MoveGenerationFilter::CapturesOnly,
         memoryPool_);
-    pseudoLegalMoves->scoreByMaterialGain();
+    pseudoLegalMoves->scoreMoves(*evaluator_, playerToMove);
 
     for (const auto& scoredMove : *pseudoLegalMoves) {
         position_.playMove(scoredMove.getMove());
         if (position_.isValid()) {
 
-            // TODO
-            position_hash_t childPositionHash = 0;
-
             evaluator_->calculateChildEvaluationFactors(
                 childEvaluationFactors,
-                childPositionHash,
                 parentEvaluationFactors,
-                scoredMove.getMove(),
+                scoredMove,
                 playerToMove);
 
-            evaluation_t subtreeEvaluation = -runQuiescentSearch(childEvaluationFactors, -beta, -alpha);
+            const position_hash_t childHash = parentHash ^ scoredMove.getHash();
+            evaluation_t subtreeEvaluation = -runQuiescentSearch(childEvaluationFactors, childHash, -beta, -alpha);
 
             if (subtreeEvaluation >= beta) {
                 position_.undoMove();

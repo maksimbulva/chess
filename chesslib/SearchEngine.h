@@ -22,12 +22,14 @@ private:
     evaluation_t runAlphaBetaSearch(
         MovesCollection& bestMovesSequence,
         const EvaluationFactorsArray& parentEvaluationFactors,
+        position_hash_t parentHash,
         int depthPly,
         evaluation_t alpha,
         evaluation_t beta);
 
     evaluation_t runQuiescentSearch(
         const EvaluationFactorsArray& parentEvaluationFactors,
+        position_hash_t parentHash,
         evaluation_t alpha,
         evaluation_t beta);
 

@@ -12,18 +12,10 @@ void MovesCollection::append(const MovesCollection& other)
     bufferSize_ += other.bufferSize_;
 }
 
-void MovesCollection::scoreByMaterialGain()
+void MovesCollection::scoreMoves(const Evaluator& evaluator, player_t playerToMove)
 {
     for (ScoredMove& scoredMove : *this) {
-        scoredMove.score_ = Evaluator::getMaterialGain(scoredMove.getMove());
-    }
-    sortMoves();
-}
-
-void MovesCollection::scoreByTableValueDelta(player_t playerToMove)
-{
-    for (ScoredMove& scoredMove : *this) {
-        scoredMove.score_ = Evaluator::getTableValueDelta(scoredMove.getMove(), playerToMove);
+        scoredMove.updateScore(evaluator, playerToMove);
     }
     sortMoves();
 }

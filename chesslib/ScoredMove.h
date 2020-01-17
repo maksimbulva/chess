@@ -5,17 +5,22 @@
 
 namespace chesslib {
 
+class Evaluator;
+
 struct ScoredMove {
-    friend class MovesCollection;
 public:
-    ScoredMove()
-        : score_(0)
-    {
-    }
+    ScoredMove();
+
+    void updateScore(const Evaluator& evaluator, player_t player);
 
     Move getMove() const
     {
         return move_;
+    }
+
+    void setMove(Move move)
+    {
+        move_ = move;
     }
 
     evaluation_t getScore() const
@@ -23,9 +28,39 @@ public:
         return score_;
     }
 
+    evaluation_t getMyMaterialGain() const
+    {
+        return myMaterialGain_;
+    }
+
+    evaluation_t getTheirMaterialGain() const
+    {
+        return theirMaterialGain_;
+    }
+
+    evaluation_t getMyTableValueGain() const
+    {
+        return myTableValueGain_;
+    }
+
+    evaluation_t getTheirTableValueGain() const
+    {
+        return theirTableValueGain_;
+    }
+
+    position_hash_t getHash() const
+    {
+        return hash_;
+    }
+
 private:
     Move move_;
     evaluation_t score_;
+    evaluation_t myMaterialGain_;
+    evaluation_t theirMaterialGain_;
+    evaluation_t myTableValueGain_;
+    evaluation_t theirTableValueGain_;
+    position_hash_t hash_;
 };
 
 }

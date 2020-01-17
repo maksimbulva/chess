@@ -13,7 +13,11 @@ class Position;
 
 class ZobristHasher {
 public:
-    ZobristHasher();
+    static const ZobristHasher& getInstance()
+    {
+        static ZobristHasher instance;
+        return instance;
+    }
 
     uint64_t getValue(player_t player, square_t square, piece_type_t pieceType) const
     {
@@ -24,6 +28,8 @@ public:
     position_hash_t getValue(const Position& position) const;
 
 private:
+    ZobristHasher();
+
     uint64_t getValue(const Board& board, player_t player) const;
 
     uint64_t getValue(const CastleOptions& castleOptions, player_t player) const
