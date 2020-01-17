@@ -142,6 +142,7 @@
     <ClCompile Include="string_repr.cpp" />
     <ClCompile Include="string_utils.cpp" />
     <ClCompile Include="testing_utils.cpp" />
+    <ClCompile Include="TranspositionTable.cpp" />
     <ClCompile Include="uci_main.cpp" />
     <ClCompile Include="Variation.cpp" />
     <ClCompile Include="ZobristHasher.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="string_repr.h" />
     <ClInclude Include="string_utils.h" />
     <ClInclude Include="testing_utils.h" />
+    <ClInclude Include="TranspositionTable.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="Variation.h" />
     <ClInclude Include="ZobristHasher.h" />

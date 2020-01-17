@@ -118,10 +118,13 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
         position_.undoMove();
     }
 
-    if (!hasLegalMoves) {
+    if (!bestMove.isNullMove()) {
+        transpositionTable_.insert(parentHash);
+
+    } else if (!hasLegalMoves) {
         const evaluation_t evaluation = evaluator_->evaluateNoLegalMovesPosition(position_);
         return std::max(alpha, std::min(evaluation, beta));
-    } 
+    }
 
     return alpha;
 }

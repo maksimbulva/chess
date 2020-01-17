@@ -27,6 +27,7 @@ LOCAL_SRC_FILES := \
 	../../../chesslib/string_repr.cpp \
 	../../../chesslib/string_utils.cpp \
 	../../../chesslib/testing_utils.cpp \
+	../../../chesslib/TranspositionTable.cpp \
 	../../../chesslib/Variation.cpp \
 	../../../chesslib/ZobristHasher.cpp \
 	../src/main/jni/ChesslibWrapper.cpp \

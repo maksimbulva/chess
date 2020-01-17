@@ -3,6 +3,7 @@
 #include "EvaluationFactors.h"
 #include "MemoryPool.h"
 #include "Position.h"
+#include "TranspositionTable.h"
 #include "Variation.h"
 
 #include <vector>
@@ -39,6 +40,7 @@ private:
     int searchDepthPly_;
     MovesCollection bestMovesSequence_;
     MemoryPool memoryPool_;
+    TranspositionTable transpositionTable_;
 };
 
 }
