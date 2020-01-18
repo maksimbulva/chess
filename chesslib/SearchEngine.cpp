@@ -53,6 +53,35 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     evaluation_t alpha,
     evaluation_t beta)
 {
+    int storedDepthPly = std::numeric_limits<int>::max();
+    auto transpositionValue = transpositionTable_.findValue(parentHash);
+    if (transpositionValue.isNotEmpty()) {
+        storedDepthPly = transpositionValue.getDepthPly();
+        if (storedDepthPly >= depthPly) {
+            const evaluation_t storedEvaluation = transpositionValue.getEvaluation();
+            switch (transpositionValue.getEvaluationConstraint()) {
+                case TranspositionTable::Exact:
+                {
+                    return storedEvaluation;
+                }
+                case TranspositionTable::AtMost:
+                {
+                    if (storedEvaluation <= alpha) {
+                        return alpha;
+                    }
+                }
+                case TranspositionTable::AtLeast:
+                {
+                    if (storedEvaluation >= beta) {
+                        return beta;
+                    }
+                }
+            }
+        }
+    }
+
+    const bool isAllowTranspositionTableUpdate = (storedDepthPly < depthPly);
+
     const player_t playerToMove = position_.getPlayerToMove();
     const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(playerToMove);
 
@@ -104,6 +133,9 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
 
             if (evaluation >= beta) {
                 position_.undoMove();
+                if (isAllowTranspositionTableUpdate) {
+                    transpositionTable_.insertBetaCutoff(parentHash, move, depthPly, beta);
+                }
                 return beta;
             } 
             
@@ -119,11 +151,24 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     }
 
     if (!bestMove.isNullMove()) {
-        transpositionTable_.insert(parentHash);
-
-    } else if (!hasLegalMoves) {
-        const evaluation_t evaluation = evaluator_->evaluateNoLegalMovesPosition(position_);
-        return std::max(alpha, std::min(evaluation, beta));
+        if (isAllowTranspositionTableUpdate) {
+            transpositionTable_.insertExactEvaluation(
+                parentHash,
+                bestMove,
+                depthPly,
+                alpha);
+        }
+    } else {
+        if (!hasLegalMoves) {
+            const evaluation_t evaluation = evaluator_->evaluateNoLegalMovesPosition(position_);
+            return std::max(alpha, std::min(evaluation, beta));
+        }
+        if (isAllowTranspositionTableUpdate) {
+            transpositionTable_.insertNoAlphaImprovement(
+                parentHash,
+                depthPly,
+                alpha);
+        }
     }
 
     return alpha;

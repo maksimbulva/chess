@@ -82,6 +82,11 @@ public:
         return encoded_ == 0;
     }
 
+    encoded_move_t getEncodedValue() const
+    {
+        return encoded_;
+    }
+
 public:
     static constexpr encoded_move_t Capture = (static_cast<encoded_move_t>(1)) << 21;
     static constexpr encoded_move_t EnPassantCapture = (static_cast<encoded_move_t>(1)) << 22;
