@@ -17,6 +17,11 @@ public:
     {        
     }
 
+    bool operator==(const Move& other) const
+    {
+        return encoded_ == other.encoded_;
+    }
+
     square_t getOriginSquare() const
     {
         return encoded_ & SQUARE_MASK;

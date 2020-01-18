@@ -54,9 +54,12 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     evaluation_t beta)
 {
     int storedDepthPly = std::numeric_limits<int>::max();
+    Move moveToPrioritize = Move::NullMove();
+
     auto transpositionValue = transpositionTable_.findValue(parentHash);
     if (transpositionValue.isNotEmpty()) {
         storedDepthPly = transpositionValue.getDepthPly();
+        moveToPrioritize = transpositionValue.getBestMove();
         if (storedDepthPly >= depthPly) {
             const evaluation_t storedEvaluation = transpositionValue.getEvaluation();
             switch (transpositionValue.getEvaluationConstraint()) {
@@ -91,7 +94,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     auto pseudoLegalMoves = position_.generatePseudoLegalMoves(
         Position::MoveGenerationFilter::AllMoves,
         memoryPool_);
-    pseudoLegalMoves->scoreMoves(*evaluator_, playerToMove);
+    pseudoLegalMoves->scoreMoves(*evaluator_, playerToMove, moveToPrioritize);
 
     Move bestMove = Move::NullMove();
     bool hasLegalMoves = false;
@@ -197,7 +200,7 @@ evaluation_t SearchEngine::runQuiescentSearch(
     auto pseudoLegalMoves = position_.generatePseudoLegalMoves(
         Position::MoveGenerationFilter::CapturesOnly,
         memoryPool_);
-    pseudoLegalMoves->scoreMoves(*evaluator_, playerToMove);
+    pseudoLegalMoves->scoreMoves(*evaluator_, playerToMove, Move::NullMove());
 
     for (const auto& scoredMove : *pseudoLegalMoves) {
         position_.playMove(scoredMove.getMove());

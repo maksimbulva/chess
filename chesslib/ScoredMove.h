@@ -28,6 +28,11 @@ public:
         return score_;
     }
 
+    void setScore(evaluation_t score)
+    {
+        score_ = score;
+    }
+
     evaluation_t getMyMaterialGain() const
     {
         return myMaterialGain_;

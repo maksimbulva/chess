@@ -61,7 +61,10 @@ public:
         return begin() + bufferSize_;
     }
 
-    void scoreMoves(const Evaluator& evaluator, player_t playerToMove);
+    void scoreMoves(
+        const Evaluator& evaluator,
+        player_t playerToMove,
+        Move moveToPrioritize);
 
     static constexpr size_t maxCapacity()
     {
