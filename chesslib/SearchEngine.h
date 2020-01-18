@@ -21,7 +21,6 @@ public:
 
 private:
     evaluation_t runAlphaBetaSearch(
-        MovesCollection& bestMovesSequence,
         const EvaluationFactorsArray& parentEvaluationFactors,
         position_hash_t parentHash,
         int depthPly,
@@ -35,10 +34,11 @@ private:
         evaluation_t beta);
 
 private:
+    MovesCollection getPrincipalVariation(position_hash_t hash);
+
     Position position_;
     Evaluator* const evaluator_;
     int searchDepthPly_;
-    MovesCollection bestMovesSequence_;
     MemoryPool memoryPool_;
     TranspositionTable transpositionTable_;
 };

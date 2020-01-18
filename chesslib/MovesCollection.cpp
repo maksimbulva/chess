@@ -13,6 +13,14 @@ void MovesCollection::append(const MovesCollection& other)
     bufferSize_ += other.bufferSize_;
 }
 
+bool MovesCollection::isContains(Move move) const
+{
+    return std::find_if(begin(), end(), [move] (const ScoredMove& scoredMove)
+    {
+        return scoredMove.getMove() == move;
+    }) != end();
+}
+
 void MovesCollection::scoreMoves(
     const Evaluator& evaluator,
     player_t playerToMove,

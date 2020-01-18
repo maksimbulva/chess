@@ -34,6 +34,13 @@ ScoredMove::ScoredMove()
 {
 }
 
+ScoredMove::ScoredMove(Move move, const Evaluator& evaluator, player_t player)
+    : ScoredMove()
+{
+    setMove(move);
+    updateScore(evaluator, player);
+}
+
 void ScoredMove::updateScore(const Evaluator& evaluator, player_t player)
 {
     myMaterialGain_ = 0;

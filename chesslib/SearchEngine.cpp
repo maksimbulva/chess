@@ -21,7 +21,6 @@ Variation SearchEngine::runSearch(int depthPly)
     REQUIRE(depthPly > 0 && depthPly < MovesCollection::maxCapacity());
 
     searchDepthPly_ = depthPly;
-    bestMovesSequence_.clear();
 
     std::array<EvaluationFactors, PLAYER_COUNT> evaluationFactors = {
         evaluator_->getEvaluationFactors(position_, Black),
@@ -30,11 +29,11 @@ Variation SearchEngine::runSearch(int depthPly)
 
     constexpr evaluation_t beta = std::numeric_limits<evaluation_t>::max();
     constexpr evaluation_t alpha = -beta;
+    const position_hash_t hash = ZobristHasher::getInstance().getValue(position_);
 
     const evaluation_t searchResult = runAlphaBetaSearch(
-        bestMovesSequence_,
         evaluationFactors,
-        ZobristHasher::getInstance().getValue(position_),
+        hash,
         depthPly,
         alpha,
         beta);
@@ -42,11 +41,10 @@ Variation SearchEngine::runSearch(int depthPly)
     const evaluation_t sideMultiplier = position_.getPlayerToMove() == Black ? -1 : 1;
     const evaluation_t evaluation = sideMultiplier * searchResult;
 
-    return Variation(evaluation, bestMovesSequence_);
+    return Variation(evaluation, getPrincipalVariation(hash));
 }
 
 evaluation_t SearchEngine::runAlphaBetaSearch(
-    MovesCollection& bestMovesSequence,
     const EvaluationFactorsArray& parentEvaluationFactors,
     position_hash_t parentHash,
     int depthPly,
@@ -56,7 +54,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     int storedDepthPly = std::numeric_limits<int>::max();
     Move moveToPrioritize = Move::NullMove();
 
-    auto transpositionValue = transpositionTable_.findValue(parentHash);
+    const auto transpositionValue = transpositionTable_.findValue(parentHash);
     if (transpositionValue.isNotEmpty()) {
         storedDepthPly = transpositionValue.getDepthPly();
         moveToPrioritize = transpositionValue.getBestMove();
@@ -83,12 +81,12 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
         }
     }
 
-    const bool isAllowTranspositionTableUpdate = (storedDepthPly < depthPly);
+    const bool isAllowTranspositionTableUpdate = (storedDepthPly < depthPly)
+        || (storedDepthPly == std::numeric_limits<int>::max());
 
     const player_t playerToMove = position_.getPlayerToMove();
     const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(playerToMove);
 
-    auto childBestMovesSequence = memoryPool_.getMovesCollection();
     EvaluationFactorsArray childEvaluationFactors;
 
     auto pseudoLegalMoves = position_.generatePseudoLegalMoves(
@@ -124,9 +122,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
                 }
             }
             else {
-                childBestMovesSequence->clear();
                 evaluation = -runAlphaBetaSearch(
-                    *childBestMovesSequence,
                     childEvaluationFactors,
                     childHash,
                     depthPly - 1,
@@ -145,9 +141,6 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
             if (evaluation > alpha) {
                 alpha = evaluation;
                 bestMove = move;
-                bestMovesSequence.clear();
-                bestMovesSequence.pushBack(bestMove);
-                bestMovesSequence.append(*childBestMovesSequence);
             }
         }
         position_.undoMove();
@@ -228,6 +221,46 @@ evaluation_t SearchEngine::runQuiescentSearch(
     }
 
     return alpha;
+}
+
+MovesCollection SearchEngine::getPrincipalVariation(position_hash_t hash)
+{
+    MovesCollection moves;
+    Position position = position_;
+
+    while (true) {
+        const auto transpositionValue = transpositionTable_.findValue(hash);
+        if (transpositionValue.isEmpty()) {
+            break;
+        }
+
+        const Move move = transpositionValue.getBestMove();
+        if (move.isNullMove()) {
+            break;
+        }
+
+        ScoredMove scoredMove(move, *evaluator_, position.getPlayerToMove());
+
+        auto pseudoLegalMoves = position.generatePseudoLegalMoves(
+            Position::MoveGenerationFilter::AllMoves,
+            memoryPool_);
+
+        if (!pseudoLegalMoves->isContains(move)) {
+            // The move was overwritten due to hash collision, cannot continue
+            break;
+        }
+
+        position.playMove(move);
+        if (!position.isValid()) {
+            // The move was overwritten due to hash collision, cannot continue
+            break;
+        }
+
+        hash ^= scoredMove.getHash();
+        moves.pushBack(move);
+    }
+
+    return moves;
 }
 
 }

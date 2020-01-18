@@ -11,6 +11,8 @@ struct ScoredMove {
 public:
     ScoredMove();
 
+    ScoredMove(Move move, const Evaluator& evaluator, player_t player);
+
     void updateScore(const Evaluator& evaluator, player_t player);
 
     Move getMove() const

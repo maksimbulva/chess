@@ -61,6 +61,8 @@ public:
         return begin() + bufferSize_;
     }
 
+    bool isContains(Move move) const;
+
     void scoreMoves(
         const Evaluator& evaluator,
         player_t playerToMove,
