@@ -101,49 +101,53 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     for (const auto& scoredMove : *pseudoLegalMoves) {
         const Move move = scoredMove.getMove();
         position_.playMove(move);
-        if (position_.isValid()) {
 
-            hasLegalMoves = true;
+        if (position_.isNotValid()) {
+            position_.undoMove();
+            continue;
+        }
 
-            evaluator_->calculateChildEvaluationFactors(
-                childEvaluationFactors,
-                parentEvaluationFactors,
-                scoredMove,
-                playerToMove);
+        hasLegalMoves = true;
 
-            const PositionHash childHash = getChildHash(parentHash, position_.getPositionFlags(), scoredMove);
- 
-            evaluation_t evaluation;
-            if (depthPly == 1) {
-                if (move.isCapture() || move.isPromotion()) {
-                    evaluation = -runQuiescentSearch(childEvaluationFactors, childHash, -beta, -alpha);
-                }
-                else {
-                    evaluation = evaluationSideMultiplier * evaluator_->evaluate(childEvaluationFactors);
-                }
+        evaluator_->calculateChildEvaluationFactors(
+            childEvaluationFactors,
+            parentEvaluationFactors,
+            scoredMove,
+            playerToMove);
+
+        const PositionHash childHash = getChildHash(parentHash, position_.getPositionFlags(), scoredMove);
+
+        evaluation_t evaluation;
+        if (depthPly == 1) {
+            if (move.isCapture() || move.isPromotion()) {
+                evaluation = -runQuiescentSearch(childEvaluationFactors, childHash, -beta, -alpha);
             }
             else {
-                evaluation = -runAlphaBetaSearch(
-                    childEvaluationFactors,
-                    childHash,
-                    depthPly - 1,
-                    -beta,
-                    -alpha);
-            }
-
-            if (evaluation >= beta) {
-                position_.undoMove();
-                if (isAllowTranspositionTableUpdate) {
-                    transpositionTable_.insertBetaCutoff(parentHash.getHash(), move, depthPly, beta);
-                }
-                return beta;
-            } 
-            
-            if (evaluation > alpha) {
-                alpha = evaluation;
-                bestMove = move;
+                evaluation = evaluationSideMultiplier * evaluator_->evaluate(childEvaluationFactors);
             }
         }
+        else {
+            evaluation = -runAlphaBetaSearch(
+                childEvaluationFactors,
+                childHash,
+                depthPly - 1,
+                -beta,
+                -alpha);
+        }
+
+        if (evaluation >= beta) {
+            position_.undoMove();
+            if (isAllowTranspositionTableUpdate) {
+                transpositionTable_.insertBetaCutoff(parentHash.getHash(), move, depthPly, beta);
+            }
+            return beta;
+        } 
+        
+        if (evaluation > alpha) {
+            alpha = evaluation;
+            bestMove = move;
+        }
+
         position_.undoMove();
     }
 
@@ -198,26 +202,30 @@ evaluation_t SearchEngine::runQuiescentSearch(
 
     for (const auto& scoredMove : *pseudoLegalMoves) {
         position_.playMove(scoredMove.getMove());
-        if (position_.isValid()) {
 
-            evaluator_->calculateChildEvaluationFactors(
-                childEvaluationFactors,
-                parentEvaluationFactors,
-                scoredMove,
-                playerToMove);
-
-            const PositionHash childHash = getChildHash(parentHash, position_.getPositionFlags(), scoredMove);
-            evaluation_t subtreeEvaluation = -runQuiescentSearch(childEvaluationFactors, childHash, -beta, -alpha);
-
-            if (subtreeEvaluation >= beta) {
-                position_.undoMove();
-                return beta;
-            }
-
-            if (subtreeEvaluation > alpha) {
-                alpha = subtreeEvaluation;
-            }
+        if (position_.isNotValid()) {
+            position_.undoMove();
+            continue;
         }
+
+        evaluator_->calculateChildEvaluationFactors(
+            childEvaluationFactors,
+            parentEvaluationFactors,
+            scoredMove,
+            playerToMove);
+
+        const PositionHash childHash = getChildHash(parentHash, position_.getPositionFlags(), scoredMove);
+        evaluation_t subtreeEvaluation = -runQuiescentSearch(childEvaluationFactors, childHash, -beta, -alpha);
+
+        if (subtreeEvaluation >= beta) {
+            position_.undoMove();
+            return beta;
+        }
+
+        if (subtreeEvaluation > alpha) {
+            alpha = subtreeEvaluation;
+        }
+
         position_.undoMove();
     }
 
@@ -252,7 +260,7 @@ MovesCollection SearchEngine::getPrincipalVariation(PositionHash parentHash)
         }
 
         position.playMove(move);
-        if (!position.isValid()) {
+        if (position.isNotValid()) {
             // The move was overwritten due to hash collision, cannot continue
             break;
         }

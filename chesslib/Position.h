@@ -76,6 +76,11 @@ public:
 
     bool isValid() const;
 
+    bool isNotValid() const
+    {
+        return !isValid();
+    }
+
     bool isInCheck();
 
     void addPiece(const PieceOnBoard& piece);
