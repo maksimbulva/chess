@@ -49,7 +49,8 @@ bool Engine::playMove(square_t originSquare, square_t destSquare, piece_type_t p
     }
 }
 
-Variation Engine::findBestVariation()
+Variation Engine::findBestVariation(
+    std::function<void(const SearchInfo & searchInfo)> progressCallback)
 {
     Stopwatch stopwatch;
 
@@ -57,12 +58,24 @@ Variation Engine::findBestVariation()
     searchInfo_.playerToMove = currentPosition.getPlayerToMove();
 
     Evaluator evaluator;
+    const uint64_t maxEvaluations = 5000000;
 
-    SearchEngine searchEngine(currentPosition, evaluator);
-    searchInfo_.bestVariation = searchEngine.runSearch(4);
-    
-    searchInfo_.evaluatedPositionCount = evaluator.getEvaluatedPositionCount();
-    searchInfo_.searchTimeMs = stopwatch.getElapsedMilliseconds();
+    SearchEngine searchEngine(currentPosition, evaluator, maxEvaluations);
+
+    for (int depthPly = 2; ; ++depthPly) {
+        auto searchResult = searchEngine.runSearch(depthPly);
+        if (searchEngine.isSearchAborted()) {
+            break;
+        }
+
+        searchInfo_.bestVariation = std::move(searchResult);
+        searchInfo_.evaluatedPositionCount = evaluator.getEvaluatedPositionCount();
+        searchInfo_.searchTimeMs = stopwatch.getElapsedMilliseconds();
+
+        if (progressCallback) {
+            progressCallback(searchInfo_);
+        }
+    } 
 
     return searchInfo_.bestVariation;
 }

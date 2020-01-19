@@ -6,6 +6,7 @@
 #include "TranspositionTable.h"
 #include "Variation.h"
 
+#include <atomic>
 #include <vector>
 
 namespace chesslib {
@@ -17,9 +18,14 @@ struct ScoredMove;
 class SearchEngine
 {
 public:
-    SearchEngine(Position position, Evaluator& evaluator);
+    SearchEngine(Position position, Evaluator& evaluator, uint64_t maxEvaluations);
 
     Variation runSearch(int depthPly);
+
+    bool isSearchAborted() const
+    {
+        return isSearchAborted_;
+    }
 
 private:
     evaluation_t runAlphaBetaSearch(
@@ -38,6 +44,8 @@ private:
 private:
     MovesCollection getPrincipalVariation(PositionHash parentHash);
 
+    void abortSearchIfNeeded();
+
     static PositionHash getChildHash(
         const PositionHash& parentHash,
         PositionFlags childPositionFlags,
@@ -45,9 +53,11 @@ private:
 
     Position position_;
     Evaluator* const evaluator_;
+    const uint64_t maxEvaluations_;
     int searchDepthPly_;
     MemoryPool memoryPool_;
     TranspositionTable transpositionTable_;
+    std::atomic_bool isSearchAborted_;
 };
 
 }

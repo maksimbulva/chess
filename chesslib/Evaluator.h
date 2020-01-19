@@ -20,6 +20,11 @@ public:
         return evaluatedPositionCount_;
     }
 
+    void resetEvaluatedPositionCounter()
+    {
+        evaluatedPositionCount_ = 0;
+    }
+
     evaluation_t getMaterialValue(piece_type_t pieceType) const;
 
     EvaluationFactors getEvaluationFactors(const Position& position, player_t player) const;

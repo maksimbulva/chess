@@ -1,6 +1,7 @@
 #include "SearchEngine.h"
 
 #include "Evaluator.h"
+#include "exceptions.h"
 #include "MovesCollection.h"
 #include "PositionHash.h"
 #include "require.h"
@@ -11,10 +12,12 @@
 
 namespace chesslib {
 
-SearchEngine::SearchEngine(Position position, Evaluator& evaluator)
+SearchEngine::SearchEngine(Position position, Evaluator& evaluator, uint64_t maxEvaluations)
     : position_(position)
     , evaluator_(&evaluator)
+    , maxEvaluations_(maxEvaluations)
     , searchDepthPly_(0)
+    , isSearchAborted_(false)
 {
 }
 
@@ -23,6 +26,7 @@ Variation SearchEngine::runSearch(int depthPly)
     REQUIRE(depthPly > 0 && depthPly < MovesCollection::maxCapacity());
 
     searchDepthPly_ = depthPly;
+    evaluator_->resetEvaluatedPositionCounter();
 
     std::array<EvaluationFactors, PLAYER_COUNT> evaluationFactors = {
         evaluator_->getEvaluationFactors(position_, Black),
@@ -32,6 +36,7 @@ Variation SearchEngine::runSearch(int depthPly)
     constexpr evaluation_t beta = std::numeric_limits<evaluation_t>::max();
     constexpr evaluation_t alpha = -beta;
     const PositionHash positionHash = ZobristHasher::getInstance().getValue(position_);
+    isSearchAborted_ = false;
 
     const evaluation_t searchResult = runAlphaBetaSearch(
         evaluationFactors,
@@ -39,6 +44,10 @@ Variation SearchEngine::runSearch(int depthPly)
         depthPly,
         alpha,
         beta);
+
+    if (isSearchAborted_) {
+        return Variation();
+    }
 
     const evaluation_t sideMultiplier = position_.getPlayerToMove() == Black ? -1 : 1;
     const evaluation_t evaluation = sideMultiplier * searchResult;
@@ -53,6 +62,11 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     evaluation_t alpha,
     evaluation_t beta)
 {
+    abortSearchIfNeeded();
+    if (isSearchAborted_) {
+        return 0;
+    }
+
     int storedDepthPly = std::numeric_limits<int>::max();
     Move moveToPrioritize = Move::NullMove();
 
@@ -136,6 +150,10 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
                 -alpha);
         }
 
+        if (isSearchAborted_) {
+            return 0;
+        }
+
         if (evaluation >= beta) {
             position_.undoMove();
             if (isAllowTranspositionTableUpdate) {
@@ -182,6 +200,11 @@ evaluation_t SearchEngine::runQuiescentSearch(
     evaluation_t alpha,
     evaluation_t beta)
 {
+    abortSearchIfNeeded();
+    if (isSearchAborted_) {
+        return 0;
+    }
+
     const player_t playerToMove = position_.getPlayerToMove();
     const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(playerToMove);
     const evaluation_t evaluation = evaluationSideMultiplier * evaluator_->evaluate(parentEvaluationFactors);
@@ -217,6 +240,10 @@ evaluation_t SearchEngine::runQuiescentSearch(
 
         const PositionHash childHash = getChildHash(parentHash, position_.getPositionFlags(), scoredMove);
         evaluation_t subtreeEvaluation = -runQuiescentSearch(childEvaluationFactors, childHash, -beta, -alpha);
+
+        if (isSearchAborted_) {
+            return 0;
+        }
 
         if (subtreeEvaluation >= beta) {
             position_.undoMove();
@@ -275,6 +302,13 @@ MovesCollection SearchEngine::getPrincipalVariation(PositionHash parentHash)
     }
 
     return moves;
+}
+
+void SearchEngine::abortSearchIfNeeded()
+{
+    if (!isSearchAborted_ && evaluator_->getEvaluatedPositionCount() > maxEvaluations_) {
+        isSearchAborted_ = true;
+    }
 }
 
 PositionHash SearchEngine::getChildHash(

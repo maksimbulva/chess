@@ -4,6 +4,7 @@
 #include "SearchInfo.h"
 #include "Variation.h"
 
+#include <functional>
 #include <string>
 
 namespace chesslib {
@@ -26,7 +27,8 @@ public:
         square_t destSquare,
         piece_type_t promoteToPieceType = NoPiece);
 
-    Variation findBestVariation();
+    Variation findBestVariation(
+        std::function<void(const SearchInfo& searchInfo)> progressCallback);
 
     SearchInfo getSearchInfo() const
     {

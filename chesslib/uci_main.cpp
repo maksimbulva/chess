@@ -39,6 +39,25 @@ void setupGame(std::istringstream& input, Engine& engine)
     }
 }
 
+void outputSearchInfo(const SearchInfo& searchInfo)
+{
+    std::cout << "info"
+        << " depth " << searchInfo.bestVariation.getMoves().size()
+        << " nodes " << searchInfo.evaluatedPositionCount
+        << " nps " << searchInfo.getNodesPerSecond()
+        << std::endl;
+
+    std::cout << "info"
+        << " score cp " << searchInfo.getEvaluationInCentipawns()
+        << " time " << searchInfo.searchTimeMs
+        << " pv ";
+
+    for (Move move : searchInfo.bestVariation.getMoves()) {
+        std::cout << toCoordinateNotation(move) << " ";
+    }
+    std::cout << std::endl;
+}
+
 void mainLoop(Engine& engine) {
     std::string commandString;
 
@@ -66,23 +85,13 @@ void mainLoop(Engine& engine) {
         }
         else if (token == "go") {
             // TODO
-            Variation bestVariation = engine.findBestVariation();
+            Variation bestVariation = engine.findBestVariation(
+                [&engine] (const SearchInfo& searchInfo)
+                {
+                    outputSearchInfo(engine.getSearchInfo());
+                });
 
-            const SearchInfo& searchInfo = engine.getSearchInfo();
-            std::cout << "info"
-                << " depth " << searchInfo.bestVariation.getMoves().size()
-                << " nodes " << searchInfo.evaluatedPositionCount
-                << " nps " << searchInfo.getNodesPerSecond()
-                << std::endl;
-
-            std::cout << "info"
-                << " score cp " << searchInfo.getEvaluationInCentipawns()
-                << " time " << searchInfo.searchTimeMs
-                << " pv ";
-            for (Move move : searchInfo.bestVariation.getMoves()) {
-                std::cout << toCoordinateNotation(move) << " ";
-            }
-            std::cout << std::endl;
+            outputSearchInfo(engine.getSearchInfo());
 
             const Move bestMove = bestVariation.getMoves().empty() ? Move::NullMove() : bestVariation.getMoves()[0];
             std::cout << "bestmove " << toCoordinateNotation(bestMove) << std::endl;
