@@ -34,7 +34,7 @@ public:
             : encoded_(
                 static_cast<uint64_t>(bestMove.getEncodedValue()) |
                 (static_cast<uint64_t>(depthPly) << 32) |
-                (static_cast<uint64_t>(evaluation + 0x8000) << 41) |
+                ((static_cast<uint64_t>(evaluation) + 0x8000) << 41) |
                 (static_cast<uint64_t>(evaluationConstraint) << 57))
         {
         }

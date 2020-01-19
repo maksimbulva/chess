@@ -7,6 +7,7 @@
 #include "ZobristHasher.h"
 
 #include <limits>
+#include <unordered_set>
 
 namespace chesslib {
 
@@ -237,7 +238,9 @@ MovesCollection SearchEngine::getPrincipalVariation(PositionHash parentHash)
     MovesCollection moves;
     Position position = position_;
 
-    while (true) {
+    std::unordered_set<position_hash_t> takenHashes;
+
+    while (takenHashes.find(parentHash.getHash()) == takenHashes.end()) {
         const auto transpositionValue = transpositionTable_.findValue(parentHash.getHash());
         if (transpositionValue.isEmpty()) {
             break;
@@ -264,6 +267,8 @@ MovesCollection SearchEngine::getPrincipalVariation(PositionHash parentHash)
             // The move was overwritten due to hash collision, cannot continue
             break;
         }
+
+        takenHashes.insert(parentHash.getHash());
 
         parentHash = getChildHash(parentHash, position.getPositionFlags(), scoredMove);
         moves.pushBack(move);

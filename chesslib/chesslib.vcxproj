@@ -171,6 +171,7 @@
     <ClInclude Include="PieceOnBoard.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="PositionFlags.h" />
+    <ClInclude Include="PositionHash.h" />
     <ClInclude Include="PositionHistory.h" />
     <ClInclude Include="PositionMoveCounters.h" />
     <ClInclude Include="position_factory.h" />

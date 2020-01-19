@@ -34,7 +34,7 @@ public:
     }
 
 public:
-    static constexpr size_t MAX_ENCODED_VALUE = 8;
+    static constexpr size_t MAX_ENCODED_VALUE = 15;
 
 private:
     static constexpr encoded_position_flags_t COLUMN_MASK = 7;

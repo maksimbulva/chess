@@ -11,8 +11,8 @@
 namespace chesslib {
 
 class Evaluator;
-class PositionHash;
-class ScoredMove;
+struct PositionHash;
+struct ScoredMove;
 
 class SearchEngine
 {
