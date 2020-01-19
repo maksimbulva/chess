@@ -69,6 +69,11 @@ public:
         return board_;
     }
 
+    PositionFlags getPositionFlags() const
+    {
+        return positionFlags_;
+    }
+
     bool isValid() const;
 
     bool isInCheck();

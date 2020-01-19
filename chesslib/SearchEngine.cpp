@@ -2,6 +2,7 @@
 
 #include "Evaluator.h"
 #include "MovesCollection.h"
+#include "PositionHash.h"
 #include "require.h"
 #include "ZobristHasher.h"
 
@@ -29,11 +30,11 @@ Variation SearchEngine::runSearch(int depthPly)
 
     constexpr evaluation_t beta = std::numeric_limits<evaluation_t>::max();
     constexpr evaluation_t alpha = -beta;
-    const position_hash_t hash = ZobristHasher::getInstance().getValue(position_);
+    const PositionHash positionHash = ZobristHasher::getInstance().getValue(position_);
 
     const evaluation_t searchResult = runAlphaBetaSearch(
         evaluationFactors,
-        hash,
+        positionHash,
         depthPly,
         alpha,
         beta);
@@ -41,12 +42,12 @@ Variation SearchEngine::runSearch(int depthPly)
     const evaluation_t sideMultiplier = position_.getPlayerToMove() == Black ? -1 : 1;
     const evaluation_t evaluation = sideMultiplier * searchResult;
 
-    return Variation(evaluation, getPrincipalVariation(hash));
+    return Variation(evaluation, getPrincipalVariation(positionHash));
 }
 
 evaluation_t SearchEngine::runAlphaBetaSearch(
     const EvaluationFactorsArray& parentEvaluationFactors,
-    position_hash_t parentHash,
+    const PositionHash& parentHash,
     int depthPly,
     evaluation_t alpha,
     evaluation_t beta)
@@ -54,7 +55,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     int storedDepthPly = std::numeric_limits<int>::max();
     Move moveToPrioritize = Move::NullMove();
 
-    const auto transpositionValue = transpositionTable_.findValue(parentHash);
+    const auto transpositionValue = transpositionTable_.findValue(parentHash.getHash());
     if (transpositionValue.isNotEmpty()) {
         storedDepthPly = transpositionValue.getDepthPly();
         moveToPrioritize = transpositionValue.getBestMove();
@@ -110,7 +111,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
                 scoredMove,
                 playerToMove);
 
-            const position_hash_t childHash = parentHash ^ scoredMove.getHash();
+            const PositionHash childHash = getChildHash(parentHash, position_.getPositionFlags(), scoredMove);
  
             evaluation_t evaluation;
             if (depthPly == 1) {
@@ -133,7 +134,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
             if (evaluation >= beta) {
                 position_.undoMove();
                 if (isAllowTranspositionTableUpdate) {
-                    transpositionTable_.insertBetaCutoff(parentHash, move, depthPly, beta);
+                    transpositionTable_.insertBetaCutoff(parentHash.getHash(), move, depthPly, beta);
                 }
                 return beta;
             } 
@@ -149,7 +150,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     if (!bestMove.isNullMove()) {
         if (isAllowTranspositionTableUpdate) {
             transpositionTable_.insertExactEvaluation(
-                parentHash,
+                parentHash.getHash(),
                 bestMove,
                 depthPly,
                 alpha);
@@ -161,7 +162,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
         }
         if (isAllowTranspositionTableUpdate) {
             transpositionTable_.insertNoAlphaImprovement(
-                parentHash,
+                parentHash.getHash(),
                 depthPly,
                 alpha);
         }
@@ -172,7 +173,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
 
 evaluation_t SearchEngine::runQuiescentSearch(
     const EvaluationFactorsArray& parentEvaluationFactors,
-    position_hash_t parentHash,
+    const PositionHash& parentHash,
     evaluation_t alpha,
     evaluation_t beta)
 {
@@ -205,7 +206,7 @@ evaluation_t SearchEngine::runQuiescentSearch(
                 scoredMove,
                 playerToMove);
 
-            const position_hash_t childHash = parentHash ^ scoredMove.getHash();
+            const PositionHash childHash = getChildHash(parentHash, position_.getPositionFlags(), scoredMove);
             evaluation_t subtreeEvaluation = -runQuiescentSearch(childEvaluationFactors, childHash, -beta, -alpha);
 
             if (subtreeEvaluation >= beta) {
@@ -223,13 +224,13 @@ evaluation_t SearchEngine::runQuiescentSearch(
     return alpha;
 }
 
-MovesCollection SearchEngine::getPrincipalVariation(position_hash_t hash)
+MovesCollection SearchEngine::getPrincipalVariation(PositionHash parentHash)
 {
     MovesCollection moves;
     Position position = position_;
 
     while (true) {
-        const auto transpositionValue = transpositionTable_.findValue(hash);
+        const auto transpositionValue = transpositionTable_.findValue(parentHash.getHash());
         if (transpositionValue.isEmpty()) {
             break;
         }
@@ -256,11 +257,24 @@ MovesCollection SearchEngine::getPrincipalVariation(position_hash_t hash)
             break;
         }
 
-        hash ^= scoredMove.getHash();
+        parentHash = getChildHash(parentHash, position.getPositionFlags(), scoredMove);
         moves.pushBack(move);
     }
 
     return moves;
+}
+
+PositionHash SearchEngine::getChildHash(
+    const PositionHash& parentHash,
+    PositionFlags childPositionFlags,
+    const ScoredMove& movePlayed)
+{
+    const uint64_t childFlagsHash = ZobristHasher::getInstance().getValue(childPositionFlags);
+    const uint64_t childHash = parentHash.getHash()
+        ^ parentHash.getFlagsHash()
+        ^ childFlagsHash
+        ^ movePlayed.getHash();
+    return PositionHash(childHash, childFlagsHash);
 }
 
 }

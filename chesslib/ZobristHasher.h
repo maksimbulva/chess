@@ -2,6 +2,8 @@
 
 #include "CastleOptions.h"
 #include "OptionalColumn.h"
+#include "PositionFlags.h"
+#include "PositionHash.h"
 #include "types.h"
 
 #include <array>
@@ -25,7 +27,9 @@ public:
         return pieceValues_[index];
     }
 
-    position_hash_t getValue(const Position& position) const;
+    PositionHash getValue(const Position& position) const;
+
+    position_hash_t getValue(PositionFlags flags) const;
 
 private:
     ZobristHasher();

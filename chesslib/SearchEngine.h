@@ -11,6 +11,8 @@
 namespace chesslib {
 
 class Evaluator;
+class PositionHash;
+class ScoredMove;
 
 class SearchEngine
 {
@@ -22,19 +24,24 @@ public:
 private:
     evaluation_t runAlphaBetaSearch(
         const EvaluationFactorsArray& parentEvaluationFactors,
-        position_hash_t parentHash,
+        const PositionHash& parentHash,
         int depthPly,
         evaluation_t alpha,
         evaluation_t beta);
 
     evaluation_t runQuiescentSearch(
         const EvaluationFactorsArray& parentEvaluationFactors,
-        position_hash_t parentHash,
+        const PositionHash& parentHash,
         evaluation_t alpha,
         evaluation_t beta);
 
 private:
-    MovesCollection getPrincipalVariation(position_hash_t hash);
+    MovesCollection getPrincipalVariation(PositionHash parentHash);
+
+    static PositionHash getChildHash(
+        const PositionHash& parentHash,
+        PositionFlags childPositionFlags,
+        const ScoredMove& movePlayed);
 
     Position position_;
     Evaluator* const evaluator_;
