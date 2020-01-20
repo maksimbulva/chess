@@ -26,7 +26,6 @@ Variation SearchEngine::runSearch(int depthPly)
     REQUIRE(depthPly > 0 && depthPly < MovesCollection::maxCapacity());
 
     searchDepthPly_ = depthPly;
-    evaluator_->resetEvaluatedPositionCounter();
 
     std::array<EvaluationFactors, PLAYER_COUNT> evaluationFactors = {
         evaluator_->getEvaluationFactors(position_, Black),
