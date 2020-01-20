@@ -170,8 +170,9 @@ bool Position::isValid() const
         if (parentIsInCheck.isEquals(false)) {
             const Move lastMove = history_.back().getMove();
             if (lastMove.getPieceType() != King) {
+                const square_t originSquare = lastMove.getOriginSquare();
                 const bool isMyKingBecameExposed = isSquareSlideAttackedThroughSpecificSquare(
-                    lastMove.getOriginSquare(), myKingSquare, board_, attacker);
+                    originSquare, myKingSquare, board_, attacker);
                 return !isMyKingBecameExposed;
             }
         }
@@ -215,7 +216,10 @@ bool Position::isRecentMovePutsEnemyKingInCheck(Move recentMove) const
     else {
         return isSquareAttackedFromSpecificSquare(destSquare, kingSquare, board_, otherPlayer)
             || isSquareSlideAttackedThroughSpecificSquare(
-                originSquare, kingSquare, board_, otherPlayer);
+                originSquare, kingSquare, board_, otherPlayer)
+            || (recentMove.isEnPassantCapture()
+                && isSquareSlideAttackedThroughSpecificSquare(
+                    encodeSquare(getRow(originSquare), getColumn(destSquare)), kingSquare, board_, otherPlayer));
     }
 }
 
