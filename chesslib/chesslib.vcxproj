@@ -136,6 +136,7 @@
     <ClCompile Include="MovesCollection.cpp" />
     <ClCompile Include="moves_generator.cpp" />
     <ClCompile Include="notation.cpp" />
+    <ClCompile Include="pawns_evaluation.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="position_factory.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="notation.h" />
     <ClInclude Include="OptionalBoolean.h" />
     <ClInclude Include="OptionalColumn.h" />
+    <ClInclude Include="pawns_evaluation.h" />
     <ClInclude Include="PieceOnBoard.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="PositionFlags.h" />

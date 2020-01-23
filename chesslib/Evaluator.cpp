@@ -1,6 +1,7 @@
 #include "Evaluator.h"
 
 #include "bitboard.h"
+#include "pawns_evaluation.h"
 #include "Position.h"
 #include "squares.h"
 
@@ -118,18 +119,13 @@ evaluation_t Evaluator::getMaterialValue(piece_type_t pieceType) const
 
 EvaluationFactors Evaluator::getEvaluationFactors(const Position& position, player_t player) const
 {
-    uint64_t pawnsBitboard = 0;
-    position.getBoard().doForEachPiece(player, [&pawnsBitboard] (piece_type_t pieceType, square_t square)
-        {
-            if (pieceType == Pawn) {
-                setSquare(pawnsBitboard, square);
-            }
-        });
-
+    const uint64_t pawnsBitboard = getPawnsBitboard(position.getBoard(), player);
+    const uint32_t pawnsColumnMask = getPawnsColumnMask(pawnsBitboard);
     return EvaluationFactors(
         evaluateMaterial(position, player),
         evaluateTableValues(position, player),
-        pawnsBitboard);
+        pawnsBitboard,
+        pawnsColumnMask);
 }
 
 void Evaluator::calculateChildEvaluationFactors(
@@ -142,28 +138,35 @@ void Evaluator::calculateChildEvaluationFactors(
     const auto& otherParent = parentFactors[getOtherPlayer(player)];
 
     const Move& move = movePlayed.getMove();
+
     bitboard_t myPawnsBitboard = myParent.getPawnsBitboard();
+    uint32_t myPawnsColumnMask = myParent.getPawnsColumnMask();
     if (move.getPieceType() == Pawn) {
         unsetSquare(myPawnsBitboard, move.getOriginSquare());
         if (!move.isPromotion()) {
             setSquare(myPawnsBitboard, move.getDestSquare());
         }
+        myPawnsColumnMask = getPawnsColumnMask(myPawnsBitboard);
     }
 
     bitboard_t otherPawnsBitboard = otherParent.getPawnsBitboard();
+    uint32_t otherPawnsColumnMask = otherParent.getPawnsColumnMask();
     if (move.getCapturedPieceType() == Pawn) {
         unsetSquare(otherPawnsBitboard, move.getCapturedPieceSquare());
+        otherPawnsColumnMask = getPawnsColumnMask(otherPawnsBitboard);
     }
 
     childFactors[player] = EvaluationFactors(
         myParent.getMaterial() + movePlayed.getMyMaterialGain(),
         myParent.getTableValue() + movePlayed.getMyTableValueGain(),
-        myPawnsBitboard);
+        myPawnsBitboard,
+        myPawnsColumnMask);
 
     childFactors[getOtherPlayer(player)] = EvaluationFactors(
         otherParent.getMaterial() + movePlayed.getTheirMaterialGain(),
         otherParent.getTableValue() + movePlayed.getTheirTableValueGain(),
-        otherPawnsBitboard);
+        otherPawnsBitboard,
+        otherPawnsColumnMask);
 }
 
 // TODO: this is temporary method. Replace with some ML evaluations
@@ -183,18 +186,12 @@ evaluation_t Evaluator::evaluateNoLegalMovesPosition(Position& position)
 
 evaluation_t Evaluator::evaluateMaterial(const Position& position, player_t player) const
 {
-    evaluation_t result = 0;
-    auto piecesIt = position.getBoard().getPieceIterator(player);
-    while (true) {
-        result += MATERIAL_VALUE[piecesIt.getPieceType()];
-        if (piecesIt.hasNext()) {
-            ++piecesIt;
-        }
-        else {
-            break;
-        }
-    }
-    return result;
+    evaluation_t material = 0;
+    position.getBoard().doForEachPiece(player, [&material](piece_type_t pieceType, square_t)
+        {
+            material += MATERIAL_VALUE[pieceType];
+        });
+    return material;
 }
 
 evaluation_t Evaluator::evaluateTableValues(const Position& position, player_t player)
