@@ -52,7 +52,7 @@ void fillWithDeltaMoves(
     const auto& deltas = pieceType == Knight ? KNIGHT_MOVE_DELTAS : KING_MOVE_DELTAS;
     const player_t myPlayer = position.getPlayerToMove();
     const Board& board = position.getBoard();
-    const bitboard_t originBit = setSquare(0, origin);
+    const bitboard_t originBit = static_cast<bitboard_t>(1) << origin;
     MoveBuilder moveBuilder{ pieceType, origin };
 
     if (movesFilter == Position::MoveGenerationFilter::AllMoves) {

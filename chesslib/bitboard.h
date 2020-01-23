@@ -6,9 +6,14 @@ namespace chesslib {
 
 using bitboard_t = uint64_t;
 
-constexpr inline bitboard_t setSquare(bitboard_t bitboard, square_t square)
+constexpr inline void setSquare(bitboard_t& bitboard, square_t square)
 {
-    return bitboard | ((static_cast<bitboard_t>(1)) << square);
+    bitboard |= ((static_cast<bitboard_t>(1)) << square);
+}
+
+constexpr inline void unsetSquare(bitboard_t& bitboard, square_t square)
+{
+    bitboard &= ~((static_cast<bitboard_t>(1)) << square);
 }
 
 constexpr inline bitboard_t generateValidOriginsForDelta(square_t deltaRow, square_t deltaColumn)
@@ -19,7 +24,7 @@ constexpr inline bitboard_t generateValidOriginsForDelta(square_t deltaRow, squa
         const auto row = getRow(origin) + deltaRow;
         const auto column = getColumn(origin) + deltaColumn;
         if (row >= 0 && row < ROW_COUNT && column >= 0 && column < COLUMN_COUNT) {
-            result = setSquare(result, origin);
+            setSquare(result, origin);
         }
     }
 

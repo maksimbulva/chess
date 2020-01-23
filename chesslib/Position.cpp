@@ -37,17 +37,9 @@ void Position::playMove(const Move& move)
     if (move.isCapture())
     {
         capturedPieceType = move.getCapturedPieceType();
-        if (move.isEnPassantCapture())
-        {
-            const auto capturedPieceSquare = encodeSquare(
-                originRow, getColumn(destSquare));
-            board_.erasePieceAt(capturedPieceSquare);
-        }
-        else {
-            // TODO
-            // TODO: optimization - there is no need to clear the dest square first
-            board_.erasePieceAt(destSquare);
-        }
+        // TODO: optimization - there is no need to clear the dest square first
+        // if it is not an en passant capture
+        board_.erasePieceAt(move.getCapturedPieceSquare());
         board_.updatePieceSquare(originSquare, destSquare);
     }
     else {

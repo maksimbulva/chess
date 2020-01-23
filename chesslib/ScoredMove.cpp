@@ -72,9 +72,7 @@ void ScoredMove::updateScore(const Evaluator& evaluator, player_t player)
 
     if (move_.isCapture()) {
         const piece_type_t capturedPieceType = move_.getCapturedPieceType();
-        square_t capturedSquare = move_.isEnPassantCapture()
-            ? encodeSquare(getRow(originSquare), getColumn(destSquare))
-            : destSquare;
+        square_t capturedSquare = move_.getCapturedPieceSquare();
         theirTableValueGain_ -= evaluator.getTableValue(capturedPieceType, getOtherPlayer(player), capturedSquare);
         theirMaterialGain_ -= evaluator.getMaterialValue(capturedPieceType);
         hash_ ^= hasher.getValue(getOtherPlayer(player), capturedSquare, capturedPieceType);

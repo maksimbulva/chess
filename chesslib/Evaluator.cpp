@@ -1,5 +1,6 @@
 #include "Evaluator.h"
 
+#include "bitboard.h"
 #include "Position.h"
 #include "squares.h"
 
@@ -117,9 +118,18 @@ evaluation_t Evaluator::getMaterialValue(piece_type_t pieceType) const
 
 EvaluationFactors Evaluator::getEvaluationFactors(const Position& position, player_t player) const
 {
+    uint64_t pawnsBitboard = 0;
+    position.getBoard().doForEachPiece(player, [&pawnsBitboard] (piece_type_t pieceType, square_t square)
+        {
+            if (pieceType == Pawn) {
+                setSquare(pawnsBitboard, square);
+            }
+        });
+
     return EvaluationFactors(
         evaluateMaterial(position, player),
-        evaluateTableValues(position, player));
+        evaluateTableValues(position, player),
+        pawnsBitboard);
 }
 
 void Evaluator::calculateChildEvaluationFactors(
@@ -131,13 +141,29 @@ void Evaluator::calculateChildEvaluationFactors(
     const auto& myParent = parentFactors[player];
     const auto& otherParent = parentFactors[getOtherPlayer(player)];
 
+    const Move& move = movePlayed.getMove();
+    bitboard_t myPawnsBitboard = myParent.getPawnsBitboard();
+    if (move.getPieceType() == Pawn) {
+        unsetSquare(myPawnsBitboard, move.getOriginSquare());
+        if (!move.isPromotion()) {
+            setSquare(myPawnsBitboard, move.getDestSquare());
+        }
+    }
+
+    bitboard_t otherPawnsBitboard = otherParent.getPawnsBitboard();
+    if (move.getCapturedPieceType() == Pawn) {
+        unsetSquare(otherPawnsBitboard, move.getCapturedPieceSquare());
+    }
+
     childFactors[player] = EvaluationFactors(
         myParent.getMaterial() + movePlayed.getMyMaterialGain(),
-        myParent.getTableValue() + movePlayed.getMyTableValueGain());
+        myParent.getTableValue() + movePlayed.getMyTableValueGain(),
+        myPawnsBitboard);
 
     childFactors[getOtherPlayer(player)] = EvaluationFactors(
         otherParent.getMaterial() + movePlayed.getTheirMaterialGain(),
-        otherParent.getTableValue() + movePlayed.getTheirTableValueGain());
+        otherParent.getTableValue() + movePlayed.getTheirTableValueGain(),
+        otherPawnsBitboard);
 }
 
 // TODO: this is temporary method. Replace with some ML evaluations

@@ -32,6 +32,17 @@ public:
         return (encoded_ >> 6) & SQUARE_MASK;
     }
 
+    square_t getCapturedPieceSquare() const
+    {
+        if (isEnPassantCapture()) {
+            // TODO: possibly this can be optimized
+            return encodeSquare(getRow(getOriginSquare()), getColumn(getDestSquare()));
+        }
+        else {
+            return getDestSquare();
+        }
+    }
+
     piece_type_t getPieceType() const
     {
         return static_cast<piece_type_t>((encoded_ >> 12) & PIECE_TYPE_MASK);
