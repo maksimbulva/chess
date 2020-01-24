@@ -22,6 +22,8 @@ std::array<position_hash_t, PLAYER_COUNT> longCastleRookHash = {
         ^ ZobristHasher::getInstance().getValue(White, Squares::D1, Rook)
 };
 
+constexpr std::array<square_t, PLAYER_COUNT> baseRows = { ROW_8, ROW_1 };
+
 }
 
 ScoredMove::ScoredMove()
@@ -78,7 +80,7 @@ void ScoredMove::updateScore(const Evaluator& evaluator, player_t player)
         hash_ ^= hasher.getValue(getOtherPlayer(player), capturedSquare, capturedPieceType);
     }
     else if (move_.isCastle()) {
-        const square_t baseRow = player == Black ? ROW_8 : ROW_1;
+        const square_t baseRow = baseRows[player];
         if (move_.isShortCastle()) {
             myTableValueGain_ += Evaluator::getTableValue(Rook, player, encodeSquare(baseRow, COLUMN_F))
                 - Evaluator::getTableValue(Rook, player, encodeSquare(baseRow, COLUMN_H));

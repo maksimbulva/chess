@@ -221,5 +221,8 @@
     <ClInclude Include="pawns_evaluation.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="PawnEvaluationFactors.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

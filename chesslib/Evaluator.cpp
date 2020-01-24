@@ -119,13 +119,11 @@ evaluation_t Evaluator::getMaterialValue(piece_type_t pieceType) const
 
 EvaluationFactors Evaluator::getEvaluationFactors(const Position& position, player_t player) const
 {
-    const uint64_t pawnsBitboard = getPawnsBitboard(position.getBoard(), player);
-    const uint32_t pawnsColumnMask = getPawnsColumnMask(pawnsBitboard);
-    return EvaluationFactors(
-        evaluateMaterial(position, player),
-        evaluateTableValues(position, player),
-        pawnsBitboard,
-        pawnsColumnMask);
+    EvaluationFactors factors;
+    factors.setMaterial(evaluateMaterial(position, player));
+    factors.setTableValue(evaluateTableValues(position, player));
+    factors.setPawnFactors(getPawnsBitboard(position.getBoard(), player), player);
+    return factors;
 }
 
 void Evaluator::calculateChildEvaluationFactors(
@@ -139,34 +137,44 @@ void Evaluator::calculateChildEvaluationFactors(
 
     const Move& move = movePlayed.getMove();
 
-    bitboard_t myPawnsBitboard = myParent.getPawnsBitboard();
-    uint32_t myPawnsColumnMask = myParent.getPawnsColumnMask();
+    bool myPawnsChanged = false;
+    bitboard_t myPawnsBitboard = myParent.getPawnFactors().pawnsBitboard;
     if (move.getPieceType() == Pawn) {
         unsetSquare(myPawnsBitboard, move.getOriginSquare());
         if (!move.isPromotion()) {
             setSquare(myPawnsBitboard, move.getDestSquare());
         }
-        myPawnsColumnMask = getPawnsColumnMask(myPawnsBitboard);
+        myPawnsChanged = true;
     }
 
-    bitboard_t otherPawnsBitboard = otherParent.getPawnsBitboard();
-    uint32_t otherPawnsColumnMask = otherParent.getPawnsColumnMask();
+    bool otherPawnsChanged = false;
+    bitboard_t otherPawnsBitboard = otherParent.getPawnFactors().pawnsBitboard;
     if (move.getCapturedPieceType() == Pawn) {
         unsetSquare(otherPawnsBitboard, move.getCapturedPieceSquare());
-        otherPawnsColumnMask = getPawnsColumnMask(otherPawnsBitboard);
+        otherPawnsChanged = true;
     }
 
-    childFactors[player] = EvaluationFactors(
-        myParent.getMaterial() + movePlayed.getMyMaterialGain(),
-        myParent.getTableValue() + movePlayed.getMyTableValueGain(),
-        myPawnsBitboard,
-        myPawnsColumnMask);
+    auto& myChildFactors = childFactors[player];
+    myChildFactors.setMaterial(myParent.getMaterial() + movePlayed.getMyMaterialGain());
+    myChildFactors.setTableValue(myParent.getTableValue() + movePlayed.getMyTableValueGain());
 
-    childFactors[getOtherPlayer(player)] = EvaluationFactors(
-        otherParent.getMaterial() + movePlayed.getTheirMaterialGain(),
-        otherParent.getTableValue() + movePlayed.getTheirTableValueGain(),
-        otherPawnsBitboard,
-        otherPawnsColumnMask);
+    if (myPawnsChanged) {
+        myChildFactors.setPawnFactors(myPawnsBitboard, player);
+    }
+    else {
+        myChildFactors.setPawnFactors(myParent.getPawnFactors());
+    }
+
+    auto& otherChildFactors = childFactors[getOtherPlayer(player)];
+    otherChildFactors.setMaterial(otherParent.getMaterial() + movePlayed.getTheirMaterialGain());
+    otherChildFactors.setTableValue(otherParent.getTableValue() + movePlayed.getTheirTableValueGain());
+
+    if (otherPawnsChanged) {
+        otherChildFactors.setPawnFactors(otherPawnsBitboard, getOtherPlayer(player));
+    }
+    else {
+        otherChildFactors.setPawnFactors(otherParent.getPawnFactors());
+    }
 }
 
 // TODO: this is temporary method. Replace with some ML evaluations

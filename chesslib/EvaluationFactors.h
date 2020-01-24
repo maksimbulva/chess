@@ -1,6 +1,7 @@
 #pragma once
 
-#include "bitboard.h"
+#include "PawnEvaluationFactors.h"
+#include "pawns_evaluation.h"
 #include "types.h"
 
 #include <array>
@@ -9,23 +10,18 @@ namespace chesslib {
 
 struct EvaluationFactors {
 public:
-    EvaluationFactors() = default;
 
-    EvaluationFactors(
-        evaluation_t material,
-        evaluation_t tableValue,
-        bitboard_t pawnsBitboard,
-        uint32_t pawnsColumnMask)
-        : material_(material)
-        , tableValue_(tableValue)
-        , pawnsBitboard_(pawnsBitboard)
-        , pawnsColumnMask_(pawnsColumnMask)
-    {
-    }
+public:
+    EvaluationFactors() = default;
 
     evaluation_t getMaterial() const
     {
         return material_;
+    }
+
+    void setMaterial(const evaluation_t& material)
+    {
+        material_ = material;
     }
 
     evaluation_t getTableValue() const
@@ -33,21 +29,30 @@ public:
         return tableValue_;
     }
 
-    uint64_t getPawnsBitboard() const
+    void setTableValue(const evaluation_t& tableValue)
     {
-        return pawnsBitboard_;
+        tableValue_ = tableValue;
     }
 
-    uint32_t getPawnsColumnMask() const
+    const PawnEvaluationFactors& getPawnFactors() const
     {
-        return pawnsColumnMask_;
+        return pawnFactors_;
+    }
+
+    void setPawnFactors(const PawnEvaluationFactors& pawnFactors)
+    {
+        pawnFactors_ = pawnFactors;
+    }
+
+    void setPawnFactors(const bitboard_t& pawnsBitboard, player_t player)
+    {
+        updatePawnFactors(pawnsBitboard, player, pawnFactors_);
     }
 
 private:
     evaluation_t material_;
     evaluation_t tableValue_;
-    bitboard_t pawnsBitboard_;
-    uint32_t pawnsColumnMask_;
+    PawnEvaluationFactors pawnFactors_;
 };
 
 using EvaluationFactorsArray = std::array<EvaluationFactors, PLAYER_COUNT>;

@@ -12,14 +12,17 @@ LOCAL_LDLIBS := -llog
 LOCAL_SRC_FILES := \
 	../../../chesslib/board_utils.cpp \
 	../../../chesslib/Board.cpp \
+	../../../chesslib/CatboostEvaluator.cpp \
+	../../../chesslib/CatboostModel.cpp \
 	../../../chesslib/Engine.cpp \
 	../../../chesslib/Evaluator.cpp \
 	../../../chesslib/fen.cpp \
 	../../../chesslib/Game.cpp \
-	../../../chesslib/moves_generator.cpp \
 	../../../chesslib/MemoryPool.cpp \
+	../../../chesslib/moves_generator.cpp \
 	../../../chesslib/MovesCollection.cpp \
 	../../../chesslib/notation.cpp \
+	../../../chesslib/pawns_evaluation.cpp \
 	../../../chesslib/position_factory.cpp \
 	../../../chesslib/Position.cpp \
 	../../../chesslib/ScoredMove.cpp \

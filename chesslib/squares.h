@@ -4,8 +4,16 @@
 
 namespace chesslib {
 
-constexpr square_t ROW_1 = 0;
-constexpr square_t ROW_8 = 7;
+enum Rank : square_t {
+    ROW_1 = 0,
+    ROW_2,
+    ROW_3,
+    ROW_4,
+    ROW_5,
+    ROW_6,
+    ROW_7,
+    ROW_8
+};
 
 enum Columns : square_t {
     COLUMN_A = 0,
