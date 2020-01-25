@@ -49,10 +49,11 @@ class MoveGeneratorTest {
     }
 
     private fun assertMoveCount(fenString: String, expectedMoveCount: Array<Long>) {
-        val chesslib = ChesslibWrapper()
+        val chesslibWrapper = ChesslibWrapper()
         expectedMoveCount.forEachIndexed { index, expected ->
             val depthPly = index + 1
-            assertEquals(expected, chesslib.calculateLegalMovesCount(fenString, depthPly))
+            assertEquals(expected, chesslibWrapper.calculateLegalMovesCount(fenString, depthPly))
         }
+        chesslibWrapper.destroy()
     }
 }

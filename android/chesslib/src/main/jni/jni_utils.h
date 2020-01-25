@@ -7,6 +7,6 @@
 
 namespace chesslib {
 
-void logError(std::string message);
+void logError(const std::string& message);
 
 }

@@ -13,7 +13,39 @@ extern "C" {
  * Signature: (Ljava/lang/String;I)J
  */
 JNIEXPORT jlong JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_calculateLegalMovesCount
-  (JNIEnv *, jobject, jstring, jint);
+        (JNIEnv *, jobject, jstring, jint);
+
+/*
+ * Class:     ru_maksimbulva_chess_chesslib_ChesslibWrapper
+ * Method:    resetGame
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_resetGame__J
+        (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     ru_maksimbulva_chess_chesslib_ChesslibWrapper
+ * Method:    resetGame
+ * Signature: (Ljava/lang/String;J)V
+ */
+JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_resetGame__Ljava_lang_String_2J
+        (JNIEnv *, jobject, jstring, jlong);
+
+/*
+ * Class:     ru_maksimbulva_chess_chesslib_ChesslibWrapper
+ * Method:    createEngineInstance
+ * Signature: ()J
+ */
+JNIEXPORT jlong JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_createEngineInstance
+        (JNIEnv *, jobject);
+
+/*
+ * Class:     ru_maksimbulva_chess_chesslib_ChesslibWrapper
+ * Method:    releaseEngineInstance
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_releaseEngineInstance
+        (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus
 }

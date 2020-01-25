@@ -7,12 +7,20 @@ import ru.maksimbulva.chess.chesslib.ChesslibWrapper
 
 class MainActivity : AppCompatActivity() {
 
+    private var chesslibWrapper: ChesslibWrapper? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val chesslibWrapper = ChesslibWrapper()
+        chesslibWrapper = ChesslibWrapper()
         val myText: TextView = findViewById(R.id.text)
-        myText.text = chesslibWrapper.calculateLegalMovesCount("", 0).toString()
+        myText.text = chesslibWrapper!!.calculateLegalMovesCount("", 0).toString()
+    }
+
+    override fun onDestroy() {
+        chesslibWrapper?.destroy()
+        chesslibWrapper = null
+        super.onDestroy()
     }
 }
