@@ -17,20 +17,28 @@ void setupGame(std::istringstream& input, Engine& engine)
     std::string token;
     input >> std::skipws >> token;
 
-    if (token == "startpos") {
+    if (token == "fen") {
+        std::string fen;
+        while (input >> token) {
+            if (token == "moves") {
+                break;
+            }
+            fen += token + " ";
+        }
+        engine.resetGame(fen);
+    }
+    else if (token == "startpos") {
         engine.resetGame();
     }
     else {
-        // TODO: Implement me
         FAIL();
     }
 
-    std::string moveToken;
-    while (input >> moveToken) {
-        if (moveToken == "moves") {
+    while (input >> token) {
+        if (token == "moves") {
             continue;
         }
-        const ParsedMove parsedMove = parseCoordinateNotation(moveToken);
+        const ParsedMove parsedMove = parseCoordinateNotation(token);
         const bool isMovePlayed = engine.playMove(
             parsedMove.originSquare,
             parsedMove.destSquare,

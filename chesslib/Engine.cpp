@@ -25,7 +25,12 @@ std::string Engine::getName() const
 
 void Engine::resetGame()
 {
-    game_ = Game{ decodeFen(initialPositonFen) };
+    resetGame(initialPositonFen);
+}
+
+void Engine::resetGame(const std::string& positionFen)
+{
+    game_ = Game{ decodeFen(positionFen) };
 }
 
 bool Engine::playMove(square_t originSquare, square_t destSquare, piece_type_t promoteToPieceType)

@@ -22,6 +22,8 @@ public:
 
     void resetGame();
 
+    void resetGame(const std::string& positionFen);
+
     bool playMove(
         square_t originSquare,
         square_t destSquare,
