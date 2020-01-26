@@ -56,6 +56,11 @@ public:
 
     static evaluation_t evaluateTableValues(const Position& position, player_t player);
 
+public:
+    static constexpr evaluation_t CheckmateValue = 100000;
+    static constexpr evaluation_t StalemateValue = 0;
+    static constexpr evaluation_t GoodEnoughToStopIterativeDeepening = CheckmateValue - 1000;
+
 private:
     // TODO: consider using std::atomic_uint64_t
     std::atomic<uint64_t> evaluatedPositionCount_;

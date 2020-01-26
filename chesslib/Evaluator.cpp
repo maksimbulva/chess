@@ -11,12 +11,9 @@ namespace chesslib {
 
 namespace {
 
-constexpr evaluation_t CheckmateValue = 100000;
-constexpr evaluation_t StalemateValue = 0;
-
 static std::array<evaluation_t, King + 1> MATERIAL_VALUE = {
     /* NoPiece */ 0,
-    /* Pawn*/     100,
+    /* Pawn */    100,
     /* Knight */  300,
     /* Bishop */  300,
     /* Rook */    500,

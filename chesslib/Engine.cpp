@@ -69,7 +69,8 @@ Variation Engine::findBestVariation(
 
     for (int depthPly = 2; ; ++depthPly) {
         auto searchResult = searchEngine.runSearch(depthPly);
-        if (searchEngine.isSearchAborted()) {
+        if (searchEngine.isSearchAborted()
+            || std::abs(searchResult.getEvaluation()) >= Evaluator::GoodEnoughToStopIterativeDeepening) {
             break;
         }
 
