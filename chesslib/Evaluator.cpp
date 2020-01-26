@@ -185,11 +185,11 @@ evaluation_t Evaluator::evaluate(const EvaluationFactorsArray& factors)
         - factors[Black].getMaterial() - factors[Black].getTableValue();
 }
 
-evaluation_t Evaluator::evaluateNoLegalMovesPosition(Position& position)
+evaluation_t Evaluator::evaluateNoLegalMovesPosition(Position& position, int currentSearchDepthPly)
 {
     ++evaluatedPositionCount_;
     // Either we are checkmated or it is a stalemate
-    return position.isInCheck() ? -CheckmateValue : StalemateValue;
+    return position.isInCheck() ? currentSearchDepthPly - CheckmateValue : StalemateValue;
 }
 
 evaluation_t Evaluator::evaluateMaterial(const Position& position, player_t player) const

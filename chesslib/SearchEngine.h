@@ -44,6 +44,8 @@ private:
 private:
     MovesCollection getPrincipalVariation(PositionHash parentHash);
 
+    int getCurrentSearchDepthPly(int remainingDepthPly) const;
+
     void abortSearchIfNeeded();
 
     static PositionHash getChildHash(

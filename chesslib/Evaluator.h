@@ -32,7 +32,7 @@ public:
 
     evaluation_t evaluate(const EvaluationFactorsArray& factors);
 
-    evaluation_t evaluateNoLegalMovesPosition(Position& position);
+    evaluation_t evaluateNoLegalMovesPosition(Position& position, int currentSearchDepthPly);
 
     evaluation_t evaluateMaterial(const Position& position, player_t player) const;
 
