@@ -2,6 +2,7 @@
 
 #include "Evaluator.h"
 #include "fen.h"
+#include "notation.h"
 #include "SearchEngine.h"
 #include "Stopwatch.h"
 
@@ -52,6 +53,12 @@ bool Engine::playMove(square_t originSquare, square_t destSquare, piece_type_t p
     else {
         return false;
     }
+}
+
+bool Engine::playMove(const std::string& moveString)
+{
+    const ParsedMove parsedMove = parseCoordinateNotation(moveString);
+    return playMove(parsedMove.originSquare, parsedMove.destSquare, parsedMove.promoteToPieceType);
 }
 
 Variation Engine::findBestVariation(

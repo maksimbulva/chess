@@ -33,6 +33,14 @@ JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_resetG
 
 /*
  * Class:     ru_maksimbulva_chess_chesslib_ChesslibWrapper
+ * Method:    playMove
+ * Signature: (Ljava/lang/String;J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_playMove
+        (JNIEnv *, jobject, jstring, jlong);
+
+/*
+ * Class:     ru_maksimbulva_chess_chesslib_ChesslibWrapper
  * Method:    createEngineInstance
  * Signature: ()J
  */

@@ -15,7 +15,7 @@ struct ParsedMove {
 
 square_t parseSquare(std::string squareString);
 
-ParsedMove parseCoordinateNotation(std::string moveString);
+ParsedMove parseCoordinateNotation(const std::string& moveString);
 
 std::string toCoordinateNotation(Move move);
 

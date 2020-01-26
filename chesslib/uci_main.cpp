@@ -38,11 +38,7 @@ void setupGame(std::istringstream& input, Engine& engine)
         if (token == "moves") {
             continue;
         }
-        const ParsedMove parsedMove = parseCoordinateNotation(token);
-        const bool isMovePlayed = engine.playMove(
-            parsedMove.originSquare,
-            parsedMove.destSquare,
-            parsedMove.promoteToPieceType);
+        const bool isMovePlayed = engine.playMove(token);
         REQUIRE(isMovePlayed);
     }
 }

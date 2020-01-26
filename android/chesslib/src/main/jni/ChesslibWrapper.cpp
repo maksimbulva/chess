@@ -22,22 +22,21 @@ extern "C" {
 JNIEXPORT jlong JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_calculateLegalMovesCount(
         JNIEnv* env, jobject, jstring fenString, jint depthPly)
 {
-    const char *cstr = env->GetStringUTFChars(fenString, nullptr);
+    JavaStringWrapper fen(env, fenString);
 
     jlong result = -1;
     try {
-        result = static_cast<jlong>(countLegalMoves(std::string{cstr}, depthPly));
+        result = static_cast<jlong>(countLegalMoves(fen.getString(), depthPly));
     }
     catch (std::exception &ex) {
         logError(ex.what());
     }
 
-    env->ReleaseStringUTFChars(fenString, cstr);
     return result;
 }
 
 JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_resetGame__J(
-        JNIEnv* env, jobject, jlong enginePointer)
+        JNIEnv*, jobject, jlong enginePointer)
 {
     Engine* const engine = getEngine(enginePointer);
 
@@ -53,18 +52,32 @@ JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_resetG
         JNIEnv* env, jobject, jstring fenString, jlong enginePointer)
 {
     Engine* const engine = getEngine(enginePointer);
-    const char *cstr = env->GetStringUTFChars(fenString, nullptr);
+    JavaStringWrapper fen(env, fenString);
 
     try {
-        engine->resetGame(std::string(cstr));
+        engine->resetGame(fen.getString());
+    }
+    catch (std::exception& ex) {
+        logError(ex.what());
+    }
+}
+
+JNIEXPORT jboolean JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_playMove(
+        JNIEnv* env, jobject, jstring moveString, jlong enginePointer)
+{
+    Engine* const engine = getEngine(enginePointer);
+    JavaStringWrapper move(env, moveString);
+
+    bool result = false;
+    try {
+        result = engine->playMove(move.getString());
     }
     catch (std::exception& ex) {
         logError(ex.what());
     }
 
-    env->ReleaseStringUTFChars(fenString, cstr);
+    return static_cast<jboolean>(result);
 }
-
 
 JNIEXPORT jlong JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_createEngineInstance(
         JNIEnv*, jobject)

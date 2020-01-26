@@ -9,6 +9,7 @@ public class ChesslibWrapper {
     }
 
     public void destroy() {
+        releaseEngineInstance(enginePointer);
     }
 
     public native long calculateLegalMovesCount(String fen, int depthPly);
@@ -16,6 +17,8 @@ public class ChesslibWrapper {
     public native void resetGame(long enginePointer);
 
     public native void resetGame(String fen, long enginePointer);
+
+    public native boolean playMove(String move, long enginePointer);
 
     private native long createEngineInstance();
 

@@ -55,7 +55,7 @@ square_t parseSquare(std::string squareString)
     return encodeSquare(rowChar - '1', columnChar - 'a');
 }
 
-ParsedMove parseCoordinateNotation(std::string moveString)
+ParsedMove parseCoordinateNotation(const std::string& moveString)
 {
     const auto originSquare = parseSquare(moveString.substr(0, 2));
     const auto destSquare = parseSquare(moveString.substr(2, 2));

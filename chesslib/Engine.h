@@ -29,6 +29,8 @@ public:
         square_t destSquare,
         piece_type_t promoteToPieceType = NoPiece);
 
+    bool playMove(const std::string& moveString);
+
     Variation findBestVariation(
         std::function<void(const SearchInfo& searchInfo)> progressCallback);
 
