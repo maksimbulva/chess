@@ -1,6 +1,7 @@
-#include "ru_maksimbulva_chess_chesslib_ChesslibWrapper.h"
+#include "ru_maksimbulva_chess_chesslib_AbsChesslibWrapper.h"
 #include "jni_utils.h"
 
+#include "../../../../../chesslib/fen.h"
 #include "../../../../../chesslib/Engine.h"
 #include "../../../../../chesslib/testing_utils.h"
 
@@ -19,7 +20,7 @@ Engine* getEngine(jlong enginePointer)
 
 extern "C" {
 
-JNIEXPORT jlong JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_calculateLegalMovesCount(
+JNIEXPORT jlong JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_calculateLegalMovesCount(
         JNIEnv* env, jobject, jstring fenString, jint depthPly)
 {
     JavaStringWrapper fen(env, fenString);
@@ -35,7 +36,7 @@ JNIEXPORT jlong JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_calcu
     return result;
 }
 
-JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_resetGame__J(
+JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_resetGame__J(
         JNIEnv*, jobject, jlong enginePointer)
 {
     Engine* const engine = getEngine(enginePointer);
@@ -48,7 +49,7 @@ JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_resetG
     }
 }
 
-JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_resetGame__Ljava_lang_String_2J(
+JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_resetGame__Ljava_lang_String_2J(
         JNIEnv* env, jobject, jstring fenString, jlong enginePointer)
 {
     Engine* const engine = getEngine(enginePointer);
@@ -62,7 +63,16 @@ JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_resetG
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_playMove(
+JNIEXPORT jstring JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_getCurrentPositionFen(
+        JNIEnv* env, jobject, jlong enginePointer)
+{
+    Engine* const engine = getEngine(enginePointer);
+    const Position& position = engine->getGame().getCurrentPosition();
+    std::string fenString = encodeFen(position);
+    return env->NewStringUTF(fenString.c_str());
+}
+
+JNIEXPORT jboolean JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_playMove(
         JNIEnv* env, jobject, jstring moveString, jlong enginePointer)
 {
     Engine* const engine = getEngine(enginePointer);
@@ -79,13 +89,20 @@ JNIEXPORT jboolean JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_pl
     return static_cast<jboolean>(result);
 }
 
-JNIEXPORT jlong JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_createEngineInstance(
+JNIEXPORT jstring JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_findBestVariation(
+        JNIEnv* env, jobject, jlong enginePointer)
+{
+    return jstring();
+}
+
+
+JNIEXPORT jlong JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_createEngineInstance(
         JNIEnv*, jobject)
 {
     return reinterpret_cast<jlong>(new Engine());
 }
 
-JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_ChesslibWrapper_releaseEngineInstance(
+JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_releaseEngineInstance(
         JNIEnv*, jobject, jlong enginePointer)
 {
     if (enginePointer != 0) {

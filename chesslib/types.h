@@ -11,8 +11,6 @@ using fastint = int_fast32_t;
 using piece_type_t = fastint;
 using player_t = fastint;
 using square_t = fastint;
-using row_t = fastint;
-using column_t = fastint;
 
 using encoded_move_t = uint32_t;
 

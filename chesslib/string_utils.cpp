@@ -17,4 +17,17 @@ std::vector<std::string> split(const std::string& source, char delimiter)
     return result;
 }
 
+std::string join(std::vector<std::string> strings, char delimiter)
+{
+    std::string joinedString;
+    joinedString.reserve(80);
+    for (size_t i = 0; i < strings.size(); ++i) {
+        joinedString += strings[i];
+        if (i + 1 != strings.size()) {
+            joinedString.push_back(delimiter);
+        }
+    }
+    return joinedString;
+}
+
 }

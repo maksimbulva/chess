@@ -8,4 +8,6 @@ namespace chesslib {
 
 Position decodeFen(const std::string& fenString);
 
+std::string encodeFen(const Position& position);
+
 }
