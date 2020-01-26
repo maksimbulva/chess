@@ -17,9 +17,7 @@ public:
 
     struct Value {
     public:
-        Value()
-        {            
-        }
+        Value() = default;
 
         explicit constexpr Value(uint64_t encoded)
             : encoded_(encoded)

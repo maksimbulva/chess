@@ -62,8 +62,7 @@ public:
     static constexpr evaluation_t GoodEnoughToStopIterativeDeepening = CheckmateValue - 1000;
 
 private:
-    // TODO: consider using std::atomic_uint64_t
-    std::atomic<uint64_t> evaluatedPositionCount_;
+    std::atomic_uint64_t evaluatedPositionCount_;
 
     using TableValues = std::array<evaluation_t, SQUARE_COUNT>;
     static const std::array<TableValues*, King + 1> TABLE_VALUES;
