@@ -179,9 +179,13 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
         }
     } else {
         if (!hasLegalMoves) {
-            const evaluation_t evaluation = evaluator_->evaluateNoLegalMovesPosition(
-                position_,
-                getCurrentSearchDepthPly(depthPly));
+            const auto currentSearchDepth = getCurrentSearchDepthPly(depthPly);
+            const evaluation_t evaluation = evaluator_->evaluateNoLegalMovesPosition(position_, currentSearchDepth);
+            transpositionTable_.insertExactEvaluation(
+                parentHash.getHash(),
+                Move::NullMove(),
+                depthPly,
+                evaluation);
             return std::max(alpha, std::min(evaluation, beta));
         }
         if (isAllowTranspositionTableUpdate) {
@@ -307,7 +311,7 @@ MovesCollection SearchEngine::getPrincipalVariation(PositionHash parentHash)
 
 int SearchEngine::getCurrentSearchDepthPly(int remainingDepthPly) const
 {
-    return searchDepthPly_ - remainingDepthPly;
+    return searchDepthPly_ - remainingDepthPly + 1;
 }
 
 void SearchEngine::abortSearchIfNeeded()
