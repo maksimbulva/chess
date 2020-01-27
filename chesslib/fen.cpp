@@ -229,10 +229,9 @@ uint32_t decodeHalfmoveClock(const std::string& encoded)
     return static_cast<uint32_t>(std::stoi(encoded));
 }
 
-std::string encodeHalfmoveClock()
+std::string encodeHalfmoveClock(const PositionMoveCounters& moveCounters)
 {
-    // TODO: Return actual value
-    return std::to_string(0);
+    return std::to_string(moveCounters.halfmoveClock);
 }
 
 uint32_t decodeFullmoveNumber(const std::string& encoded)
@@ -240,10 +239,9 @@ uint32_t decodeFullmoveNumber(const std::string& encoded)
     return static_cast<uint32_t>(std::stoi(encoded));
 }
 
-std::string encodeFullmoveNumber()
+std::string encodeFullmoveNumber(const PositionMoveCounters& moveCounters)
 {
-    // TODO: Return actual value
-    return std::to_string(1);
+    return std::to_string(moveCounters.fullmoveNumber);
 }
 
 }  // namespace
@@ -278,8 +276,8 @@ std::string encodeFen(const Position& position)
             encodePlayerToMove(position.getPlayerToMove()),
             encodeCastleOptions({ position.getCastleOptions(Black), position.getCastleOptions(White) }),
             encodeEnPassantColumn(position.getPlayerToMove(), position.getEnPassantColumn()),
-            encodeHalfmoveClock(),
-            encodeFullmoveNumber()
+            encodeHalfmoveClock(position.getMoveCounters()),
+            encodeFullmoveNumber(position.getMoveCounters())
         },
         ' ');
 }

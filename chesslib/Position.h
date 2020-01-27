@@ -74,6 +74,11 @@ public:
         return positionFlags_;
     }
 
+    const PositionMoveCounters& getMoveCounters() const
+    {
+        return moveCounters_;
+    }
+
     bool isValid() const;
 
     bool isNotValid() const
@@ -86,6 +91,8 @@ public:
     void addPiece(const PieceOnBoard& piece);
 
     void playMove(const Move& move);
+
+    void updateMoveCounters(const Move& move);
 
     bool isCanUndoMove() const
     {

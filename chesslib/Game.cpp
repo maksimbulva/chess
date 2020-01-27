@@ -25,6 +25,7 @@ Move Game::getRandomMove() const
 void Game::playMove(Move move)
 {
     currentPosition_.playMove(move);
+    currentPosition_.updateMoveCounters(move);
     updateLegalMoves();
 }
 

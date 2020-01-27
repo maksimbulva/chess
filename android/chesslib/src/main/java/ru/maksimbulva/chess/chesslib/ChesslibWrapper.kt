@@ -1,6 +1,8 @@
 package ru.maksimbulva.chess.chesslib
 
 import ru.maksimbulva.chess.core.engine.Variation
+import ru.maksimbulva.chess.core.engine.move.Move
+import ru.maksimbulva.chess.core.notation.CoordinateNotation
 
 class ChesslibWrapper : AbsChesslibWrapper() {
 
@@ -20,8 +22,8 @@ class ChesslibWrapper : AbsChesslibWrapper() {
 
     fun currentPositionFen(): String = getCurrentPositionFen(enginePointer)
 
-    fun playMove(move: String): Boolean {
-        return playMove(move, enginePointer)
+    fun playMove(move: Move): Boolean {
+        return playMove(CoordinateNotation.moveToString(move), enginePointer)
     }
 
     fun findBestVariation(): Variation {

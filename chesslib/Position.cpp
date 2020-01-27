@@ -97,10 +97,6 @@ void Position::playMove(const Move& move)
     positionFlags_.setPlayerToMove(getOtherPlayer());
 
     history_.emplace_back(move, oldPositionFlags, moveCounters_);
-
-    uint32_t newHalfmoveClock = (move.isCapture() || pieceToMove == Pawn) ? 0 : moveCounters_.getHalfmoveClock() + 1;
-    uint32_t newFullmoveNumber = moveCounters_.getFullmoveNumber() + (playerToMove == Black ? 1 : 0);
-    moveCounters_ = PositionMoveCounters(newHalfmoveClock, newFullmoveNumber);
 }
 
 void Position::undoMove()
@@ -149,6 +145,20 @@ void Position::undoMove()
     moveCounters_ = historyToUndo.getPositionMoveCounters();
 
     history_.pop_back();
+}
+
+void Position::updateMoveCounters(const Move& move)
+{
+    if (move.isCapture() || move.getPieceType() == Pawn) {
+        moveCounters_.halfmoveClock = 0;
+    }
+    else {
+        ++moveCounters_.halfmoveClock;
+    }
+
+    if (getPlayerToMove() == White) {
+        ++moveCounters_.fullmoveNumber;
+    }
 }
 
 bool Position::isValid() const
