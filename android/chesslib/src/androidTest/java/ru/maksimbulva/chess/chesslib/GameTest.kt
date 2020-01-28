@@ -44,4 +44,15 @@ class GameTest {
             chesslibWrapper.currentPositionFen()
         )
     }
+
+    @Test
+    fun resetToSpecificPositionTest() {
+        chesslibWrapper.resetGame("2bqkbn1/2pppp2/np2N3/r3P1p1/p2N2B1/5Q2/PPPPKPP1/RNB2r2 w KQkq - 0 1")
+        chesslibWrapper.playMove(Move(Cell.of("e6"), Cell.of("c7")))
+        assertEquals(
+            "2bqkbn1/2Nppp2/np6/r3P1p1/p2N2B1/5Q2/PPPPKPP1/RNB2r2 b - - 0 1",
+            chesslibWrapper.currentPositionFen()
+        )
+
+    }
 }

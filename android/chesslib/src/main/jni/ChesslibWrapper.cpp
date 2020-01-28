@@ -3,9 +3,11 @@
 
 #include "../../../../../chesslib/fen.h"
 #include "../../../../../chesslib/Engine.h"
+#include "../../../../../chesslib/notation.h"
 #include "../../../../../chesslib/testing_utils.h"
 
 #include <exception>
+#include <string>
 
 using namespace chesslib;
 
@@ -92,7 +94,22 @@ JNIEXPORT jboolean JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper
 JNIEXPORT jstring JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_findBestVariation(
         JNIEnv* env, jobject, jlong enginePointer)
 {
-    return jstring();
+    Engine* const engine = getEngine(enginePointer);
+    std::string variationString;
+
+    try {
+        auto bestVariation = engine->findBestVariation(nullptr);
+        variationString += std::to_string(bestVariation.getEvaluation());
+        for (const auto& move : bestVariation.getMoves()) {
+            variationString.push_back(' ');
+            variationString += toCoordinateNotation(move);
+        }
+    }
+    catch (std::exception& ex) {
+        logError(ex.what());
+    }
+
+    return env->NewStringUTF(variationString.c_str());
 }
 
 
