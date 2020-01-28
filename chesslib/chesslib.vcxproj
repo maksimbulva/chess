@@ -137,6 +137,7 @@
     <ClCompile Include="moves_generator.cpp" />
     <ClCompile Include="notation.cpp" />
     <ClCompile Include="pawns_evaluation.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="position_factory.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="PawnEvaluationFactors.h" />
     <ClInclude Include="pawns_evaluation.h" />
     <ClInclude Include="PieceOnBoard.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="PositionFlags.h" />
     <ClInclude Include="PositionHash.h" />

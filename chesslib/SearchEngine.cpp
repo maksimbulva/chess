@@ -3,6 +3,7 @@
 #include "Evaluator.h"
 #include "exceptions.h"
 #include "MovesCollection.h"
+#include "Player.h"
 #include "PositionHash.h"
 #include "require.h"
 #include "ZobristHasher.h"
@@ -12,10 +13,10 @@
 
 namespace chesslib {
 
-SearchEngine::SearchEngine(Position position, Evaluator& evaluator, uint64_t maxEvaluations)
+SearchEngine::SearchEngine(Position position, Player& player)
     : position_(position)
-    , evaluator_(&evaluator)
-    , maxEvaluations_(maxEvaluations)
+    , evaluator_(&player.getEvaluator())
+    , maxEvaluations_(player.getMaxEvaluations())
     , searchDepthPly_(0)
     , isSearchAborted_(false)
 {

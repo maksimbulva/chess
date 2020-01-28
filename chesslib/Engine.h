@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Game.h"
+#include "Player.h"
 #include "SearchInfo.h"
 #include "Variation.h"
 
@@ -41,6 +42,7 @@ public:
 
 private:
     Game game_;
+    std::array<Player, PLAYER_COUNT> players_;
     SearchInfo searchInfo_;
 };
 

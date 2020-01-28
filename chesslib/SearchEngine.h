@@ -12,13 +12,14 @@
 namespace chesslib {
 
 class Evaluator;
+class Player;
 struct PositionHash;
 struct ScoredMove;
 
 class SearchEngine
 {
 public:
-    SearchEngine(Position position, Evaluator& evaluator, uint64_t maxEvaluations);
+    SearchEngine(Position position, Player& player);
 
     Variation runSearch(int depthPly);
 

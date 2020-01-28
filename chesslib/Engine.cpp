@@ -16,6 +16,7 @@ const char* const initialPositonFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKB
 
 Engine::Engine()
     : game_(decodeFen(initialPositonFen))
+    , players_({ Player(), Player() })
 {
 }
 
@@ -69,10 +70,8 @@ Variation Engine::findBestVariation(
     const Position& currentPosition = game_.getCurrentPosition();
     searchInfo_.playerToMove = currentPosition.getPlayerToMove();
 
-    Evaluator evaluator;
-    const uint64_t maxEvaluations = 5000000;
-
-    SearchEngine searchEngine(currentPosition, evaluator, maxEvaluations);
+    Player& currentPlayer = players_[searchInfo_.playerToMove];
+    SearchEngine searchEngine(currentPosition, currentPlayer);
 
     for (int depthPly = 2; ; ++depthPly) {
         auto searchResult = searchEngine.runSearch(depthPly);
@@ -81,7 +80,7 @@ Variation Engine::findBestVariation(
         }
 
         searchInfo_.bestVariation = std::move(searchResult);
-        searchInfo_.evaluatedPositionCount = evaluator.getEvaluatedPositionCount();
+        searchInfo_.evaluatedPositionCount = currentPlayer.getEvaluator().getEvaluatedPositionCount();
         searchInfo_.searchTimeMs = stopwatch.getElapsedMilliseconds();
 
         if (std::abs(searchResult.getEvaluation()) >= Evaluator::GoodEnoughToStopIterativeDeepening) {

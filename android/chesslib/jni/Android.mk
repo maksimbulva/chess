@@ -23,6 +23,7 @@ LOCAL_SRC_FILES := \
 	../../../chesslib/MovesCollection.cpp \
 	../../../chesslib/notation.cpp \
 	../../../chesslib/pawns_evaluation.cpp \
+	../../../chesslib/Player.cpp \
 	../../../chesslib/position_factory.cpp \
 	../../../chesslib/Position.cpp \
 	../../../chesslib/ScoredMove.cpp \
