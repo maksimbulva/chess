@@ -5,7 +5,6 @@
 #include "types.h"
 
 #include <array>
-#include <atomic>
 
 namespace chesslib {
 
@@ -13,13 +12,6 @@ class Position;
 
 class Evaluator {
 public:
-    Evaluator();
-
-    uint64_t getEvaluatedPositionCount() const
-    {
-        return evaluatedPositionCount_;
-    }
-
     evaluation_t getMaterialValue(piece_type_t pieceType) const;
 
     EvaluationFactors getEvaluationFactors(const Position& position, player_t player) const;
@@ -30,9 +22,9 @@ public:
         const ScoredMove& movePlayed,
         const player_t player) const;
 
-    evaluation_t evaluate(const EvaluationFactorsArray& factors);
+    evaluation_t evaluate(const EvaluationFactorsArray& factors) const;
 
-    evaluation_t evaluateNoLegalMovesPosition(Position& position, int currentSearchDepthPly);
+    evaluation_t evaluateNoLegalMovesPosition(Position& position, int currentSearchDepthPly) const;
 
     evaluation_t evaluateMaterial(const Position& position, player_t player) const;
 
@@ -62,8 +54,6 @@ public:
     static constexpr evaluation_t GoodEnoughToStopIterativeDeepening = CheckmateValue - 1000;
 
 private:
-    std::atomic_uint64_t evaluatedPositionCount_;
-
     using TableValues = std::array<evaluation_t, SQUARE_COUNT>;
     static const std::array<TableValues*, King + 1> TABLE_VALUES;
 };

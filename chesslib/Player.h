@@ -11,7 +11,7 @@ class Player
 public:
     Player();
 
-    Evaluator& getEvaluator()
+    const Evaluator& getEvaluator() const
     {
         return evaluator_;
     }

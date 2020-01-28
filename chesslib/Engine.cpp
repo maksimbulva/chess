@@ -80,7 +80,7 @@ Variation Engine::findBestVariation(
         }
 
         searchInfo_.bestVariation = std::move(searchResult);
-        searchInfo_.evaluatedPositionCount = currentPlayer.getEvaluator().getEvaluatedPositionCount();
+        searchInfo_.evaluatedPositionCount = searchEngine.getEvaluatedPositionCount();
         searchInfo_.searchTimeMs = stopwatch.getElapsedMilliseconds();
 
         if (std::abs(searchResult.getEvaluation()) >= Evaluator::GoodEnoughToStopIterativeDeepening) {

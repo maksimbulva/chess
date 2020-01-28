@@ -104,11 +104,6 @@ const std::array<TableValues*, King + 1> Evaluator::TABLE_VALUES = {
     &TABLE_KING_VALUES
 };
 
-Evaluator::Evaluator()
-    : evaluatedPositionCount_(0)
-{
-}
-
 evaluation_t Evaluator::getMaterialValue(piece_type_t pieceType) const
 {
     return MATERIAL_VALUE[pieceType];
@@ -175,16 +170,14 @@ void Evaluator::calculateChildEvaluationFactors(
 }
 
 // TODO: this is temporary method. Replace with some ML evaluations
-evaluation_t Evaluator::evaluate(const EvaluationFactorsArray& factors)
+evaluation_t Evaluator::evaluate(const EvaluationFactorsArray& factors) const
 {
-    ++evaluatedPositionCount_;
     return factors[White].getMaterial() + factors[White].getTableValue()
         - factors[Black].getMaterial() - factors[Black].getTableValue();
 }
 
-evaluation_t Evaluator::evaluateNoLegalMovesPosition(Position& position, int currentSearchDepthPly)
+evaluation_t Evaluator::evaluateNoLegalMovesPosition(Position& position, int currentSearchDepthPly) const
 {
-    ++evaluatedPositionCount_;
     // Either we are checkmated or it is a stalemate
     return position.isInCheck() ? currentSearchDepthPly - CheckmateValue : StalemateValue;
 }

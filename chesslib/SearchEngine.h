@@ -19,13 +19,18 @@ struct ScoredMove;
 class SearchEngine
 {
 public:
-    SearchEngine(Position position, Player& player);
+    SearchEngine(Position position, const Player& player);
 
     Variation runSearch(int depthPly);
 
     bool isSearchAborted() const
     {
         return isSearchAborted_;
+    }
+
+    uint64_t getEvaluatedPositionCount() const
+    {
+        return evaluatedPositionCount_;
     }
 
 private:
@@ -49,18 +54,23 @@ private:
 
     void abortSearchIfNeeded();
 
+    evaluation_t evaluate(const EvaluationFactorsArray& factors);
+    evaluation_t evaluateNoLegalMovesPosition(int currentSearchDepthPly);
+
     static PositionHash getChildHash(
         const PositionHash& parentHash,
         PositionFlags childPositionFlags,
         const ScoredMove& movePlayed);
 
     Position position_;
-    Evaluator* const evaluator_;
+    const Evaluator* const evaluator_;
     const uint64_t maxEvaluations_;
     int searchDepthPly_;
     MemoryPool memoryPool_;
     TranspositionTable transpositionTable_;
+
     std::atomic_bool isSearchAborted_;
+    std::atomic_uint64_t evaluatedPositionCount_;
 };
 
 }

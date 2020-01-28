@@ -13,12 +13,13 @@
 
 namespace chesslib {
 
-SearchEngine::SearchEngine(Position position, Player& player)
+SearchEngine::SearchEngine(Position position, const Player& player)
     : position_(position)
     , evaluator_(&player.getEvaluator())
     , maxEvaluations_(player.getMaxEvaluations())
     , searchDepthPly_(0)
     , isSearchAborted_(false)
+    , evaluatedPositionCount_(0)
 {
 }
 
@@ -138,7 +139,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
                 evaluation = -runQuiescentSearch(childEvaluationFactors, childHash, -beta, -alpha);
             }
             else {
-                evaluation = evaluationSideMultiplier * evaluator_->evaluate(childEvaluationFactors);
+                evaluation = evaluationSideMultiplier * evaluate(childEvaluationFactors);
             }
         }
         else {
@@ -181,7 +182,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
     } else {
         if (!hasLegalMoves) {
             const auto currentSearchDepth = getCurrentSearchDepthPly(depthPly);
-            const evaluation_t evaluation = evaluator_->evaluateNoLegalMovesPosition(position_, currentSearchDepth);
+            const evaluation_t evaluation = evaluateNoLegalMovesPosition(currentSearchDepth);
             transpositionTable_.insertExactEvaluation(
                 parentHash.getHash(),
                 Move::NullMove(),
@@ -213,7 +214,7 @@ evaluation_t SearchEngine::runQuiescentSearch(
 
     const player_t playerToMove = position_.getPlayerToMove();
     const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(playerToMove);
-    const evaluation_t evaluation = evaluationSideMultiplier * evaluator_->evaluate(parentEvaluationFactors);
+    const evaluation_t evaluation = evaluationSideMultiplier * evaluate(parentEvaluationFactors);
 
     if (evaluation >= beta) {
         return beta;
@@ -317,9 +318,21 @@ int SearchEngine::getCurrentSearchDepthPly(int remainingDepthPly) const
 
 void SearchEngine::abortSearchIfNeeded()
 {
-    if (!isSearchAborted_ && evaluator_->getEvaluatedPositionCount() > maxEvaluations_) {
+    if (!isSearchAborted_ && evaluatedPositionCount_ > maxEvaluations_) {
         isSearchAborted_ = true;
     }
+}
+
+evaluation_t SearchEngine::evaluate(const EvaluationFactorsArray& factors)
+{
+    ++evaluatedPositionCount_;
+    return evaluator_->evaluate(factors);
+}
+
+evaluation_t SearchEngine::evaluateNoLegalMovesPosition(int currentSearchDepthPly)
+{
+    ++evaluatedPositionCount_;
+    return evaluator_->evaluateNoLegalMovesPosition(position_, currentSearchDepthPly);
 }
 
 PositionHash SearchEngine::getChildHash(
