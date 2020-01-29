@@ -6,7 +6,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class MoveGeneratorTest {
+class MoveGeneratorTest : BaseChesslibTest() {
 
     @Test
     fun moveCountFromInitialPositionTest() {
@@ -49,11 +49,9 @@ class MoveGeneratorTest {
     }
 
     private fun assertMoveCount(fenString: String, expectedMoveCount: Array<Long>) {
-        val chesslibWrapper = ChesslibWrapper()
         expectedMoveCount.forEachIndexed { index, expected ->
             val depthPly = index + 1
             assertEquals(expected, chesslibWrapper.calculateLegalMovesCount(fenString, depthPly))
         }
-        chesslibWrapper.destroy()
     }
 }

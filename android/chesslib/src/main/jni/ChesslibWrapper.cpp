@@ -22,7 +22,8 @@ Engine* getEngine(jlong enginePointer)
 
 extern "C" {
 
-JNIEXPORT jlong JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_calculateLegalMovesCount(
+JNIEXPORT jlong JNICALL
+Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_calculateLegalMovesCount(
         JNIEnv* env, jobject, jstring fenString, jint depthPly)
 {
     JavaStringWrapper fen(env, fenString);
@@ -51,7 +52,8 @@ JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_res
     }
 }
 
-JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_resetGame__Ljava_lang_String_2J(
+JNIEXPORT void JNICALL
+Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_resetGame__Ljava_lang_String_2J(
         JNIEnv* env, jobject, jstring fenString, jlong enginePointer)
 {
     Engine* const engine = getEngine(enginePointer);
@@ -65,7 +67,8 @@ JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_res
     }
 }
 
-JNIEXPORT jstring JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_getCurrentPositionFen(
+JNIEXPORT jstring JNICALL
+Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_getCurrentPositionFen(
         JNIEnv* env, jobject, jlong enginePointer)
 {
     Engine* const engine = getEngine(enginePointer);
@@ -112,6 +115,20 @@ JNIEXPORT jstring JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_
     return env->NewStringUTF(variationString.c_str());
 }
 
+JNIEXPORT void JNICALL
+Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_setPlayerEvaluationsLimit(
+        JNIEnv* env, jobject, jint playerIndex, jlong evaluationsLimit, jlong enginePointer)
+{
+    Engine* const engine = getEngine(enginePointer);
+
+    try {
+        Player& player = engine->getPlayer(static_cast<player_t>(playerIndex));
+        player.setMaxEvaluations(static_cast<uint64_t>(evaluationsLimit));
+    }
+    catch (std::exception& ex) {
+        logError(ex.what());
+    }
+}
 
 JNIEXPORT jlong JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_createEngineInstance(
         JNIEnv*, jobject)

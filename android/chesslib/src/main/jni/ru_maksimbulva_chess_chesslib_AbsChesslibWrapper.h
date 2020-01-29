@@ -57,6 +57,14 @@ JNIEXPORT jstring JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_
 
 /*
  * Class:     ru_maksimbulva_chess_chesslib_AbsChesslibWrapper
+ * Method:    setPlayerEvaluationsLimit
+ * Signature: (IJJ)V
+ */
+JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_setPlayerEvaluationsLimit
+        (JNIEnv *, jobject, jint, jlong, jlong);
+
+/*
+ * Class:     ru_maksimbulva_chess_chesslib_AbsChesslibWrapper
  * Method:    createEngineInstance
  * Signature: ()J
  */

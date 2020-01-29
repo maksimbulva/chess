@@ -18,6 +18,11 @@ public abstract class AbsChesslibWrapper {
 
     protected native String findBestVariation(long enginePointer);
 
+    protected native void setPlayerEvaluationsLimit(
+            int player,
+            long evaluationsLimit,
+            long enginePointer);
+
     protected native long createEngineInstance();
 
     protected native void releaseEngineInstance(long enginePointer);

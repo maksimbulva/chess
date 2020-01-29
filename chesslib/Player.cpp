@@ -13,4 +13,9 @@ Player::Player()
 {
 }
 
+void Player::setMaxEvaluations(uint64_t maxEvaluations)
+{
+    maxEvaluations_ = maxEvaluations;
+}
+
 }

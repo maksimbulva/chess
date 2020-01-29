@@ -21,6 +21,8 @@ public:
         return maxEvaluations_;
     }
 
+    void setMaxEvaluations(uint64_t maxEvaluations);
+
 private:
     Evaluator evaluator_;
     uint64_t maxEvaluations_;

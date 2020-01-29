@@ -1,28 +1,13 @@
 package ru.maksimbulva.chess.chesslib
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
-import org.junit.Assert.*
 import org.junit.runner.RunWith
 import ru.maksimbulva.chess.core.engine.board.Cell
 import ru.maksimbulva.chess.core.engine.move.Move
 
 @RunWith(AndroidJUnit4::class)
-class FindMateTest {
-
-    private lateinit var chesslibWrapper: ChesslibWrapper
-
-    @Before
-    fun setUp() {
-        chesslibWrapper = ChesslibWrapper()
-    }
-
-    @After
-    fun tearDown() {
-        chesslibWrapper.destroy()
-    }
+class FindMateTest : BaseChesslibTest() {
 
     @Test
     fun findMateInTwoTest() {
@@ -42,9 +27,12 @@ class FindMateTest {
         )
     }
 
-    private fun assertBestMove(fen: String, expectedBestMove: Move) {
-        chesslibWrapper.resetGame(fen)
-        val actualVariation = chesslibWrapper.findBestVariation(onlyFirstMove = true)
-        assertEquals(expectedBestMove, actualVariation.moves.first())
+    @Test
+    fun findMateInMiddlegamePosition() {
+        // See https://www.chessprogramming.org/Bratko-Kopec_Test
+        assertBestMove(
+            fen = "1k1r4/pp1b1R2/3q2pp/4p3/2B5/4Q3/PPP2B2/2K5 b - -",
+            expectedBestMove = Move(Cell.of("d6"), Cell.of("d1"))
+        )
     }
 }

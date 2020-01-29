@@ -21,6 +21,11 @@ public:
         return game_;
     }
 
+    Player& getPlayer(player_t player)
+    {
+        return players_[player];
+    }
+
     void resetGame();
 
     void resetGame(const std::string& positionFen);
