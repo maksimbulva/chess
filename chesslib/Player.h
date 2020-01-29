@@ -23,9 +23,16 @@ public:
 
     void setMaxEvaluations(uint64_t maxEvaluations);
 
+    int getEvaluationRandomness() const
+    {
+        return evaluationRandomness_;
+    }
+
 private:
     Evaluator evaluator_;
     uint64_t maxEvaluations_;
+    // Must be zero or a power of two
+    evaluation_t evaluationRandomness_;
 };
 
 }

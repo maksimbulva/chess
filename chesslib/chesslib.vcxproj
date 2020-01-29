@@ -184,6 +184,7 @@
     <ClInclude Include="PositionHistory.h" />
     <ClInclude Include="PositionMoveCounters.h" />
     <ClInclude Include="position_factory.h" />
+    <ClInclude Include="Random.h" />
     <ClInclude Include="RayIterator.h" />
     <ClInclude Include="require.h" />
     <ClInclude Include="ScoredMove.h" />

@@ -5,6 +5,7 @@
 #include "MovesCollection.h"
 #include "Player.h"
 #include "PositionHash.h"
+#include "Random.h"
 #include "require.h"
 #include "ZobristHasher.h"
 
@@ -13,11 +14,23 @@
 
 namespace chesslib {
 
+namespace {
+
+position_hash_t getRandomHashMask(const evaluation_t evaluationRandomness)
+{
+    return evaluationRandomness == 0 ? 0 : (static_cast<position_hash_t>(evaluationRandomness) << 1) - 1;
+}
+
+}
+
 SearchEngine::SearchEngine(Position position, const Player& player)
     : position_(position)
     , evaluator_(&player.getEvaluator())
     , maxEvaluations_(player.getMaxEvaluations())
     , searchDepthPly_(0)
+    , randomHash_(Random{}.getNextU64())
+    , randomHashMask_(getRandomHashMask(player.getEvaluationRandomness()))
+    , evaluationRandomness_(player.getEvaluationRandomness())
     , isSearchAborted_(false)
     , evaluatedPositionCount_(0)
 {
@@ -139,7 +152,7 @@ evaluation_t SearchEngine::runAlphaBetaSearch(
                 evaluation = -runQuiescentSearch(childEvaluationFactors, childHash, -beta, -alpha);
             }
             else {
-                evaluation = evaluationSideMultiplier * evaluate(childEvaluationFactors);
+                evaluation = evaluationSideMultiplier * evaluate(childEvaluationFactors, childHash.getHash());
             }
         }
         else {
@@ -214,7 +227,8 @@ evaluation_t SearchEngine::runQuiescentSearch(
 
     const player_t playerToMove = position_.getPlayerToMove();
     const evaluation_t evaluationSideMultiplier = Evaluator::getSideMultiplier(playerToMove);
-    const evaluation_t evaluation = evaluationSideMultiplier * evaluate(parentEvaluationFactors);
+    const evaluation_t evaluation = evaluationSideMultiplier
+        * evaluate(parentEvaluationFactors, parentHash.getHash());
 
     if (evaluation >= beta) {
         return beta;
@@ -323,10 +337,14 @@ void SearchEngine::abortSearchIfNeeded()
     }
 }
 
-evaluation_t SearchEngine::evaluate(const EvaluationFactorsArray& factors)
+evaluation_t SearchEngine::evaluate(
+    const EvaluationFactorsArray& factors,
+    const position_hash_t positionHash)
 {
     ++evaluatedPositionCount_;
-    return evaluator_->evaluate(factors);
+    position_hash_t randomValue = (positionHash ^ randomHash_) & randomHashMask_;
+    evaluation_t evaluationRandomValue = static_cast<evaluation_t>(randomValue) - evaluationRandomness_;
+    return evaluator_->evaluate(factors) + evaluationRandomValue;
 }
 
 evaluation_t SearchEngine::evaluateNoLegalMovesPosition(int currentSearchDepthPly)

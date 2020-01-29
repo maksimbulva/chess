@@ -10,6 +10,7 @@ constexpr uint64_t DefaultMaxEvaluations = 5000000;
 
 Player::Player()
     : maxEvaluations_(DefaultMaxEvaluations)
+    , evaluationRandomness_(0)
 {
 }
 

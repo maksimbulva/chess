@@ -1,32 +1,30 @@
 #include "ZobristHasher.h"
 
 #include "Position.h"
+#include "Random.h"
 
 #include <limits>
-#include <random>
 
 namespace chesslib {
 
 ZobristHasher::ZobristHasher()
 {
-    std::random_device rndDevice;
-    std::mt19937_64 generator(rndDevice());
-    std::uniform_int_distribution<uint64_t> distribution;
+    Random random;
 
     for (uint64_t& value : pieceValues_) {
-        value = distribution(generator);
+        value = random.getNextU64();
     }
 
     for (uint64_t& value : playerToMoveValues_) {
-        value = distribution(generator);
+        value = random.getNextU64();
     }
 
     for (uint64_t& value : enPassantCaptureColumnValues_) {
-        value = distribution(generator);
+        value = random.getNextU64();
     }
 
     for (uint64_t& value : castleValues_) {
-        value = distribution(generator);
+        value = random.getNextU64();
     }
 }
 

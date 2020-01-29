@@ -54,7 +54,7 @@ private:
 
     void abortSearchIfNeeded();
 
-    evaluation_t evaluate(const EvaluationFactorsArray& factors);
+    evaluation_t evaluate(const EvaluationFactorsArray& factors, position_hash_t positionHash);
     evaluation_t evaluateNoLegalMovesPosition(int currentSearchDepthPly);
 
     static PositionHash getChildHash(
@@ -68,6 +68,10 @@ private:
     int searchDepthPly_;
     MemoryPool memoryPool_;
     TranspositionTable transpositionTable_;
+
+    const position_hash_t randomHash_;
+    const position_hash_t randomHashMask_;
+    const evaluation_t evaluationRandomness_;
 
     std::atomic_bool isSearchAborted_;
     std::atomic_uint64_t evaluatedPositionCount_;
