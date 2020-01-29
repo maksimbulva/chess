@@ -2,10 +2,13 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+APP_OPTIM := release
+
 LOCAL_MODULE := chess-jni
 
 LOCAL_CPP_FEATURES := exceptions
 LOCAL_CPPFLAGS += -std=c++14
+LOCAL_CPPFLAGS += -DNDEBUG
 
 LOCAL_LDLIBS := -llog
 
