@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     >
 
     <ImageView
@@ -8,6 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
+        tools:src="@drawable/chessboard_square_fritz_light"
+        />
+
+    <ImageView
+        android:id="@+id/chessboard_square_piece_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:visibility="gone"
+        tools:src="@drawable/piece_set_alpha_black_bishop"
+        tools:visibility="visible"
         />
 
 </merge>
