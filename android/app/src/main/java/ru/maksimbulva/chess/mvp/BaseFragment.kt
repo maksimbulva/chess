@@ -19,6 +19,8 @@ abstract class BaseFragment<P, V, VM>(
 
     protected abstract val view: V
 
+    protected abstract fun onViewCreated(view: View)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = obtainViewModel()
@@ -31,6 +33,7 @@ abstract class BaseFragment<P, V, VM>(
         savedInstanceState: Bundle?
     ): View? {
         return super.onCreateView(inflater, container, savedInstanceState).also {
+            it?.let { onViewCreated(it) }
             presenter.onAttachedView(view)
         }
     }

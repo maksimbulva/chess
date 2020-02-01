@@ -13,4 +13,14 @@
         android:layout_height="match_parent"
         />
 
+    <Button
+        android:id="@+id/play_move_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/edge_margin"
+        android:layout_marginRight="@dimen/edge_margin"
+        android:layout_marginTop="@dimen/edge_margin"
+        android:text="Play move!"
+        />
+
 </LinearLayout>

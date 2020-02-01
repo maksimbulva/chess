@@ -9,6 +9,15 @@ class GameScreenPresenter(
 
     override fun onAttachedView(view: IGameScreenView) {
         super.onAttachedView(view)
-        viewModel.position = chessEngineService.currentPosition
+
+        addSubscription(
+            chessEngineService.currentPosition.subscribe {
+                viewModel.position = it
+            }
+        )
+
+        view.setPlayMoveOnClickListener {
+            chessEngineService.playBestMoveAsync()
+        }
     }
 }

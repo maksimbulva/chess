@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import org.koin.android.ext.android.get
@@ -18,6 +19,7 @@ class GameScreenFragment
     ), IGameScreenView
 {
     private lateinit var chessboardView: ChessboardView
+    private lateinit var playMoveButton: Button
 
     override val view: IGameScreenView = this
 
@@ -35,13 +37,12 @@ class GameScreenFragment
         })
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return super.onCreateView(inflater, container, savedInstanceState).also {
-            chessboardView = it!!.findViewById(R.id.chessboard)
-        }
+    override fun onViewCreated(view: View) {
+        chessboardView = view.findViewById(R.id.chessboard)
+        playMoveButton = view.findViewById(R.id.play_move_button)
+    }
+
+    override fun setPlayMoveOnClickListener(listener: () -> Unit) {
+        playMoveButton.setOnClickListener { listener() }
     }
 }
