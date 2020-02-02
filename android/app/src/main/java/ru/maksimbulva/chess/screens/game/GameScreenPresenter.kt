@@ -17,7 +17,9 @@ class GameScreenPresenter(
         )
 
         view.setPlayMoveOnClickListener {
-            chessEngineService.playBestMoveAsync()
+            addSubscription(
+                chessEngineService.playBestMoveAsync().subscribe()
+            )
         }
     }
 }

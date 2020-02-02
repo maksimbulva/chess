@@ -1,9 +1,9 @@
 package ru.maksimbulva.chess
 
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
+import io.reactivex.*
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import ru.maksimbulva.chess.chesslib.ChesslibWrapper
 import ru.maksimbulva.chess.core.engine.Engine
@@ -20,12 +20,19 @@ class ChessEngineService {
     val currentPosition: Flowable<Position>
         get() = _currentPosition.toFlowable(BackpressureStrategy.LATEST)
 
-    fun playBestMoveAsync() {
-        val bestVariation = chesslibWrapper.findBestVariation(onlyFirstMove = true)
-        with (bestVariation.moves.first()) {
-            engine.playMove(this)
-            chesslibWrapper.playMove(this)
+    fun playBestMoveAsync(): Completable {
+        return Single.fromCallable {
+            chesslibWrapper.findBestVariation(onlyFirstMove = true)
         }
-        _currentPosition.onNext(engine.currentPosition)
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { bestVariation ->
+                with (bestVariation.moves.first()) {
+                    engine.playMove(this)
+                    chesslibWrapper.playMove(this)
+                }
+                _currentPosition.onNext(engine.currentPosition)
+            }
+            .ignoreElement()
     }
 }

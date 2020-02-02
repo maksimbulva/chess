@@ -6,31 +6,63 @@ import ru.maksimbulva.chess.core.engine.fen.FenDecoder
 import ru.maksimbulva.chess.core.engine.move.Move
 import ru.maksimbulva.chess.core.engine.move.MoveGenerator
 import ru.maksimbulva.chess.core.notation.CoordinateNotation
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 class ChesslibWrapper : AbsChesslibWrapper() {
 
     private val enginePointer = createEngineInstance()
 
+    private val lock: Lock = ReentrantLock()
+
+    private var isEngineBusy = false
+
     fun destroy() {
-        releaseEngineInstance(enginePointer)
+        lock.withLock {
+            require(!isEngineBusy)
+            releaseEngineInstance(enginePointer)
+        }
     }
 
     fun resetGame() {
-        resetGame(enginePointer)
+        lock.withLock {
+            require(!isEngineBusy)
+            resetGame(enginePointer)
+        }
     }
 
     fun resetGame(fen: String) {
-        resetGame(fen, enginePointer)
+        lock.withLock {
+            require(!isEngineBusy)
+            resetGame(fen, enginePointer)
+        }
     }
 
-    fun currentPositionFen(): String = getCurrentPositionFen(enginePointer)
+    fun currentPositionFen(): String {
+        lock.withLock {
+            require(!isEngineBusy)
+            return getCurrentPositionFen(enginePointer)
+        }
+    }
 
     fun playMove(move: Move): Boolean {
-        return playMove(CoordinateNotation.moveToString(move), enginePointer)
+        lock.withLock {
+            require(!isEngineBusy)
+            return playMove(CoordinateNotation.moveToString(move), enginePointer)
+        }
     }
 
+    // Must not be ran on UI thread
     fun findBestVariation(onlyFirstMove: Boolean): Variation {
+        lock.withLock {
+            require(!isEngineBusy)
+            isEngineBusy = true
+        }
+
         val variationStringTokens = findBestVariation(enginePointer).split(' ')
+        isEngineBusy = false
+
         val evaluation = variationStringTokens.first().toInt()
         val moves = mutableListOf<Move>()
         var position = FenDecoder.decode(currentPositionFen())
@@ -48,8 +80,11 @@ class ChesslibWrapper : AbsChesslibWrapper() {
     }
 
     fun setPlayerEvaluationsLimit(player: Player, evaluationsLimit: Long) {
-        val playerIndex = getChesslibPlayerIndex(player)
-        setPlayerEvaluationsLimit(playerIndex, evaluationsLimit, enginePointer)
+        lock.withLock {
+            require(!isEngineBusy)
+            val playerIndex = getChesslibPlayerIndex(player)
+            setPlayerEvaluationsLimit(playerIndex, evaluationsLimit, enginePointer)
+        }
     }
 
     fun getPlayer(player: Player): ChesslibPlayerWrapper {
