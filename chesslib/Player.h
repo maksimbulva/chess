@@ -27,6 +27,11 @@ public:
     {
         return evaluationRandomness_;
     }
+    
+    // The value must be zero or a power of two
+    void setEvaluationRandomness(evaluation_t evaluationRandomness);
+
+    void setMaterialValue(piece_type_t pieceType, evaluation_t materialValue);
 
 private:
     Evaluator evaluator_;

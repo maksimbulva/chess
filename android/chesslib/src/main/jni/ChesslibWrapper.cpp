@@ -18,6 +18,12 @@ Engine* getEngine(jlong enginePointer)
     return reinterpret_cast<Engine*>(enginePointer);
 }
 
+Player& getPlayer(jint playerIndex, jlong enginePointer)
+{
+    Engine* const engine = getEngine(enginePointer);
+    return engine->getPlayer(static_cast<player_t>(playerIndex));
+}
+
 }
 
 extern "C" {
@@ -117,13 +123,39 @@ JNIEXPORT jstring JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_
 
 JNIEXPORT void JNICALL
 Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_setPlayerEvaluationsLimit(
-        JNIEnv* env, jobject, jint playerIndex, jlong evaluationsLimit, jlong enginePointer)
+        JNIEnv*, jobject, jint playerIndex, jlong evaluationsLimit, jlong enginePointer)
 {
-    Engine* const engine = getEngine(enginePointer);
-
     try {
-        Player& player = engine->getPlayer(static_cast<player_t>(playerIndex));
+        Player& player = getPlayer(playerIndex, enginePointer);
         player.setMaxEvaluations(static_cast<uint64_t>(evaluationsLimit));
+    }
+    catch (std::exception& ex) {
+        logError(ex.what());
+    }
+}
+
+JNIEXPORT void JNICALL
+Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_setDegreeOfRandomness(
+        JNIEnv *, jobject, jint playerIndex, jint degreeOfRandomness, jlong enginePointer)
+{
+    try {
+        Player& player = getPlayer(playerIndex, enginePointer);
+        player.setEvaluationRandomness(static_cast<evaluation_t>(degreeOfRandomness));
+    }
+    catch (std::exception& ex) {
+        logError(ex.what());
+    }
+}
+
+JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_setMaterialValue(
+        JNIEnv *, jobject, jint playerIndex, jint pieceType, jint materialValue,
+        jlong enginePointer)
+{
+    try {
+        Player& player = getPlayer(playerIndex, enginePointer);
+        player.setMaterialValue(
+            static_cast<piece_type_t>(pieceType),
+            static_cast<evaluation_t>(materialValue));
     }
     catch (std::exception& ex) {
         logError(ex.what());

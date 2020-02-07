@@ -23,6 +23,17 @@ public abstract class AbsChesslibWrapper {
             long evaluationsLimit,
             long enginePointer);
 
+    protected native void setDegreeOfRandomness(
+            int player,
+            int degreeOfRandomness,
+            long enginePointer);
+
+    protected native void setMaterialValue(
+            int player,
+            int pieceType,
+            int materialValue,
+            long enginePointer);
+
     protected native long createEngineInstance();
 
     protected native void releaseEngineInstance(long enginePointer);

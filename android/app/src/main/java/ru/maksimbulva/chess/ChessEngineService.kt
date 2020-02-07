@@ -42,11 +42,15 @@ class ChessEngineService {
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess { bestVariation ->
-                with (bestVariation.moves.first()) {
-                    engine.playMove(this)
-                    chesslibWrapper.playMove(this)
+                if (bestVariation.moves.isEmpty()) {
+                    // TODO: set game result
+                } else {
+                    with(bestVariation.moves.first()) {
+                        engine.playMove(this)
+                        chesslibWrapper.playMove(this)
+                    }
+                    _currentPosition.onNext(engine.currentPosition)
                 }
-                _currentPosition.onNext(engine.currentPosition)
             }
             .ignoreElement()
     }
@@ -58,6 +62,7 @@ class ChessEngineService {
         }
         with (chesslibWrapper.getPlayer(player)) {
             setPlayerEvaluationsLimit(person.evaluationsLimit)
+            setDegreeOfRandomness(person.degreeOfRandomness)
         }
     }
 }

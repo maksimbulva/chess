@@ -12,7 +12,14 @@ class Position;
 
 class Evaluator {
 public:
-    evaluation_t getMaterialValue(piece_type_t pieceType) const;
+    Evaluator();
+
+    evaluation_t getMaterialValue(piece_type_t pieceType) const
+    {
+        return materialValue_[pieceType];
+    }
+
+    void setMaterialValue(piece_type_t pieceType, evaluation_t materialValue);
 
     EvaluationFactors getEvaluationFactors(const Position& position, player_t player) const;
 
@@ -54,6 +61,8 @@ public:
     static constexpr evaluation_t GoodEnoughToStopIterativeDeepening = CheckmateValue - 1000;
 
 private:
+    std::array<evaluation_t, King + 1> materialValue_;
+
     using TableValues = std::array<evaluation_t, SQUARE_COUNT>;
     static const std::array<TableValues*, King + 1> TABLE_VALUES;
 };

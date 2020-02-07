@@ -65,6 +65,22 @@ JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_set
 
 /*
  * Class:     ru_maksimbulva_chess_chesslib_AbsChesslibWrapper
+ * Method:    setDegreeOfRandomness
+ * Signature: (IIJ)V
+ */
+JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_setDegreeOfRandomness
+        (JNIEnv *, jobject, jint, jint, jlong);
+
+/*
+ * Class:     ru_maksimbulva_chess_chesslib_AbsChesslibWrapper
+ * Method:    setMaterialValue
+ * Signature: (IIIJ)V
+ */
+JNIEXPORT void JNICALL Java_ru_maksimbulva_chess_chesslib_AbsChesslibWrapper_setMaterialValue
+        (JNIEnv *, jobject, jint, jint, jint, jlong);
+
+/*
+ * Class:     ru_maksimbulva_chess_chesslib_AbsChesslibWrapper
  * Method:    createEngineInstance
  * Signature: ()J
  */

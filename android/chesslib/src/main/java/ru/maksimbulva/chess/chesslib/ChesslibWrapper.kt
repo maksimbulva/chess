@@ -1,5 +1,6 @@
 package ru.maksimbulva.chess.chesslib
 
+import ru.maksimbulva.chess.core.engine.Piece
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.Variation
 import ru.maksimbulva.chess.core.engine.fen.FenDecoder
@@ -87,6 +88,24 @@ class ChesslibWrapper : AbsChesslibWrapper() {
         }
     }
 
+    fun setDegreeOfRandomness(player: Player, degreeOfRandomness: Int) {
+        require(degreeOfRandomness == 0 || isPowerOfTwo(degreeOfRandomness))
+        lock.withLock {
+            require(!isEngineBusy)
+            val playerIndex = getChesslibPlayerIndex(player)
+            setDegreeOfRandomness(playerIndex, degreeOfRandomness, enginePointer)
+        }
+    }
+
+    fun setMaterialValue(player: Player, piece: Piece, materialValue: Int) {
+        require(piece in setOf(Piece.Pawn, Piece.Knight, Piece.Bishop, Piece.Rook, Piece.Queen))
+        lock.withLock {
+            require(!isEngineBusy)
+            val playerIndex = getChesslibPlayerIndex(player)
+            setMaterialValue(playerIndex, piece.toChesslibPieceType(), materialValue, enginePointer)
+        }
+    }
+
     fun getPlayer(player: Player): ChesslibPlayerWrapper {
         return ChesslibPlayerWrapper(this, player)
     }
@@ -102,3 +121,5 @@ class ChesslibWrapper : AbsChesslibWrapper() {
         }
     }
 }
+
+private fun isPowerOfTwo(x: Int) = (x > 0) && (x and (x - 1) == 0)

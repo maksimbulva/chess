@@ -5,21 +5,9 @@
 #include "Position.h"
 #include "squares.h"
 
-#include <array>
-
 namespace chesslib {
 
 namespace {
-
-static std::array<evaluation_t, King + 1> MATERIAL_VALUE = {
-    /* NoPiece */ 0,
-    /* Pawn */    100,
-    /* Knight */  300,
-    /* Bishop */  300,
-    /* Rook */    500,
-    /* Queen */   900,
-    /* King */    0
-};
 
 using TableValues = std::array<evaluation_t, SQUARE_COUNT>;
 
@@ -104,9 +92,22 @@ const std::array<TableValues*, King + 1> Evaluator::TABLE_VALUES = {
     &TABLE_KING_VALUES
 };
 
-evaluation_t Evaluator::getMaterialValue(piece_type_t pieceType) const
+Evaluator::Evaluator()
+    : materialValue_({
+        /* NoPiece */ 0,
+        /* Pawn */    100,
+        /* Knight */  300,
+        /* Bishop */  300,
+        /* Rook */    500,
+        /* Queen */   900,
+        /* King */    0
+    })
 {
-    return MATERIAL_VALUE[pieceType];
+}
+
+void Evaluator::setMaterialValue(piece_type_t pieceType, evaluation_t materialValue)
+{
+    materialValue_[pieceType] = materialValue;
 }
 
 EvaluationFactors Evaluator::getEvaluationFactors(const Position& position, player_t player) const
@@ -185,9 +186,9 @@ evaluation_t Evaluator::evaluateNoLegalMovesPosition(Position& position, int cur
 evaluation_t Evaluator::evaluateMaterial(const Position& position, player_t player) const
 {
     evaluation_t material = 0;
-    position.getBoard().doForEachPiece(player, [&material](piece_type_t pieceType, square_t)
+    position.getBoard().doForEachPiece(player, [this, &material](piece_type_t pieceType, square_t)
         {
-            material += MATERIAL_VALUE[pieceType];
+            material += getMaterialValue(pieceType);
         });
     return material;
 }
