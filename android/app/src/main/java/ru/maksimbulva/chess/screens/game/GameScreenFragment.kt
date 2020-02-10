@@ -23,7 +23,7 @@ class GameScreenFragment
 
     override val view: IGameScreenView = this
 
-    override fun createPresenter() = GameScreenPresenter(get(), get())
+    override fun createPresenter() = GameScreenPresenter(get(), get(), get())
 
     override fun obtainViewModel(): GameScreenViewModel {
         return ViewModelProvider(this).get(GameScreenViewModel::class.java)

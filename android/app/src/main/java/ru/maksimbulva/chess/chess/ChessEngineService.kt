@@ -1,4 +1,4 @@
-package ru.maksimbulva.chess
+package ru.maksimbulva.chess.chess
 
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -8,6 +8,7 @@ import io.reactivex.subjects.Subject
 import ru.maksimbulva.chess.chesslib.ChesslibWrapper
 import ru.maksimbulva.chess.core.engine.Engine
 import ru.maksimbulva.chess.core.engine.Player
+import ru.maksimbulva.chess.core.engine.move.Move
 import ru.maksimbulva.chess.core.engine.position.Position
 import ru.maksimbulva.chess.person.Person
 
@@ -15,6 +16,8 @@ class ChessEngineService {
 
     private val engine = Engine()
     private val chesslibWrapper = ChesslibWrapper()
+
+    private val gameAdjudicator = GameAdjudicator(engine)
 
     private val _currentPosition: Subject<Position>
             = BehaviorSubject.createDefault(engine.currentPosition)
@@ -45,14 +48,22 @@ class ChessEngineService {
                 if (bestVariation.moves.isEmpty()) {
                     // TODO: set game result
                 } else {
-                    with(bestVariation.moves.first()) {
-                        engine.playMove(this)
-                        chesslibWrapper.playMove(this)
-                    }
+                    playMove(bestVariation.moves.first())
                     _currentPosition.onNext(engine.currentPosition)
                 }
             }
             .ignoreElement()
+    }
+
+    fun playMove(move: Move) {
+        engine.playMove(move)
+        chesslibWrapper.playMove(move)
+    }
+
+    fun adjudicateGame(): GameAdjudicationResult {
+        return gameAdjudicator.checkCurrentPosition(
+            isComputer = currentPersonToMove is Person.Computer
+        )
     }
 
     private fun configurePlayer(player: Player) {
