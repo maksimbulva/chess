@@ -49,7 +49,7 @@ class ChessEngineService {
                     // TODO: set game result
                 } else {
                     playMove(bestVariation.moves.first())
-                    _currentPosition.onNext(engine.currentPosition)
+                    publishPositionUpdate()
                 }
             }
             .ignoreElement()
@@ -58,12 +58,17 @@ class ChessEngineService {
     fun playMove(move: Move) {
         engine.playMove(move)
         chesslibWrapper.playMove(move)
+        publishPositionUpdate()
     }
 
     fun adjudicateGame(): GameAdjudicationResult {
         return gameAdjudicator.checkCurrentPosition(
             isComputer = currentPersonToMove is Person.Computer
         )
+    }
+
+    private fun publishPositionUpdate() {
+        _currentPosition.onNext(engine.currentPosition)
     }
 
     private fun configurePlayer(player: Player) {
