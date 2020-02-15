@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ui</string>
+
+    <string name="evaluation_format">%d%%</string>
 </resources>

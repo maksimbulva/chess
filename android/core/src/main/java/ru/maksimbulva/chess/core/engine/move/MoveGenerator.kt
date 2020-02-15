@@ -73,7 +73,7 @@ object MoveGenerator {
             }
     }
 
-    private fun isAttacksCell(position: Position, attacker: Player, targetCell: Cell): Boolean {
+    fun isAttacksCell(position: Position, attacker: Player, targetCell: Cell): Boolean {
         val board = position.board
         return board.pieces(attacker).any { pieceOnBoard ->
             val fromCell = pieceOnBoard.cell

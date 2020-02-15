@@ -2,7 +2,6 @@ package ru.maksimbulva.chess.screens.game
 
 import ru.maksimbulva.chess.chess.ChessEngineService
 import ru.maksimbulva.chess.mvp.BasePresenter
-import ru.maksimbulva.chess.person.Person
 import ru.maksimbulva.chess.person.PersonsRepository
 
 class GameScreenPresenter(
@@ -21,8 +20,16 @@ class GameScreenPresenter(
 
         addSubscription(
             chessEngineService.currentPosition.subscribe {
-                viewModel.position = it
+                viewModel.setPosition(it)
                 interactor.onPositionChanged()
+            }
+        )
+
+        addSubscription(
+            chessEngineService.bestVariation.subscribe { bestVariationByPlayer ->
+                bestVariationByPlayer.forEach {
+                    viewModel.updateBestVariation(it.key, it.value)
+                }
             }
         )
 

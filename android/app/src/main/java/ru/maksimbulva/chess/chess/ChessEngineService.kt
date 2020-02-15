@@ -8,6 +8,7 @@ import io.reactivex.subjects.Subject
 import ru.maksimbulva.chess.chesslib.ChesslibWrapper
 import ru.maksimbulva.chess.core.engine.Engine
 import ru.maksimbulva.chess.core.engine.Player
+import ru.maksimbulva.chess.core.engine.Variation
 import ru.maksimbulva.chess.core.engine.move.Move
 import ru.maksimbulva.chess.core.engine.position.Position
 import ru.maksimbulva.chess.person.Person
@@ -20,10 +21,16 @@ class ChessEngineService {
     private val gameAdjudicator = GameAdjudicator(engine)
 
     private val _currentPosition: Subject<Position>
-            = BehaviorSubject.createDefault(engine.currentPosition)
+        = BehaviorSubject.createDefault(engine.currentPosition)
 
     val currentPosition: Flowable<Position>
         get() = _currentPosition.toFlowable(BackpressureStrategy.LATEST)
+
+    private val _bestVariation: BehaviorSubject<Map<Player, Variation>>
+        = BehaviorSubject.createDefault(emptyMap())
+
+    val bestVariation: Flowable<Map<Player, Variation>>
+        get() = _bestVariation.toFlowable(BackpressureStrategy.LATEST)
 
     private lateinit var _players: Map<Player, Person>
 
@@ -45,11 +52,15 @@ class ChessEngineService {
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess { bestVariation ->
+                _bestVariation.onNext(
+                    _bestVariation.value!!.toMutableMap().also {
+                        it[engine.currentPosition.playerToMove] = bestVariation
+                    }
+                )
                 if (bestVariation.moves.isEmpty()) {
                     // TODO: set game result
                 } else {
                     playMove(bestVariation.moves.first())
-                    publishPositionUpdate()
                 }
             }
             .ignoreElement()
