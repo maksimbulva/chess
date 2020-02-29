@@ -49,7 +49,6 @@ class ChessboardView(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
 
     init {
         LayoutInflater.from(context).inflate(R.layout.chessboard, this, true)
-        setBackgroundColor(resources.getColor(R.color.green))
 
         grid = findViewById(R.id.chessboard_grid)
         grid.adapter = adapter

@@ -3,10 +3,10 @@ package ru.maksimbulva.ui.chessboard
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import ru.maksimbulva.ui.R
 import ru.maksimbulva.ui.chessboard.items.ChessboardItem
 import ru.maksimbulva.ui.core.IBindable
@@ -36,9 +36,9 @@ internal class ChessboardSquareView(context: Context, attrs: AttributeSet?, defS
         if (item.player != null && item.piece != null) {
             val drawableId = theme.pieceImage(item.player, item.piece)
             pieceImage.setImageDrawable(ContextCompat.getDrawable(context, drawableId))
-            pieceImage.isVisible = true
+            pieceImage.visibility = View.VISIBLE
         } else {
-            pieceImage.isVisible = false
+            pieceImage.visibility = View.GONE
         }
     }
 
