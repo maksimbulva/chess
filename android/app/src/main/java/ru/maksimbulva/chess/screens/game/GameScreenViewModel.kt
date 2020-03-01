@@ -3,31 +3,27 @@ package ru.maksimbulva.chess.screens.game
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import ru.maksimbulva.chess.core.PlayerMap
 import ru.maksimbulva.chess.core.engine.Player
-import ru.maksimbulva.chess.core.engine.Variation
 import ru.maksimbulva.chess.core.engine.position.Position
 
 class GameScreenViewModel : ViewModel() {
-    private val _boardState = MutableLiveData<GameScreenBoardState>()
-    val boardState: LiveData<GameScreenBoardState>
-        get() = _boardState
 
-    private val _personsState = MutableLiveData<Map<Player, GameScreenPersonState>>()
-    val personsState: LiveData<Map<Player, GameScreenPersonState>>
-        get() = _personsState
-
-    fun setPosition(position: Position) {
-        _boardState.value = GameScreenBoardState(position)
+    data class ViewState(
+        val position: Position,
+        val playerOnTop: Player,
+        val playersState: PlayerMap<GameScreenPersonState>
+    ) {
+        val boardItems = ChessboardItemsGenerator.generateForBoard(position.board, playerOnTop)
     }
 
-    fun updateBestVariation(player: Player, bestVariation: Variation) {
-        _personsState.value =
-            _personsState.value?.toMutableMap()?.also {
-                it[player] = it.getValue(player).copy(bestVariation = bestVariation)
-            }
-    }
+    private val _viewState = MutableLiveData<ViewState>()
+    val viewState: LiveData<ViewState>
+        get() = _viewState
 
-    init {
-        _personsState.value = Player.values().map { it to GameScreenPersonState() }.toMap()
-    }
+    var currentState: ViewState
+        get() = _viewState.value!!
+        set(value) {
+            _viewState.value = value
+        }
 }

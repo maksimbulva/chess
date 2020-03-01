@@ -2,16 +2,13 @@ package ru.maksimbulva.chess.screens.game
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import org.koin.android.ext.android.get
 import ru.maksimbulva.chess.R
-import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.mvp.BaseFragment
 import ru.maksimbulva.ui.PersonPanel
 import ru.maksimbulva.ui.chessboard.ChessboardView
-import ru.maksimbulva.ui.chessboard.items.ChessboardItem
 
 class GameScreenFragment
     : BaseFragment<GameScreenPresenter, IGameScreenView, GameScreenViewModel>(
@@ -19,8 +16,7 @@ class GameScreenFragment
     ), IGameScreenView
 {
     private lateinit var chessboardView: ChessboardView
-    private lateinit var topPersonPanel: PersonPanel
-    private lateinit var playMoveButton: Button
+    private lateinit var personPanels: Array<PersonPanel>
 
     override val view: IGameScreenView = this
 
@@ -33,28 +29,24 @@ class GameScreenFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.boardState.observe(this, Observer<GameScreenBoardState>{ boardState ->
-            chessboardView.setItems(boardState.chessboardItems)
-        })
-
-        viewModel.personsState.observe(this, Observer<Map<Player, GameScreenPersonState>>{
+        viewModel.viewState.observe(this, Observer<GameScreenViewModel.ViewState>{
+            viewState ->
+                chessboardView.setItems(viewState.boardItems)
+            /*
             it[Player.Black]?.bestVariation?.let { variation ->
                 topPersonPanel.updateEvaluation(PersonPanel.EvaluationModel(
                     evaluation = variation.evaluation.toDouble()
                 ))
             }
+             */
         })
     }
 
     override fun onViewCreated(view: View) {
         chessboardView = view.findViewById(R.id.chessboard)
-        topPersonPanel = view.findViewById(R.id.top_person_panel)
-        playMoveButton = view.findViewById(R.id.play_move_button)
-
-        topPersonPanel.setPortrait(R.drawable.portrait_001)
-    }
-
-    override fun setPlayMoveOnClickListener(listener: () -> Unit) {
-        playMoveButton.setOnClickListener { listener() }
+        personPanels = arrayOf(
+            view.findViewById(R.id.top_person_panel),
+            view.findViewById(R.id.bottom_person_panel)
+        )
     }
 }

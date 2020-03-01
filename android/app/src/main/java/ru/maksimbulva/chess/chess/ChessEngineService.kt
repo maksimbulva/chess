@@ -4,8 +4,8 @@ import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.Subject
 import ru.maksimbulva.chess.chesslib.ChesslibWrapper
+import ru.maksimbulva.chess.core.PlayerMap
 import ru.maksimbulva.chess.core.engine.Engine
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.Variation
@@ -20,29 +20,32 @@ class ChessEngineService {
 
     private val gameAdjudicator = GameAdjudicator(engine)
 
-    private val _currentPosition: Subject<Position>
+    private val _position: BehaviorSubject<Position>
         = BehaviorSubject.createDefault(engine.currentPosition)
 
-    val currentPosition: Flowable<Position>
-        get() = _currentPosition.toFlowable(BackpressureStrategy.LATEST)
+    val position: Flowable<Position>
+        get() = _position.toFlowable(BackpressureStrategy.LATEST)
 
-    private val _bestVariation: BehaviorSubject<Map<Player, Variation>>
-        = BehaviorSubject.createDefault(emptyMap())
+    val currentPosition: Position
+        get() = _position.value!!
 
-    val bestVariation: Flowable<Map<Player, Variation>>
+    private val _bestVariation: BehaviorSubject<PlayerMap<Variation?>>
+        = BehaviorSubject.createDefault(PlayerMap<Variation?>(null, null))
+
+    val bestVariation: Flowable<PlayerMap<Variation?>>
         get() = _bestVariation.toFlowable(BackpressureStrategy.LATEST)
 
-    private lateinit var _players: Map<Player, Person>
+    private var _players = PlayerMap<Person>(
+        blackPlayerValue = Person.Human(),
+        whitePlayerValue = Person.Human()
+    )
 
     val currentPersonToMove: Person
-        get() = _players.getValue(engine.currentPosition.playerToMove)
+        get() = _players.get(engine.currentPosition.playerToMove)
 
-    fun setPlayers(personSideWhite: Person, personSideBlack: Person) {
-        _players = mapOf(
-            Player.Black to personSideWhite,
-            Player.White to personSideBlack
-        )
-        _players.keys.forEach { configurePlayer(it) }
+    fun setPlayers(persons: PlayerMap<Person>) {
+        _players = persons
+        Player.values().forEach(this::configurePlayer)
     }
 
     fun playBestMoveAsync(): Completable {
@@ -53,9 +56,10 @@ class ChessEngineService {
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess { bestVariation ->
                 _bestVariation.onNext(
-                    _bestVariation.value!!.toMutableMap().also {
-                        it[engine.currentPosition.playerToMove] = bestVariation
-                    }
+                    _bestVariation.value!!.copyWith(
+                        player = engine.currentPosition.playerToMove,
+                        value = bestVariation
+                    )
                 )
                 if (bestVariation.moves.isEmpty()) {
                     // TODO: set game result
@@ -79,11 +83,11 @@ class ChessEngineService {
     }
 
     private fun publishPositionUpdate() {
-        _currentPosition.onNext(engine.currentPosition)
+        _position.onNext(engine.currentPosition)
     }
 
     private fun configurePlayer(player: Player) {
-        val person = _players.getValue(player)
+        val person = _players.get(player)
         if (person !is Person.Computer) {
             return
         }
