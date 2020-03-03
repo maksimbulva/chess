@@ -6,13 +6,14 @@ import androidx.lifecycle.ViewModel
 import ru.maksimbulva.chess.core.PlayerMap
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.position.Position
+import ru.maksimbulva.ui.person.PersonPanelState
 
 class GameScreenViewModel : ViewModel() {
 
     data class ViewState(
         val position: Position,
         val playerOnTop: Player,
-        val playersState: PlayerMap<GameScreenPersonState>
+        val playersState: PlayerMap<PersonPanelState>
     ) {
         val boardItems = ChessboardItemsGenerator.generateForBoard(position.board, playerOnTop)
     }

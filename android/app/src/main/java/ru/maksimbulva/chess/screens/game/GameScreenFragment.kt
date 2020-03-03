@@ -6,8 +6,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import org.koin.android.ext.android.get
 import ru.maksimbulva.chess.R
+import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.mvp.BaseFragment
-import ru.maksimbulva.ui.PersonPanel
+import ru.maksimbulva.ui.person.PersonPanel
 import ru.maksimbulva.ui.chessboard.ChessboardView
 
 class GameScreenFragment
@@ -17,6 +18,12 @@ class GameScreenFragment
 {
     private lateinit var chessboardView: ChessboardView
     private lateinit var personPanels: Array<PersonPanel>
+
+    private val topPanel: PersonPanel
+        get() = personPanels.first()
+
+    private val bottomPanel: PersonPanel
+        get() = personPanels.last()
 
     override val view: IGameScreenView = this
 
@@ -29,17 +36,16 @@ class GameScreenFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.viewState.observe(this, Observer<GameScreenViewModel.ViewState>{
-            viewState ->
+        viewModel.viewState.observe(this, Observer<GameScreenViewModel.ViewState>
+            { viewState ->
                 chessboardView.setItems(viewState.boardItems)
-            /*
-            it[Player.Black]?.bestVariation?.let { variation ->
-                topPersonPanel.updateEvaluation(PersonPanel.EvaluationModel(
-                    evaluation = variation.evaluation.toDouble()
-                ))
+
+                Player.values().forEach {
+                    val playerState = viewState.playersState.get(it)
+                    playerPanel(it, viewState.playerOnTop).setState(playerState)
+                }
             }
-             */
-        })
+        )
     }
 
     override fun onViewCreated(view: View) {
@@ -48,5 +54,9 @@ class GameScreenFragment
             view.findViewById(R.id.top_person_panel),
             view.findViewById(R.id.bottom_person_panel)
         )
+    }
+
+    private fun playerPanel(player: Player, playerOnTop: Player): PersonPanel {
+        return if (playerOnTop == player) topPanel else bottomPanel
     }
 }

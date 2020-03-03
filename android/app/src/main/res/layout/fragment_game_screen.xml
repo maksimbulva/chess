@@ -4,10 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/holo_blue_light"
     >
 
-    <ru.maksimbulva.ui.PersonPanel
+    <ru.maksimbulva.ui.person.PersonPanel
         android:id="@+id/top_person_panel"
         android:layout_width="match_parent"
         android:layout_height="96dp"
@@ -19,7 +18,7 @@
         android:layout_height="match_parent"
         />
 
-    <ru.maksimbulva.ui.PersonPanel
+    <ru.maksimbulva.ui.person.PersonPanel
         android:id="@+id/bottom_person_panel"
         android:layout_width="match_parent"
         android:layout_height="96dp"

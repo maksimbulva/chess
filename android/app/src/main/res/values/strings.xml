@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Chess</string>
+
+    <string name="person_alice_name">Alice</string>
+    <string name="person_bob_name">Bob</string>
+
+    <string name="person_human_name">Jason</string>
 </resources>

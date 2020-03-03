@@ -6,6 +6,7 @@ import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.mvp.BasePresenter
 import ru.maksimbulva.chess.person.PersonsRepository
 import ru.maksimbulva.chess.screens.game.GameScreenViewModel.ViewState
+import ru.maksimbulva.ui.person.PersonPanelState
 
 class GameScreenPresenter(
     private val chessEngineService: ChessEngineService,
@@ -16,19 +17,25 @@ class GameScreenPresenter(
     override fun onCreate(viewModel: GameScreenViewModel) {
         super.onCreate(viewModel)
 
-        viewModel.currentState = ViewState(
-            position = chessEngineService.currentPosition,
-            playerOnTop = Player.Black,
-            playersState = PlayerMap(
-                blackPlayerValue = GameScreenPersonState(),
-                whitePlayerValue = GameScreenPersonState()
-            )
-        )
-
         chessEngineService.setPlayers(
             PlayerMap(
                 blackPlayerValue = personsRepository.alice,
                 whitePlayerValue = personsRepository.bob
+            )
+        )
+
+        viewModel.currentState = ViewState(
+            position = chessEngineService.currentPosition,
+            playerOnTop = Player.Black,
+            playersState = PlayerMap(
+                blackPlayerValue = PersonPanelState(
+                    portraitResId = chessEngineService.person(Player.Black).portrait,
+                    nameResId = chessEngineService.person(Player.Black).nameResId
+                ),
+                whitePlayerValue = PersonPanelState(
+                    portraitResId = chessEngineService.person(Player.White).portrait,
+                    nameResId = chessEngineService.person(Player.White).nameResId
+                )
             )
         )
     }
@@ -51,10 +58,10 @@ class GameScreenPresenter(
                 viewModel.currentState = viewModel.currentState.copy(
                     playersState = PlayerMap(
                         blackPlayerValue = currentPlayersState.get(Player.Black).copy(
-                            bestVariation = bestVariation.blackPlayerValue
+                            evaluation = bestVariation.blackPlayerValue?.evaluation?.toDouble()
                         ),
                         whitePlayerValue = currentPlayersState.get(Player.White).copy(
-                            bestVariation = bestVariation.whitePlayerValue
+                            evaluation = bestVariation.whitePlayerValue?.evaluation?.toDouble()
                         )
                     )
                 )

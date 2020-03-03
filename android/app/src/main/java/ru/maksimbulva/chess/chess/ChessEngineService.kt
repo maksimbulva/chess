@@ -4,6 +4,7 @@ import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import ru.maksimbulva.chess.R
 import ru.maksimbulva.chess.chesslib.ChesslibWrapper
 import ru.maksimbulva.chess.core.PlayerMap
 import ru.maksimbulva.chess.core.engine.Engine
@@ -36,8 +37,8 @@ class ChessEngineService {
         get() = _bestVariation.toFlowable(BackpressureStrategy.LATEST)
 
     private var _players = PlayerMap<Person>(
-        blackPlayerValue = Person.Human(),
-        whitePlayerValue = Person.Human()
+        blackPlayerValue = Person.Human(R.drawable.portrait_001, R.string.person_human_name),
+        whitePlayerValue = Person.Human(R.drawable.portrait_001, R.string.person_human_name)
     )
 
     val currentPersonToMove: Person
@@ -46,6 +47,10 @@ class ChessEngineService {
     fun setPlayers(persons: PlayerMap<Person>) {
         _players = persons
         Player.values().forEach(this::configurePlayer)
+    }
+
+    fun person(player: Player): Person {
+        return _players.get(player)
     }
 
     fun playBestMoveAsync(): Completable {
