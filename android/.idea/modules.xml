@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Chess/app" />
       <module fileurl="file://$PROJECT_DIR$/chesslib/chesslib.iml" filepath="$PROJECT_DIR$/chesslib/chesslib.iml" group="Chess/chesslib" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" group="Chess/core" />
+      <module fileurl="file://$PROJECT_DIR$/stylekit/stylekit.iml" filepath="$PROJECT_DIR$/stylekit/stylekit.iml" group="Chess/stylekit" />
       <module fileurl="file://$PROJECT_DIR$/ui/ui.iml" filepath="$PROJECT_DIR$/ui/ui.iml" group="Chess/ui" />
     </modules>
   </component>

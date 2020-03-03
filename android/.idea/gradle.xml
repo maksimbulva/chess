@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/chesslib" />
             <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/stylekit" />
             <option value="$PROJECT_DIR$/ui" />
           </set>
         </option>

@@ -1,0 +1,2 @@
+Country flags: https://github.com/hjnilsson/country-flags
+Thanks for Hampus Joakim Nilsson
