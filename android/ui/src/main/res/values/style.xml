@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight" />
+
+    <style name="PersonRating" parent="Widget.AppCompat.RatingBar.Indicator">
+        <item name="android:isIndicator">true</item>
+    </style>
 </resources>

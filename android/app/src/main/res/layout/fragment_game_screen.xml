@@ -4,24 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/background"
     >
 
     <ru.maksimbulva.ui.person.PersonPanel
         android:id="@+id/top_person_panel"
         android:layout_width="match_parent"
-        android:layout_height="96dp"
+        android:layout_height="wrap_content"
         />
 
     <ru.maksimbulva.ui.chessboard.ChessboardView
         android:id="@+id/chessboard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="@dimen/indent"
         />
 
     <ru.maksimbulva.ui.person.PersonPanel
         android:id="@+id/bottom_person_panel"
         android:layout_width="match_parent"
-        android:layout_height="96dp"
+        android:layout_height="wrap_content"
         />
 
 </LinearLayout>

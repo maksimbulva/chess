@@ -1,43 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="@dimen/person_panel_height"
+    android:padding="@dimen/indent"
+    android:orientation="horizontal"
     android:background="@color/panel_background"
+    tools:ignore="RtlHardcoded"
     >
 
     <ImageView
         android:id="@+id/person_portrait"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/indent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:layout_width="90dp"
         tools:layout_height="90dp"
         />
 
-    <TextView
-        android:id="@+id/person_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@id/person_portrait"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Alice"
-        />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        >
 
-    <TextView
-        android:id="@+id/evaluation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@id/person_portrait"
-        app:layout_constraintTop_toBottomOf="@id/person_name"
-        tools:text="72%"
-        />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginLeft="@dimen/edge_margin"
+                android:src="@drawable/flags_cz"
+                />
+
+            <TextView
+                android:id="@+id/person_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/indent"
+                tools:text="Alice"
+                style="@style/TextTitle"
+                />
+
+            <androidx.appcompat.widget.AppCompatRatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginLeft="@dimen/edge_margin"
+                android:layout_gravity="center_vertical"
+                android:rating="3.5"
+                android:scaleX="0.5"
+                android:scaleY="0.5"
+                android:transformPivotX="0dp"
+                android:transformPivotY="16dp"
+                style="@style/PersonRating"
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/evaluation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/edge_margin"
+            tools:text="72%"
+            style="@style/TextSubtitle"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>
