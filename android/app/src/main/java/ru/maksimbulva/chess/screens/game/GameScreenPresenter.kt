@@ -26,6 +26,7 @@ class GameScreenPresenter(
 
         viewModel.currentState = ViewState(
             position = chessEngineService.currentPosition,
+            adjudicationResult = chessEngineService.adjudicateGame(),
             playerOnTop = Player.Black,
             playersState = PlayerMap(
                 blackPlayerValue = PersonPanelState(
@@ -45,10 +46,12 @@ class GameScreenPresenter(
 
         addSubscription(
             chessEngineService.position.subscribe {
+                val adjudicationResult = chessEngineService.adjudicateGame()
                 viewModel.currentState = viewModel.currentState.copy(
-                    position = it
+                    position = it,
+                    adjudicationResult = adjudicationResult
                 )
-                interactor.onPositionChanged()
+                interactor.onPositionChanged(adjudicationResult)
             }
         )
 

@@ -1,13 +1,19 @@
 package ru.maksimbulva.chess
 
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
+import ru.maksimbulva.chess.screens.game.GameScreenFragment
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    lateinit var actionBarPresenter: ActionBarPresenter
 
-        setContentView(R.layout.activity_main)
+    override fun onStart() {
+        super.onStart()
+        actionBarPresenter = ActionBarPresenter(supportActionBar!!)
+
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.content, GameScreenFragment())
+            .commit()
     }
 }

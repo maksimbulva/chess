@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
+import ru.maksimbulva.chess.ActionBarPresenter
+import ru.maksimbulva.chess.MainActivity
 
 abstract class BaseFragment<P, V, VM>(
     @LayoutRes contentLayoutId: Int
@@ -17,6 +19,9 @@ abstract class BaseFragment<P, V, VM>(
     protected lateinit var viewModel: VM
 
     protected abstract val view: V
+
+    protected val actionBarPresenter: ActionBarPresenter?
+        get() = (activity as? MainActivity)?.actionBarPresenter
 
     protected abstract fun onViewCreated(view: View)
 

@@ -9,8 +9,8 @@ class GameScreenInteractor(private val chessEngineService: ChessEngineService) {
 
     private val playBestMoveDisposable = SerialDisposable()
 
-    fun onPositionChanged() {
-        when (val adjudicationResult = chessEngineService.adjudicateGame()) {
+    fun onPositionChanged(adjudicationResult: GameAdjudicationResult) {
+        when (adjudicationResult) {
             is GameAdjudicationResult.PlayOn -> {
                 if (chessEngineService.currentPersonToMove is Person.Computer) {
                     playBestMoveDisposable.replace(

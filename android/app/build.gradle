@@ -25,6 +25,7 @@ android {
 
 dependencies {
     implementation project(':chesslib')
+    implementation project(':stylekit')
     implementation project(':ui')
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])

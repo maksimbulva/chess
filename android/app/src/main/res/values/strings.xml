@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Chess</string>
 
+    <string name="action_bar_black_checkmated">Black is checkmated</string>
+    <string name="action_bar_white_checkmated">White is checkmated</string>
+
     <string name="person_alice_name">Alice</string>
     <string name="person_bob_name">Bob</string>
 

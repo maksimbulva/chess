@@ -3,6 +3,7 @@ package ru.maksimbulva.chess.screens.game
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import ru.maksimbulva.chess.chess.GameAdjudicationResult
 import ru.maksimbulva.chess.core.PlayerMap
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.position.Position
@@ -12,6 +13,7 @@ class GameScreenViewModel : ViewModel() {
 
     data class ViewState(
         val position: Position,
+        val adjudicationResult: GameAdjudicationResult,
         val playerOnTop: Player,
         val playersState: PlayerMap<PersonPanelState>
     ) {
