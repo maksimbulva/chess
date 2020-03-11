@@ -3,6 +3,8 @@
 
     <string name="action_bar_black_checkmated">Black is checkmated</string>
     <string name="action_bar_white_checkmated">White is checkmated</string>
+    <string name="action_bar_stalemate">Draw (stalemate)</string>
+    <string name="action_bar_fifty_moves_rule">Draw (50 moves)</string>
 
     <string name="person_alice_name">Alice</string>
     <string name="person_bob_name">Bob</string>

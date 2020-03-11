@@ -1,23 +1,32 @@
 package ru.maksimbulva.chess.chess
 
-import ru.maksimbulva.chess.core.engine.Engine
-import ru.maksimbulva.chess.core.engine.otherPlayer
 import ru.maksimbulva.chess.chess.GameAdjudicationResult.Draw.DrawReason
+import ru.maksimbulva.chess.core.engine.move.Move
+import ru.maksimbulva.chess.core.engine.otherPlayer
+import ru.maksimbulva.chess.core.engine.position.Position
 
-class GameAdjudicator(private val engine: Engine) {
+object GameAdjudicator {
 
-    fun checkCurrentPosition(isComputer: Boolean): GameAdjudicationResult {
-        val playerToMove = engine.currentPosition.playerToMove
+    fun checkCurrentPosition(
+        currentPosition: Position,
+        legalMoves: List<Move>,
+        isComputer: Boolean
+    ): GameAdjudicationResult {
+        val playerToMove = currentPosition.playerToMove
+        android.util.Log.w("TXL", currentPosition.halfMoveClock.toString())
         return when {
-            engine.legalMoves.isEmpty() -> {
-                if (engine.currentPosition.isInCheck) {
+            legalMoves.isEmpty() -> {
+                if (currentPosition.isInCheck) {
                     GameAdjudicationResult.Win(playerToMove.otherPlayer())
                 } else {
                     GameAdjudicationResult.Draw(DrawReason.Stalemate)
                 }
             }
-            isComputer && engine.legalMoves.size == 1 -> {
-                GameAdjudicationResult.PlayMove(engine.legalMoves.first())
+            isComputer && legalMoves.size == 1 -> {
+                GameAdjudicationResult.PlayMove(legalMoves.first())
+            }
+            isComputer && currentPosition.halfMoveClock >= 100 -> {
+                GameAdjudicationResult.Draw(DrawReason.FiftyMovesRule)
             }
             else -> GameAdjudicationResult.PlayOn
         }

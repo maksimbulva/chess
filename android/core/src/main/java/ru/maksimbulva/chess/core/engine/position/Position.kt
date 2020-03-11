@@ -46,14 +46,14 @@ class Position(
         } else {
             blackCastlingAvailability
         }
-        // TODO
+
         return Position(
             board.playMove(move, playerToMove),
             playerToMove.otherPlayer(),
             newWhiteCastlingAvailability,
             newBlackCastlingAvailability,
             newEnPassantCaptureColumn,
-            halfMoveClock,
+            updateHalfmoveClock(halfMoveClock, move),
             fullMoveNumber + if (playerToMove == Player.Black) 1 else 0
         )
     }
@@ -84,5 +84,15 @@ class Position(
     private fun isDoublePawnMove(move: Move): Boolean {
         return board.pieceAt(move.fromCell)?.piece == Piece.Pawn
                 && abs(move.fromCell.row - move.toCell.row) == 2
+    }
+
+    private fun updateHalfmoveClock(currentValue: Int, move: Move): Int {
+        return if (board.pieceAt(move.fromCell)?.piece == Piece.Pawn ||
+            board.pieceAt(move.toCell)?.player == playerToMove.otherPlayer()
+        ) {
+            0
+        } else {
+            currentValue + 1
+        }
     }
 }

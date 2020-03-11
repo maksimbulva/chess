@@ -18,7 +18,8 @@ sealed class GameAdjudicationResult {
 
     class Draw(val drawReason: DrawReason) : GameAdjudicationResult() {
         enum class DrawReason {
-            Stalemate
+            Stalemate,
+            FiftyMovesRule
         }
     }
 

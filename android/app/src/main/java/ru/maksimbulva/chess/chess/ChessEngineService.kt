@@ -19,8 +19,6 @@ class ChessEngineService {
     private val engine = Engine()
     private val chesslibWrapper = ChesslibWrapper()
 
-    private val gameAdjudicator = GameAdjudicator(engine)
-
     private val _position: BehaviorSubject<Position>
         = BehaviorSubject.createDefault(engine.currentPosition)
 
@@ -82,7 +80,9 @@ class ChessEngineService {
     }
 
     fun adjudicateGame(): GameAdjudicationResult {
-        return gameAdjudicator.checkCurrentPosition(
+        return GameAdjudicator.checkCurrentPosition(
+            engine.currentPosition,
+            engine.legalMoves,
             isComputer = currentPersonToMove is Person.Computer
         )
     }
