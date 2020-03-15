@@ -38,7 +38,9 @@ class GameScreenFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        actionBarWrapper = GameScreenActionBarWrapper(context!!.resources) { actionBarPresenter }
+        actionBarWrapper = GameScreenActionBarWrapper(context!!.resources, get()) {
+            actionBarPresenter
+        }
 
         viewModel.viewState.observe(this, Observer<GameScreenViewModel.ViewState>
             { viewState ->
@@ -49,7 +51,8 @@ class GameScreenFragment
                     playerPanel(it, viewState.playerOnTop).setState(playerState)
                 }
 
-                actionBarWrapper?.showState(viewState)
+                val lastMove = viewState.moveHistory.lastOrNull()
+                actionBarWrapper.showState(viewState, lastMove)
             }
         )
     }

@@ -26,6 +26,7 @@ class GameScreenPresenter(
 
         viewModel.currentState = ViewState(
             position = chessEngineService.currentPosition,
+            moveHistory = chessEngineService.moveHistory,
             adjudicationResult = chessEngineService.adjudicateGame(),
             playerOnTop = Player.Black,
             playersState = PlayerMap(
@@ -49,6 +50,7 @@ class GameScreenPresenter(
                 val adjudicationResult = chessEngineService.adjudicateGame()
                 viewModel.currentState = viewModel.currentState.copy(
                     position = it,
+                    moveHistory = chessEngineService.moveHistory,
                     adjudicationResult = adjudicationResult
                 )
                 interactor.onPositionChanged(adjudicationResult)

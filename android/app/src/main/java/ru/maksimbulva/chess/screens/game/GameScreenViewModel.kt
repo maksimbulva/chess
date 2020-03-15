@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import ru.maksimbulva.chess.chess.GameAdjudicationResult
 import ru.maksimbulva.chess.core.PlayerMap
 import ru.maksimbulva.chess.core.engine.Player
+import ru.maksimbulva.chess.core.engine.move.DetailedMove
 import ru.maksimbulva.chess.core.engine.position.Position
 import ru.maksimbulva.ui.person.PersonPanelState
 
@@ -13,6 +14,7 @@ class GameScreenViewModel : ViewModel() {
 
     data class ViewState(
         val position: Position,
+        val moveHistory: List<DetailedMove>,
         val adjudicationResult: GameAdjudicationResult,
         val playerOnTop: Player,
         val playersState: PlayerMap<PersonPanelState>

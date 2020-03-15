@@ -10,6 +10,7 @@ import ru.maksimbulva.chess.core.PlayerMap
 import ru.maksimbulva.chess.core.engine.Engine
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.Variation
+import ru.maksimbulva.chess.core.engine.move.DetailedMove
 import ru.maksimbulva.chess.core.engine.move.Move
 import ru.maksimbulva.chess.core.engine.position.Position
 import ru.maksimbulva.chess.person.Person
@@ -27,6 +28,9 @@ class ChessEngineService {
 
     val currentPosition: Position
         get() = _position.value!!
+
+    val moveHistory: List<DetailedMove>
+        get() = engine.moveHistory
 
     private val _bestVariation: BehaviorSubject<PlayerMap<Variation?>>
         = BehaviorSubject.createDefault(PlayerMap<Variation?>(null, null))

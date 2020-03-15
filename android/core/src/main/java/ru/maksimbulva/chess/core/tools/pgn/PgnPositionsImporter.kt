@@ -2,6 +2,7 @@ package ru.maksimbulva.chess.core.tools.pgn
 
 import ru.maksimbulva.chess.core.engine.Engine
 import ru.maksimbulva.chess.core.engine.fen.FenEncoder
+import ru.maksimbulva.chess.core.engine.move.DetailedMovesFactory
 
 object PgnPositionsImporter {
 
@@ -14,8 +15,8 @@ object PgnPositionsImporter {
                 val encodedPositions = mutableListOf<String>()
                 engine.resetToInitialPosition()
 
-                game.moves.forEach { move ->
-                    engine.playMove(move)
+                game.moves.forEach { detailedMove ->
+                    engine.playMove(DetailedMovesFactory.convertToMove(detailedMove))
                     val encodedPosition = FenEncoder.encode(
                         engine.currentPosition,
                         FenEncoder.EncodingOptions.SetMovesCountToOne

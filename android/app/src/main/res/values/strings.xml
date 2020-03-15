@@ -1,10 +1,28 @@
 <resources>
     <string name="app_name">Chess</string>
 
+    <!-- Notation -->
+    <string name="notation_pawn" />
+    <string name="notation_knight">N</string>
+    <string name="notation_bishop">B</string>
+    <string name="notation_rook">R</string>
+    <string name="notation_queen">Q</string>
+    <string name="notation_king">K</string>
+    <string name="notation_move_no_capture">-</string>
+    <string name="notation_move_capture">:</string>
+    <string name="notation_move_suffix_en_passant_capture">ep</string>
+    <string name="notation_move_suffix_promotion">=%s</string>
+    <string name="notation_check">+</string>
+    <string name="notation_checkmate">\u2715</string>
+    <string name="notation_short_castle">O-O</string>
+    <string name="notation_long_castle">O-O-O</string>
+
     <string name="action_bar_black_checkmated">Black is checkmated</string>
     <string name="action_bar_white_checkmated">White is checkmated</string>
     <string name="action_bar_stalemate">Draw (stalemate)</string>
     <string name="action_bar_fifty_moves_rule">Draw (50 moves)</string>
+    <string name="action_bar_move_black_template">%s. … %s</string>
+    <string name="action_bar_move_white_template">%s. %s</string>
 
     <string name="person_alice_name">Alice</string>
     <string name="person_bob_name">Bob</string>

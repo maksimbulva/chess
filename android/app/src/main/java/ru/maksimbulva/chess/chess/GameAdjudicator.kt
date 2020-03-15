@@ -13,7 +13,6 @@ object GameAdjudicator {
         isComputer: Boolean
     ): GameAdjudicationResult {
         val playerToMove = currentPosition.playerToMove
-        android.util.Log.w("TXL", currentPosition.halfMoveClock.toString())
         return when {
             legalMoves.isEmpty() -> {
                 if (currentPosition.isInCheck) {

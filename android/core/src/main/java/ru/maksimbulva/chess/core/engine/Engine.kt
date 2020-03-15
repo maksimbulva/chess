@@ -1,6 +1,8 @@
 package ru.maksimbulva.chess.core.engine
 
 import ru.maksimbulva.chess.core.engine.fen.FenDecoder
+import ru.maksimbulva.chess.core.engine.move.DetailedMove
+import ru.maksimbulva.chess.core.engine.move.DetailedMovesFactory
 import ru.maksimbulva.chess.core.engine.move.Move
 import ru.maksimbulva.chess.core.engine.move.MoveGenerator
 import ru.maksimbulva.chess.core.engine.position.Position
@@ -10,7 +12,7 @@ class Engine {
     var currentPosition: Position = FenDecoder.decode(initialPosition)
         private set
 
-    var moveHistory: List<Move> = emptyList()
+    var moveHistory: List<DetailedMove> = emptyList()
 
     private var _legalMoves: List<Move>? = null
     val legalMoves: List<Move>
@@ -27,10 +29,11 @@ class Engine {
 
     fun playMove(move: Move) {
         require(move in legalMoves)
+        val oldPosition = currentPosition
         currentPosition = currentPosition.playMove(move)
-        moveHistory = mutableListOf<Move>().apply {
+        moveHistory = mutableListOf<DetailedMove>().apply {
             addAll(moveHistory)
-            add(move)
+            add(DetailedMovesFactory.create(move, oldPosition, currentPosition))
         }
         _legalMoves = null
     }

@@ -6,14 +6,21 @@ import ru.maksimbulva.chess.ActionBarPresenter
 import ru.maksimbulva.chess.R
 import ru.maksimbulva.chess.chess.GameAdjudicationResult
 import ru.maksimbulva.chess.core.engine.Player
+import ru.maksimbulva.chess.core.engine.move.DetailedMove
+import ru.maksimbulva.chess.settings.UserSettings
 
 class GameScreenActionBarWrapper(
     private val resources: Resources,
+    private val userSettings: UserSettings,
     private val actionBarPresenterProvider: () -> ActionBarPresenter?
 ) {
-    fun showState(viewState: GameScreenViewModel.ViewState) {
+    fun showState(viewState: GameScreenViewModel.ViewState, lastMove: DetailedMove?) {
         @StringRes val titleRes = generateActionBarTitle(viewState)
-        actionBarPresenterProvider()?.setTitle(titleRes?.let { resources.getString(titleRes) })
+        actionBarPresenterProvider()?.setTitle(when {
+            titleRes != null -> resources.getString(titleRes)
+            lastMove != null -> userSettings.notation.moveToString(resources, lastMove)
+            else -> ""
+        })
     }
 
     @StringRes
