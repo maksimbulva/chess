@@ -18,7 +18,9 @@ class GameScreenActionBarWrapper(
         @StringRes val titleRes = generateActionBarTitle(viewState)
         actionBarPresenterProvider()?.setTitle(when {
             titleRes != null -> resources.getString(titleRes)
-            lastMove != null -> userSettings.notation.moveToString(resources, lastMove)
+            lastMove != null -> {
+                userSettings.notation.moveToStringWithMoveNumber(resources, lastMove)
+            }
             else -> ""
         })
     }

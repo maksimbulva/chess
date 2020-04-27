@@ -4,26 +4,28 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.android.synthetic.main.fragment_game_screen.*
 import org.koin.android.ext.android.get
 import ru.maksimbulva.chess.R
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.mvp.BaseFragment
-import ru.maksimbulva.ui.person.PersonPanel
+import ru.maksimbulva.ui.person.PersonPanelView
 import ru.maksimbulva.ui.chessboard.ChessboardView
 
-class GameScreenFragment
-    : BaseFragment<GameScreenPresenter, IGameScreenView, GameScreenViewModel>(
+class GameScreenFragment(
+    private val moveListItemsGenerator: MoveListItemsGenerator
+) : BaseFragment<GameScreenPresenter, IGameScreenView, GameScreenViewModel>(
         R.layout.fragment_game_screen
     ), IGameScreenView
 {
     private lateinit var chessboardView: ChessboardView
-    private lateinit var personPanels: Array<PersonPanel>
+    private lateinit var personPanelViews: Array<PersonPanelView>
 
-    private val topPanel: PersonPanel
-        get() = personPanels.first()
+    private val topPanelView: PersonPanelView
+        get() = personPanelViews.first()
 
-    private val bottomPanel: PersonPanel
-        get() = personPanels.last()
+    private val bottomPanelView: PersonPanelView
+        get() = personPanelViews.last()
 
     private lateinit var actionBarWrapper: GameScreenActionBarWrapper
 
@@ -53,19 +55,26 @@ class GameScreenFragment
 
                 val lastMove = viewState.moveHistory.lastOrNull()
                 actionBarWrapper.showState(viewState, lastMove)
+
+                move_list.setItems(
+                    moveListItemsGenerator.generateMoveListItems(
+                        context!!.resources,
+                        viewState.moveHistory
+                    )
+                )
             }
         )
     }
 
     override fun onViewCreated(view: View) {
         chessboardView = view.findViewById(R.id.chessboard)
-        personPanels = arrayOf(
+        personPanelViews = arrayOf(
             view.findViewById(R.id.top_person_panel),
             view.findViewById(R.id.bottom_person_panel)
         )
     }
 
-    private fun playerPanel(player: Player, playerOnTop: Player): PersonPanel {
-        return if (playerOnTop == player) topPanel else bottomPanel
+    private fun playerPanel(player: Player, playerOnTop: Player): PersonPanelView {
+        return if (playerOnTop == player) topPanelView else bottomPanelView
     }
 }

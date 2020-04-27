@@ -2,13 +2,13 @@ package ru.maksimbulva.chess.chess.notation
 
 import android.content.res.Resources
 import ru.maksimbulva.chess.R
-import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.move.DetailedMove
 
 object LongAlgebraicNotation : BaseNotation() {
+
     override fun moveToString(resources: Resources, detailedMove: DetailedMove): String {
         return with (detailedMove) {
-            val moveString = when {
+            when {
                 isShortCastle -> resources.getString(R.string.notation_short_castle)
                 isLongCastle -> resources.getString(R.string.notation_long_castle)
                 else -> {
@@ -44,16 +44,6 @@ object LongAlgebraicNotation : BaseNotation() {
                     sb.toString()
                 }
             }
-
-            resources.getString(
-                if (playerToMove == Player.Black) {
-                    R.string.action_bar_move_black_template
-                } else {
-                    R.string.action_bar_move_white_template
-                },
-                fullmoveNumber,
-                moveString
-            )
         }
     }
 }

@@ -28,4 +28,6 @@
     <string name="person_bob_name">Bob</string>
 
     <string name="person_human_name">Jason</string>
+
+    <string name="move_list_move_number_template">%s.</string>
 </resources>

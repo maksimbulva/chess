@@ -7,7 +7,7 @@
     android:background="@color/background"
     >
 
-    <ru.maksimbulva.ui.person.PersonPanel
+    <ru.maksimbulva.ui.person.PersonPanelView
         android:id="@+id/top_person_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,10 +20,18 @@
         android:layout_margin="@dimen/indent"
         />
 
-    <ru.maksimbulva.ui.person.PersonPanel
+    <ru.maksimbulva.ui.person.PersonPanelView
         android:id="@+id/bottom_person_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        />
+
+    <ru.maksimbulva.ui.move_list.MoveListView
+        android:id="@+id/move_list"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginLeft="@dimen/edge_margin"
+        android:layout_marginRight="@dimen/edge_margin"
         />
 
 </LinearLayout>
