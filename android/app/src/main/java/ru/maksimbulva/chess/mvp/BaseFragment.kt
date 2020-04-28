@@ -10,9 +10,9 @@ import androidx.lifecycle.ViewModel
 import ru.maksimbulva.chess.ActionBarPresenter
 import ru.maksimbulva.chess.MainActivity
 
-abstract class BaseFragment<P, V, VM>(
+abstract class BaseFragment<P, V, VM, A>(
     @LayoutRes contentLayoutId: Int
-) : Fragment(contentLayoutId) where VM : ViewModel, P : BasePresenter<V, VM> {
+) : Fragment(contentLayoutId) where VM : ViewModel, P : BasePresenter<V, VM, A> {
 
     protected val presenter: P = createPresenter()
 
@@ -60,6 +60,10 @@ abstract class BaseFragment<P, V, VM>(
     override fun onDestroy() {
         super.onDestroy()
         presenter.onDestroyed()
+    }
+
+    fun publishAction(action: A) {
+        presenter.onActionReceived(action)
     }
 
     protected abstract fun createPresenter(): P

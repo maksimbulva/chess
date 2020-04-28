@@ -12,7 +12,7 @@ class GameScreenPresenter(
     private val chessEngineService: ChessEngineService,
     private val personsRepository: PersonsRepository,
     private val interactor: GameScreenInteractor
-) : BasePresenter<IGameScreenView, GameScreenViewModel>() {
+) : BasePresenter<IGameScreenView, GameScreenViewModel, GameScreenAction>() {
 
     override fun onCreate(viewModel: GameScreenViewModel) {
         super.onCreate(viewModel)
@@ -38,7 +38,8 @@ class GameScreenPresenter(
                     portraitResId = chessEngineService.person(Player.White).portrait,
                     nameResId = chessEngineService.person(Player.White).nameResId
                 )
-            )
+            ),
+            moveListCollapsed = true
         )
     }
 
@@ -77,5 +78,18 @@ class GameScreenPresenter(
     override fun onDetachedView() {
         super.onDetachedView()
         interactor.stop()
+    }
+
+    override fun onActionReceived(action: GameScreenAction) {
+        when (action) {
+            GameScreenAction.ExpandMoveListClicked -> onExpandMoveListClicked()
+        }
+    }
+
+    private fun onExpandMoveListClicked() {
+        val currentViewState = viewModel.currentState
+        viewModel.currentState = currentViewState.copy(
+            moveListCollapsed = !currentViewState.moveListCollapsed
+        )
     }
 }

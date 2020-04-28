@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-abstract class BasePresenter<V, VM> where VM : ViewModel {
+abstract class BasePresenter<V, VM, A> where VM : ViewModel {
 
     protected var attachedView: V? = null
     protected lateinit var viewModel: VM
@@ -33,6 +33,8 @@ abstract class BasePresenter<V, VM> where VM : ViewModel {
 
     open fun onDestroyed() {
     }
+
+    abstract fun onActionReceived(action: A)
 
     protected fun addSubscription(disposable: Disposable) {
         disposables.add(disposable)

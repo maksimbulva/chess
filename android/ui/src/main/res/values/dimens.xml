@@ -4,4 +4,6 @@
     <dimen name="indent">8dp</dimen>
 
     <dimen name="person_panel_height">96dp</dimen>
+
+    <dimen name="move_list_expand_button_size">24dp</dimen>
 </resources>

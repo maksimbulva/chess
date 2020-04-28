@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/moves_recycler_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/move_list_expand_button"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
-</FrameLayout>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/move_list_expand_button"
+        android:layout_width="@dimen/move_list_expand_button_size"
+        android:layout_height="@dimen/move_list_expand_button_size"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:alpha="0.8"
+        app:srcCompat="@drawable/ic_zoom_out_map_black_24dp"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

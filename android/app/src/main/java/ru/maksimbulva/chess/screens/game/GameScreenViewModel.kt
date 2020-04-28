@@ -17,10 +17,9 @@ class GameScreenViewModel : ViewModel() {
         val moveHistory: List<DetailedMove>,
         val adjudicationResult: GameAdjudicationResult,
         val playerOnTop: Player,
-        val playersState: PlayerMap<PersonPanelState>
-    ) {
-        val boardItems = ChessboardItemsGenerator.generateForBoard(position.board, playerOnTop)
-    }
+        val playersState: PlayerMap<PersonPanelState>,
+        val moveListCollapsed: Boolean
+    )
 
     private val _viewState = MutableLiveData<ViewState>()
     val viewState: LiveData<ViewState>

@@ -30,5 +30,10 @@ class MoveListView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
 
     fun setItems(items: List<MoveListItem>) {
         adapter.setItems(items)
+        moves_recycler_view.scrollToPosition(items.lastIndex)
+    }
+
+    fun setOnExpandButtonClicked(listener: () -> Unit) {
+        move_list_expand_button.setOnClickListener { listener() }
     }
 }
