@@ -11,6 +11,7 @@ import ru.maksimbulva.chess.mvp.BaseFragment
 import ru.maksimbulva.ui.person.PersonPanelView
 import ru.maksimbulva.ui.chessboard.ChessboardView
 import ru.maksimbulva.ui.move_list.MoveListView
+import ru.maksimbulva.ui.replay.ReplayGameControlsView
 
 class GameScreenFragment(
     private val moveListItemsGenerator: MoveListItemsGenerator
@@ -21,6 +22,7 @@ class GameScreenFragment(
     private lateinit var chessboardView: ChessboardView
     private lateinit var personPanelViews: Array<PersonPanelView>
     private lateinit var moveListView: MoveListView
+    private lateinit var replayGameControlsView: ReplayGameControlsView
 
     private val topPanelView: PersonPanelView
         get() = personPanelViews.first()
@@ -32,7 +34,7 @@ class GameScreenFragment(
 
     override val view: IGameScreenView = this
 
-    override fun createPresenter() = GameScreenPresenter(get(), get(), get())
+    override fun createPresenter() = GameScreenPresenter(get(), get(), get(), get())
 
     override fun obtainViewModel(): GameScreenViewModel {
         return ViewModelProvider(this).get(GameScreenViewModel::class.java)
@@ -58,6 +60,10 @@ class GameScreenFragment(
         moveListView.setOnExpandButtonClicked {
             publishAction(GameScreenAction.ExpandMoveListClicked)
         }
+        replayGameControlsView = view.findViewById(R.id.replay_game_controls)
+        replayGameControlsView.onClickListener = {
+            publishAction(GameScreenAction.ReplayControlButtonClicked(it))
+        }
     }
 
     private fun showState(viewState: GameScreenViewModel.ViewState) {
@@ -73,6 +79,8 @@ class GameScreenFragment(
                 viewState.moveHistory
             )
         )
+
+        replayGameControlsView.setItems(viewState.replayControlItems)
     }
 
     private fun showChessboardState(viewState: GameScreenViewModel.ViewState) {

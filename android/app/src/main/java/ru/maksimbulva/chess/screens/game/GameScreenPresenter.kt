@@ -1,5 +1,6 @@
 package ru.maksimbulva.chess.screens.game
 
+import io.reactivex.Flowable
 import ru.maksimbulva.chess.chess.ChessEngineService
 import ru.maksimbulva.chess.core.PlayerMap
 import ru.maksimbulva.chess.core.engine.Player
@@ -11,7 +12,8 @@ import ru.maksimbulva.ui.person.PersonPanelState
 class GameScreenPresenter(
     private val chessEngineService: ChessEngineService,
     private val personsRepository: PersonsRepository,
-    private val interactor: GameScreenInteractor
+    private val interactor: GameScreenInteractor,
+    private val replayControlsInteractor: GameScreenReplayControlsInteractor
 ) : BasePresenter<IGameScreenView, GameScreenViewModel, GameScreenAction>() {
 
     override fun onCreate(viewModel: GameScreenViewModel) {
@@ -23,6 +25,8 @@ class GameScreenPresenter(
                 whitePlayerValue = personsRepository.bob
             )
         )
+
+        replayControlsInteractor.resetControls()
 
         viewModel.currentState = ViewState(
             position = chessEngineService.currentPosition,
@@ -39,7 +43,8 @@ class GameScreenPresenter(
                     nameResId = chessEngineService.person(Player.White).nameResId
                 )
             ),
-            moveListCollapsed = true
+            moveListCollapsed = true,
+            replayControlItems = replayControlsInteractor.currentReplayControls
         )
     }
 
@@ -52,7 +57,8 @@ class GameScreenPresenter(
                 viewModel.currentState = viewModel.currentState.copy(
                     position = it,
                     moveHistory = chessEngineService.moveHistory,
-                    adjudicationResult = adjudicationResult
+                    adjudicationResult = adjudicationResult,
+                    replayControlItems = replayControlsInteractor.currentReplayControls
                 )
                 interactor.onPositionChanged(adjudicationResult)
             }
@@ -73,6 +79,18 @@ class GameScreenPresenter(
                 )
             }
         )
+
+        addSubscription(
+            replayControlsInteractor.replayControls.subscribe { replayControlItems ->
+                viewModel.currentState = viewModel.currentState.copy(
+                    replayControlItems = replayControlItems
+                )
+            }
+        )
+
+        addSubscription(
+            interactor.engineState.subscribe(replayControlsInteractor::onEngineStateUpdate)
+        )
     }
 
     override fun onDetachedView() {
@@ -83,6 +101,9 @@ class GameScreenPresenter(
     override fun onActionReceived(action: GameScreenAction) {
         when (action) {
             GameScreenAction.ExpandMoveListClicked -> onExpandMoveListClicked()
+            is GameScreenAction.ReplayControlButtonClicked -> {
+                replayControlsInteractor.onReplayControlButtonClicked(action.item)
+            }
         }
     }
 

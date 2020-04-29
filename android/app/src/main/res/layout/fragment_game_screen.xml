@@ -35,4 +35,10 @@
         android:layout_marginRight="@dimen/edge_margin"
         />
 
+    <ru.maksimbulva.ui.replay.ReplayGameControlsView
+        android:id="@+id/replay_game_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
 </LinearLayout>

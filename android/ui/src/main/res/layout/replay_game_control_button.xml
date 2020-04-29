@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.AppCompatImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/replay_game_control_button_icon"
+    android:layout_width="@dimen/replay_game_controls_button_size"
+    android:layout_height="@dimen/replay_game_controls_button_size"
+    />

@@ -7,8 +7,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ru.maksimbulva.ui.R
 
-class MoveListItemViewHolder(context: Context, parent: ViewGroup) : RecyclerView.ViewHolder(
-    LayoutInflater.from(context).inflate(R.layout.move_list_item, parent, false)
+internal class MoveListItemViewHolder(context: Context, parent: ViewGroup)
+    : RecyclerView.ViewHolder(
+        LayoutInflater.from(context).inflate(R.layout.move_list_item, parent, false)
 ) {
 
     private val moveNumberText: TextView = itemView.findViewById(R.id.move_number_text)
