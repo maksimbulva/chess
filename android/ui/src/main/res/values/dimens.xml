@@ -2,6 +2,7 @@
 <resources>
     <dimen name="edge_margin">16dp</dimen>
     <dimen name="indent">8dp</dimen>
+    <dimen name="indent_half">4dp</dimen>
 
     <dimen name="person_panel_height">96dp</dimen>
 

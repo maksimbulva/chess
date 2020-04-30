@@ -7,6 +7,7 @@ import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.mvp.BasePresenter
 import ru.maksimbulva.chess.person.PersonsRepository
 import ru.maksimbulva.chess.screens.game.GameScreenViewModel.ViewState
+import ru.maksimbulva.ui.move_list.items.MoveListItem
 import ru.maksimbulva.ui.person.PersonPanelState
 
 class GameScreenPresenter(
@@ -31,6 +32,7 @@ class GameScreenPresenter(
         viewModel.currentState = ViewState(
             position = chessEngineService.currentPosition,
             moveHistory = chessEngineService.moveHistory,
+            selectedHistoryMove = null,
             adjudicationResult = chessEngineService.adjudicateGame(),
             playerOnTop = Player.Black,
             playersState = PlayerMap(
@@ -104,6 +106,9 @@ class GameScreenPresenter(
             is GameScreenAction.ReplayControlButtonClicked -> {
                 replayControlsInteractor.onReplayControlButtonClicked(action.item)
             }
+            is GameScreenAction.MoveListItemClicked -> {
+                onMoveHistoryItemClicked(action.item, action.player)
+            }
         }
     }
 
@@ -111,6 +116,12 @@ class GameScreenPresenter(
         val currentViewState = viewModel.currentState
         viewModel.currentState = currentViewState.copy(
             moveListCollapsed = !currentViewState.moveListCollapsed
+        )
+    }
+
+    private fun onMoveHistoryItemClicked(item: MoveListItem, player: Player) {
+        viewModel.currentState = viewModel.currentState.copy(
+            selectedHistoryMove = item.getMoveItem(player)?.detailedMove
         )
     }
 }

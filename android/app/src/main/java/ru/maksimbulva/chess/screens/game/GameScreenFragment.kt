@@ -60,6 +60,9 @@ class GameScreenFragment(
         moveListView.setOnExpandButtonClicked {
             publishAction(GameScreenAction.ExpandMoveListClicked)
         }
+        moveListView.onMoveItemClickListener = { moveItem, player ->
+            publishAction(GameScreenAction.MoveListItemClicked(moveItem, player))
+        }
         replayGameControlsView = view.findViewById(R.id.replay_game_controls)
         replayGameControlsView.onClickListener = {
             publishAction(GameScreenAction.ReplayControlButtonClicked(it))
@@ -76,7 +79,8 @@ class GameScreenFragment(
         moveListView.setItems(
             moveListItemsGenerator.generateMoveListItems(
                 context!!.resources,
-                viewState.moveHistory
+                viewState.moveHistory,
+                viewState.selectedHistoryMove
             )
         )
 

@@ -16,6 +16,7 @@ class GameScreenViewModel : ViewModel() {
     data class ViewState(
         val position: Position,
         val moveHistory: List<DetailedMove>,
+        val selectedHistoryMove: DetailedMove?,
         val adjudicationResult: GameAdjudicationResult,
         val playerOnTop: Player,
         val playersState: PlayerMap<PersonPanelState>,

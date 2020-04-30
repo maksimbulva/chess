@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.move_list.view.*
+import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.ui.R
 import ru.maksimbulva.ui.move_list.items.MoveListAdapter
 import ru.maksimbulva.ui.move_list.items.MoveListItem
@@ -13,7 +14,11 @@ import ru.maksimbulva.ui.move_list.items.MoveListItem
 class MoveListView(context: Context, attributeSet: AttributeSet?, defStyleAttr: Int)
     : FrameLayout(context, attributeSet, defStyleAttr) {
 
-    private val adapter = MoveListAdapter(context)
+    var onMoveItemClickListener: ((MoveListItem, Player) -> Unit)? = null
+
+    private val adapter = MoveListAdapter(context) { item, player ->
+        onMoveItemClickListener?.invoke(item, player)
+    }
 
     constructor(context: Context) : this(context, attributeSet = null, defStyleAttr = 0)
     constructor(context: Context, attributeSet: AttributeSet)
