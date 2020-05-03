@@ -30,10 +30,10 @@ object LongAlgebraicNotation : BaseNotation() {
                             R.string.notation_move_suffix_en_passant_capture
                         ))
                     }
-                    if (promoteTo != null) {
+                    promoteTo?.let {
                         sb.append(resources.getString(
                             R.string.notation_move_suffix_promotion,
-                            resources.getString(pieceToMoveString(pieceToMove)).toLowerCase()
+                            resources.getString(pieceToMoveString(it)).toLowerCase()
                         ))
                     }
                     if (isCheckmate) {
