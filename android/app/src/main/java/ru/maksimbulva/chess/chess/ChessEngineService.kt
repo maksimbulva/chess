@@ -32,6 +32,9 @@ class ChessEngineService {
     val moveHistory: List<DetailedMove>
         get() = engine.moveHistory
 
+    val isEngineBusy: Boolean
+        get() = chesslibWrapper.isBusy()
+
     private val _bestVariation: BehaviorSubject<PlayerMap<Variation?>>
         = BehaviorSubject.createDefault(PlayerMap<Variation?>(null, null))
 
@@ -55,7 +58,16 @@ class ChessEngineService {
         return _players.get(player)
     }
 
-    fun playBestMoveAsync(): Completable {
+    fun setMoveHistory(moveHistory: List<DetailedMove>) {
+        engine.resetToInitialPosition()
+        chesslibWrapper.resetGame()
+        moveHistory.forEach {
+            playMove(Move(it), shouldPublishUpdate = false)
+        }
+        publishPositionUpdate()
+    }
+
+    fun playBestMoveAsync(doOnEngineSearchFinished: () -> Unit): Completable {
         return Single.fromCallable {
             chesslibWrapper.findBestVariation(onlyFirstMove = true)
         }
@@ -68,6 +80,7 @@ class ChessEngineService {
                         value = bestVariation
                     )
                 )
+                doOnEngineSearchFinished()
                 if (bestVariation.moves.isEmpty()) {
                     // TODO: set game result
                 } else {
@@ -77,11 +90,7 @@ class ChessEngineService {
             .ignoreElement()
     }
 
-    fun playMove(move: Move) {
-        engine.playMove(move)
-        chesslibWrapper.playMove(move)
-        publishPositionUpdate()
-    }
+    fun playMove(move: Move) = playMove(move, shouldPublishUpdate = true)
 
     fun adjudicateGame(): GameAdjudicationResult {
         return GameAdjudicator.checkCurrentPosition(
@@ -89,6 +98,14 @@ class ChessEngineService {
             engine.legalMoves,
             isComputer = currentPersonToMove is Person.Computer
         )
+    }
+
+    private fun playMove(move: Move, shouldPublishUpdate: Boolean) {
+        engine.playMove(move)
+        chesslibWrapper.playMove(move)
+        if (shouldPublishUpdate) {
+            publishPositionUpdate()
+        }
     }
 
     private fun publishPositionUpdate() {

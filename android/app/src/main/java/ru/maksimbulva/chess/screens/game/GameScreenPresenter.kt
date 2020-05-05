@@ -1,14 +1,14 @@
 package ru.maksimbulva.chess.screens.game
 
-import io.reactivex.Flowable
 import ru.maksimbulva.chess.chess.ChessEngineService
 import ru.maksimbulva.chess.core.PlayerMap
 import ru.maksimbulva.chess.core.engine.Player
+import ru.maksimbulva.chess.core.engine.move.DetailedMove
+import ru.maksimbulva.chess.core.engine.position.Position
 import ru.maksimbulva.chess.mvp.BasePresenter
 import ru.maksimbulva.chess.person.PersonsRepository
 import ru.maksimbulva.chess.screens.game.GameScreenViewModel.ViewState
 import ru.maksimbulva.ui.move_list.items.MoveListItem
-import ru.maksimbulva.ui.person.PersonPanelState
 
 class GameScreenPresenter(
     private val chessEngineService: ChessEngineService,
@@ -16,6 +16,9 @@ class GameScreenPresenter(
     private val interactor: GameScreenInteractor,
     private val replayControlsInteractor: GameScreenReplayControlsInteractor
 ) : BasePresenter<IGameScreenView, GameScreenViewModel, GameScreenAction>() {
+
+    private val currentState: ViewState
+        get() = viewModel.currentState
 
     override fun onCreate(viewModel: GameScreenViewModel) {
         super.onCreate(viewModel)
@@ -30,20 +33,20 @@ class GameScreenPresenter(
         replayControlsInteractor.resetControls()
 
         viewModel.currentState = ViewState(
+            gameState = GameState(
+                players = PlayerMap(
+                    blackPlayerValue = personsRepository.alice,
+                    whitePlayerValue = personsRepository.bob
+                ),
+                moveHistory = emptyList(),
+                adjudicationResult = chessEngineService.adjudicateGame()
+            ),
             position = chessEngineService.currentPosition,
-            moveHistory = chessEngineService.moveHistory,
             selectedHistoryMove = null,
-            adjudicationResult = chessEngineService.adjudicateGame(),
             playerOnTop = Player.Black,
             playersState = PlayerMap(
-                blackPlayerValue = PersonPanelState(
-                    portraitResId = chessEngineService.person(Player.Black).portrait,
-                    nameResId = chessEngineService.person(Player.Black).nameResId
-                ),
-                whitePlayerValue = PersonPanelState(
-                    portraitResId = chessEngineService.person(Player.White).portrait,
-                    nameResId = chessEngineService.person(Player.White).nameResId
-                )
+                blackPlayerValue = createPersonPanelState(chessEngineService, Player.Black),
+                whitePlayerValue = createPersonPanelState(chessEngineService, Player.White)
             ),
             moveListCollapsed = true,
             replayControlItems = replayControlsInteractor.currentReplayControls
@@ -52,24 +55,16 @@ class GameScreenPresenter(
 
     override fun onAttachedView(view: IGameScreenView) {
         super.onAttachedView(view)
+        interactor.start()
 
         addSubscription(
-            chessEngineService.position.subscribe {
-                val adjudicationResult = chessEngineService.adjudicateGame()
-                viewModel.currentState = viewModel.currentState.copy(
-                    position = it,
-                    moveHistory = chessEngineService.moveHistory,
-                    adjudicationResult = adjudicationResult,
-                    replayControlItems = replayControlsInteractor.currentReplayControls
-                )
-                interactor.onPositionChanged(adjudicationResult)
-            }
+            chessEngineService.position.subscribe(this::onPositionUpdated)
         )
 
         addSubscription(
             chessEngineService.bestVariation.subscribe { bestVariation ->
-                val currentPlayersState = viewModel.currentState.playersState
-                viewModel.currentState = viewModel.currentState.copy(
+                val currentPlayersState = currentState.playersState
+                viewModel.currentState = currentState.copy(
                     playersState = PlayerMap(
                         blackPlayerValue = currentPlayersState.get(Player.Black).copy(
                             evaluation = bestVariation.blackPlayerValue?.evaluation?.toDouble()
@@ -84,7 +79,7 @@ class GameScreenPresenter(
 
         addSubscription(
             replayControlsInteractor.replayControls.subscribe { replayControlItems ->
-                viewModel.currentState = viewModel.currentState.copy(
+                viewModel.currentState = currentState.copy(
                     replayControlItems = replayControlItems
                 )
             }
@@ -113,15 +108,59 @@ class GameScreenPresenter(
     }
 
     private fun onExpandMoveListClicked() {
-        val currentViewState = viewModel.currentState
-        viewModel.currentState = currentViewState.copy(
-            moveListCollapsed = !currentViewState.moveListCollapsed
+        val currentState = currentState
+        viewModel.currentState = currentState.copy(
+            moveListCollapsed = !currentState.moveListCollapsed
         )
     }
 
     private fun onMoveHistoryItemClicked(item: MoveListItem, player: Player) {
-        viewModel.currentState = viewModel.currentState.copy(
-            selectedHistoryMove = item.getMoveItem(player)?.detailedMove
+        val selectedHistoryMove = item.getMoveItem(player)?.detailedMove
+        viewModel.currentState = currentState.copy(
+            selectedHistoryMove = selectedHistoryMove
         )
+        if (selectedHistoryMove != null) {
+            interactor.goBackToMove(selectedHistoryMove, currentState.gameState.moveHistory)
+        }
+    }
+
+    private fun onPositionUpdated(position: Position) {
+        val rewriteMoveHistory = shouldRewriteMoveHistory()
+        val moveHistory = if (rewriteMoveHistory) {
+            chessEngineService.moveHistory
+        } else {
+            currentState.gameState.moveHistory
+        }
+        val adjudicationResult = if (rewriteMoveHistory) {
+            chessEngineService.adjudicateGame()
+        } else {
+            currentState.gameState.adjudicationResult
+        }
+        viewModel.currentState = viewModel.currentState.copy(
+            gameState = viewModel.currentState.gameState.copy(
+                moveHistory = moveHistory,
+                adjudicationResult = adjudicationResult
+            ),
+            position = position,
+            replayControlItems = replayControlsInteractor.currentReplayControls
+        )
+        interactor.onPositionChanged(adjudicationResult)
+    }
+
+    private fun List<DetailedMove>.isSubsequenceOf(other: List<DetailedMove>): Boolean {
+        if (size > other.size) {
+            return false
+        }
+        for (i in indices) {
+            if (this[i] != other[i]) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun shouldRewriteMoveHistory(): Boolean {
+        val currentMoveHistory = currentState.gameState.moveHistory
+        return currentMoveHistory.isSubsequenceOf(chessEngineService.moveHistory)
     }
 }

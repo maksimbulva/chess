@@ -110,6 +110,12 @@ class ChesslibWrapper : AbsChesslibWrapper() {
         return ChesslibPlayerWrapper(this, player)
     }
 
+    fun isBusy(): Boolean {
+        lock.withLock {
+            return isEngineBusy
+        }
+    }
+
     companion object {
         private const val CHESSLIB_BLACK_PLAYER_INDEX = 0
         private const val CHESSLIB_WHITE_PLAYER_INDEX = 1

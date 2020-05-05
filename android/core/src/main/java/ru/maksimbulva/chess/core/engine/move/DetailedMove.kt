@@ -17,4 +17,7 @@ data class DetailedMove(
     val isShortCastle: Boolean,
     val isLongCastle: Boolean,
     val fullmoveNumber: Int
-)
+) {
+    val isCastle: Boolean
+        get() = isShortCastle || isLongCastle
+}

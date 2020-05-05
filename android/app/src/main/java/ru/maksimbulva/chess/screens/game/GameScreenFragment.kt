@@ -73,13 +73,13 @@ class GameScreenFragment(
         showChessboardState(viewState)
         showPlayerPanelsState(viewState)
 
-        val lastMove = viewState.moveHistory.lastOrNull()
+        val lastMove = viewState.gameState.moveHistory.lastOrNull()
         actionBarWrapper.showState(viewState, lastMove)
 
         moveListView.setItems(
             moveListItemsGenerator.generateMoveListItems(
                 context!!.resources,
-                viewState.moveHistory,
+                viewState.gameState.moveHistory,
                 viewState.selectedHistoryMove
             )
         )

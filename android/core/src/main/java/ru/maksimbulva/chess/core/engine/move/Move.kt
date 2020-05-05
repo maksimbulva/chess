@@ -12,7 +12,16 @@ data class Move(
     val isCastle: Boolean = false
 ) {
     constructor(fromCell: Cell, toCell: Cell)
-            : this(fromCell, toCell, isEnPassantCapture = false)
+        : this(fromCell, toCell, isEnPassantCapture = false)
+
+    constructor(detailedMove: DetailedMove)
+        : this(
+            fromCell = detailedMove.fromCell,
+            toCell = detailedMove.toCell,
+            promoteTo = detailedMove.promoteTo,
+            isEnPassantCapture = detailedMove.isEnPassantCapture,
+            isCastle = detailedMove.isCastle
+        )
 
     companion object {
         fun createShortCastle(player: Player): Move {

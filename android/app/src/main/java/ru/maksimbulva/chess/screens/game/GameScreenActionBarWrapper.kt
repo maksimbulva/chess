@@ -27,7 +27,7 @@ class GameScreenActionBarWrapper(
 
     @StringRes
     private fun generateActionBarTitle(viewState: GameScreenViewModel.ViewState): Int? {
-        return when (val adjudicationResult = viewState.adjudicationResult) {
+        return when (val adjudicationResult = viewState.gameState.adjudicationResult) {
             is GameAdjudicationResult.Win -> {
                 when (adjudicationResult.reason) {
                     GameAdjudicationResult.Win.WinReason.Checkmate -> {

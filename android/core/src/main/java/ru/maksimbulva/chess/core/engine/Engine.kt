@@ -25,6 +25,8 @@ class Engine {
 
     fun resetToInitialPosition() {
         currentPosition = FenDecoder.decode(initialPosition)
+        moveHistory = emptyList()
+        _legalMoves = null
     }
 
     fun playMove(move: Move) {
