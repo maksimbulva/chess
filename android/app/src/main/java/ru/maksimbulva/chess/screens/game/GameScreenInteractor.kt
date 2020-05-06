@@ -60,7 +60,7 @@ class GameScreenInteractor(private val chessEngineService: ChessEngineService) {
                 _engineState.onNext(GameScreenEngineState.Stopped)
                 val moveIndex = moveHistory.indexOf(detailedMove)
                 if (moveIndex in moveHistory.indices) {
-                    chessEngineService.setMoveHistory(moveHistory.subList(0, moveIndex))
+                    chessEngineService.setMoveHistory(moveHistory.subList(0, moveIndex + 1))
                 }
             }
         )
