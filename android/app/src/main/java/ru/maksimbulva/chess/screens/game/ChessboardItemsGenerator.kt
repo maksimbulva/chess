@@ -9,21 +9,36 @@ import ru.maksimbulva.ui.chessboard.items.ChessboardItem
 object ChessboardItemsGenerator {
 
     fun generateForBoard(board: Board, playerOnTop: Player): List<ChessboardItem> {
-        return (if (playerOnTop == Player.Black) (7 downTo 0) else 0..7)
-            .flatMap { row ->
-                (0..7).map { column ->
-                    val pieceAtCell: ColoredPiece? = board.pieceAt(row, column)
-                    ChessboardItem(
-                        cell = Cell(row, column),
-                        player = pieceAtCell?.player,
-                        piece = pieceAtCell?.piece,
-                        cellColor = if ((row + column) % 2 == 0) {
-                            ChessboardItem.CellColor.Black
-                        } else {
-                            ChessboardItem.CellColor.White
-                        }
-                    )
-                }
+        return createCellsSequence(playerOnTop)
+            .map { cell ->
+                createChessboardItem(cell, board.pieceAt(cell))
             }
+            .toList()
+    }
+
+    private fun createCellsSequence(playerOnTop: Player): Sequence<Cell> {
+        return when (playerOnTop) {
+            Player.Black -> 7 downTo 0
+            Player.White -> 0..7
+        }
+            .flatMap { row -> (0..7).map { column -> Cell(row, column) } }
+            .asSequence()
+    }
+
+    private fun getCellColor(cell: Cell): ChessboardItem.CellColor {
+        return if ((cell.row + cell.column) % 2 == 0) {
+            ChessboardItem.CellColor.Black
+        } else {
+            ChessboardItem.CellColor.White
+        }
+    }
+
+    private fun createChessboardItem(cell: Cell, coloredPiece: ColoredPiece?): ChessboardItem {
+        return ChessboardItem(
+            cell = cell,
+            player = coloredPiece?.player,
+            piece = coloredPiece?.piece,
+            cellColor = getCellColor(cell)
+        )
     }
 }
