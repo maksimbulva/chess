@@ -97,7 +97,9 @@ class GameScreenPresenter(
 
     override fun onActionReceived(action: GameScreenAction) {
         when (action) {
-            GameScreenAction.ExpandMoveListClicked -> onExpandMoveListClicked()
+            is GameScreenAction.MoveListResizeButtonClicked -> {
+                onExpandMoveListClicked(action.expand)
+            }
             is GameScreenAction.ReplayControlButtonClicked -> {
                 replayControlsInteractor.onReplayControlButtonClicked(action.item)
             }
@@ -107,10 +109,10 @@ class GameScreenPresenter(
         }
     }
 
-    private fun onExpandMoveListClicked() {
+    private fun onExpandMoveListClicked(expand: Boolean) {
         val currentState = currentState
         viewModel.currentState = currentState.copy(
-            moveListCollapsed = !currentState.moveListCollapsed
+            moveListCollapsed = !expand
         )
     }
 

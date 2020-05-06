@@ -57,8 +57,8 @@ class GameScreenFragment(
             view.findViewById(R.id.bottom_person_panel)
         )
         moveListView = view.findViewById(R.id.move_list)
-        moveListView.setOnExpandButtonClicked {
-            publishAction(GameScreenAction.ExpandMoveListClicked)
+        moveListView.setOnResizeButtonClicked {
+            publishAction(GameScreenAction.MoveListResizeButtonClicked(it))
         }
         moveListView.onMoveItemClickListener = { moveItem, player ->
             publishAction(GameScreenAction.MoveListItemClicked(moveItem, player))
@@ -76,13 +76,16 @@ class GameScreenFragment(
         val lastMove = viewState.gameState.moveHistory.lastOrNull()
         actionBarWrapper.showState(viewState, lastMove)
 
-        moveListView.setItems(
-            moveListItemsGenerator.generateMoveListItems(
-                context!!.resources,
-                viewState.gameState.moveHistory,
-                viewState.selectedHistoryMove
+        with (moveListView) {
+            setCollapsed(viewState.moveListCollapsed)
+            setItems(
+                moveListItemsGenerator.generateMoveListItems(
+                    context!!.resources,
+                    viewState.gameState.moveHistory,
+                    viewState.selectedHistoryMove
+                )
             )
-        )
+        }
 
         replayGameControlsView.setItems(viewState.replayControlItems)
     }
