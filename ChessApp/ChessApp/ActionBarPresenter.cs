@@ -1,0 +1,6 @@
+﻿namespace ChessApp
+{
+    class ActionBarPresenter
+    {
+    }
+}

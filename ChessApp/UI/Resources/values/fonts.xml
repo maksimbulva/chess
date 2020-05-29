@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+  
+  <style name="TextTitle">
+    <item name="android:textColor">@color/white_alpha_87</item>
+  </style>
+
+  <style name="TextSubtitle">
+    <item name="android:textColor">@color/white_alpha_60</item>
+  </style>
+
+</resources>

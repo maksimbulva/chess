@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ChessApp</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="person_alice_name">Alice</string>
+    <string name="person_bob_name">Bob</string>
+</resources>
