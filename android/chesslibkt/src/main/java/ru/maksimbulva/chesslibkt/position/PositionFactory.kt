@@ -26,7 +26,7 @@ object PositionFactory {
             halfmoveClock = halfmoveClock,
             fullmoveNumber = fullmoveNumber
         ).apply {
-            pieces.forEach { addPiece(it) }
+            pieces.asSequence().filter { it.pieceType != Piece.King } .forEach { addPiece(it) }
             optimizeCastleOptions()
             require(isValid())
         }

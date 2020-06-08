@@ -7,10 +7,13 @@ class Board(blackKingSquare: Square, whiteKingSquare: Square) {
 
     private val boardSquares = Array<BoardSquare?>(SQUARE_COUNT) { null }
 
+    private var blackKingNode = BoardSquare(Player.Black, Piece.King)
+    private var whiteKingNode = BoardSquare(Player.White, Piece.King)
+
     init {
         require(blackKingSquare.encoded != whiteKingSquare.encoded)
-        setBoardSquare(BoardSquare(Player.Black, Piece.King), blackKingSquare)
-        setBoardSquare(BoardSquare(Player.White, Piece.King), whiteKingSquare)
+        setBoardSquare(blackKingNode, blackKingSquare)
+        setBoardSquare(whiteKingNode, whiteKingSquare)
     }
 
     fun isEmpty(square: Square): Boolean {
@@ -47,9 +50,9 @@ class Board(blackKingSquare: Square, whiteKingSquare: Square) {
         return boardSquares[square.encoded]?.player
     }
 
-    fun getKingSquare(player: Player): Square {
-        TODO()
-    }
+//    fun getKingSquare(player: Player): Square {
+//        TODO()
+//    }
 
 //    PieceIterator getPieceIterator(player_t player) const
 //    {
@@ -74,8 +77,7 @@ class Board(blackKingSquare: Square, whiteKingSquare: Square) {
         require(pieceOnBoard.pieceType != Piece.King)
         require(isEmpty(pieceOnBoard.square))
 
-        val kingSquare = getKingSquare(pieceOnBoard.player)
-        val kingNode = boardSquares[kingSquare.encoded]!!
+        val kingNode = getKingNode(pieceOnBoard.player)
 
         val pieceNode = BoardSquare(pieceOnBoard.player, pieceOnBoard.pieceType).apply {
             next = kingNode.next
@@ -107,6 +109,13 @@ class Board(blackKingSquare: Square, whiteKingSquare: Square) {
         TODO()
     }
 
+    private fun getKingNode(player: Player): BoardSquare {
+        return when (player) {
+            Player.Black -> blackKingNode
+            Player.White -> whiteKingNode
+        }
+    }
+
     private fun setBoardSquare(boardSquare: BoardSquare?, square: Square) {
         boardSquares[square.encoded] = boardSquare
     }
@@ -122,5 +131,15 @@ class Board(blackKingSquare: Square, whiteKingSquare: Square) {
 
         val RowsRange = 0..ROW_MAX
         val ColumnsRange = 0..COLUMN_MAX
+
+        fun rowOf(rowChar: Char): Int {
+            require(rowChar in '1'..'8')
+            return rowChar - '1'
+        }
+
+        fun columnOf(columnChar: Char): Int {
+            require(columnChar in 'a'..'h')
+            return columnChar - 'a'
+        }
     }
 }

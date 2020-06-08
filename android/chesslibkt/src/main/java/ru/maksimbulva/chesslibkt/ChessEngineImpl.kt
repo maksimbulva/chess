@@ -49,6 +49,6 @@ class ChessEngineImpl : IChessEngine {
     companion object {
         private const val NAME = "ChesslibKt v0.1"
 
-        private const val INITIAL_POSITION_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        const val INITIAL_POSITION_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     }
 }

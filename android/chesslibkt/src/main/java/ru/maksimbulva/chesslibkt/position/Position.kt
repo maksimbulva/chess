@@ -9,8 +9,8 @@ import ru.maksimbulva.chesslibkt.move.MoveGenerationFilter
 import ru.maksimbulva.chesslibkt.move.ScoredMove
 
 class Position(
-    private var blackKingSquare: Square,
-    private var whiteKingSquare: Square,
+    blackKingSquare: Square,
+    whiteKingSquare: Square,
     playerToMove: Player,
     enPassantColumn: Int?,
     castleOptions: Map<Player, CastleOptions>,
@@ -18,27 +18,34 @@ class Position(
     fullmoveNumber: Int
 ) {
 
+    private var _board = Board(blackKingSquare, whiteKingSquare)
     val board: Board
-        get() = TODO()
+        get() = _board
 
     val positionFlags: PositionFlags
         get() = TODO()
 
+    private var _playerToMove = playerToMove
     val playerToMove: Player
-        get() = TODO()
+        get() = _playerToMove
 
     val otherPlayer: Player
         get() = TODO()
 
+    private var _enPassantColumn = enPassantColumn
     val enPassantColumn: Int?
-        get() = TODO()
+        get() = _enPassantColumn
 
-    val moveCounters: PositionMoveCounters
-        get() = TODO()
+    private var blackCastleOptions = castleOptions.getValue(Player.Black)
+    private var whiteCastleOptions = castleOptions.getValue(Player.White)
 
-    init {
-        TODO()
-    }
+    private var _halfmoveClock = halfmoveClock
+    val halfmoveClock: Int
+        get() = _halfmoveClock
+
+    private var _fullmoveNumber = fullmoveNumber
+    val fullmoveNumber: Int
+        get() = _fullmoveNumber
 
     fun clone(): Position {
         TODO()
@@ -53,11 +60,12 @@ class Position(
     }
 
     fun optimizeCastleOptions() {
-        TODO()
+//        TODO()
     }
 
     fun isValid(): Boolean {
-        TODO()
+//        TODO()
+        return true
     }
 
     fun isNotValid(): Boolean = !isValid()

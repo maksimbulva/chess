@@ -53,8 +53,8 @@ object Fen {
                 )
             ),
             encodeEnPassantColumn(position.playerToMove, position.enPassantColumn),
-            encodeHalfmoveClock(position.moveCounters),
-            encodeFullmoveNumber(position.moveCounters)
+            encodeHalfmoveClock(position.halfmoveClock),
+            encodeFullmoveNumber(position.fullmoveNumber)
         ).joinToString(separator = "")
     }
 
@@ -82,10 +82,10 @@ object Fen {
                     }
                 }
             }
-            require(currentColumn == Board.COLUMN_MAX)
+            require(currentColumn == Board.COLUMN_MAX + 1)
         }
 
-        return decodedPieces;
+        return decodedPieces
     }
 
     private fun encodeBoard(board: Board): String
@@ -132,7 +132,8 @@ object Fen {
     }
 
     private fun decodePieceType(c: Char): Piece {
-        return pieceToChar.filter { it.value == c }.map { it.key }.first()
+        val pieceCharLower = c.toLowerCase()
+        return pieceToChar.filter { it.value == pieceCharLower }.map { it.key }.first()
     }
 
     private fun encodePlayerPieceType(player: Player, piece: Piece): Char {
@@ -239,15 +240,15 @@ object Fen {
         return encoded.toInt()
     }
 
-    private fun encodeHalfmoveClock(moveCounters: PositionMoveCounters): String {
-        return moveCounters.halfmoveClock.toString()
+    private fun encodeHalfmoveClock(halfmoveClock: Int): String {
+        return halfmoveClock.toString()
     }
 
     private fun decodeFullmoveNumber(encoded: String): Int {
         return encoded.toInt()
     }
 
-    private fun encodeFullmoveNumber(moveCounters: PositionMoveCounters): String {
-        return moveCounters.fullmoveNumber.toString()
+    private fun encodeFullmoveNumber(fullmoveNumber: Int): String {
+        return fullmoveNumber.toString()
     }
 }
