@@ -1,3 +1,4 @@
 include ':app', ':chesslib', ':core', ':stylekit', ':ui'
 
 rootProject.name='Chess'
+include ':chesslibkt'
