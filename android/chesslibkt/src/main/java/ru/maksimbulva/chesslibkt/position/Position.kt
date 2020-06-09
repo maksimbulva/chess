@@ -56,7 +56,10 @@ class Position(
     }
 
     fun getCastleOptions(player: Player): CastleOptions {
-        TODO()
+        return when (player) {
+            Player.Black -> blackCastleOptions
+            Player.White -> whiteCastleOptions
+        }
     }
 
     fun optimizeCastleOptions() {
