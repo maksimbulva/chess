@@ -48,11 +48,13 @@ class Position(
         get() = _fullmoveNumber
 
     fun clone(): Position {
-        TODO()
+        // TODO()
+        return this
     }
 
     fun generatePseudoLegalMoves(movesFilter: MoveGenerationFilter): List<ScoredMove> {
-        TODO()
+        // TODO()
+        return emptyList()
     }
 
     fun getCastleOptions(player: Player): CastleOptions {

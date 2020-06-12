@@ -6,7 +6,6 @@ import ru.maksimbulva.chesslibkt.board.Square
 import ru.maksimbulva.chesslibkt.position.CastleOptions
 import ru.maksimbulva.chesslibkt.position.Position
 import ru.maksimbulva.chesslibkt.position.PositionFactory
-import ru.maksimbulva.chesslibkt.position.PositionMoveCounters
 
 object Fen {
     private const val ROWS_SEPARATOR = '/'
@@ -55,7 +54,7 @@ object Fen {
             encodeEnPassantColumn(position.playerToMove, position.enPassantColumn),
             encodeHalfmoveClock(position.halfmoveClock),
             encodeFullmoveNumber(position.fullmoveNumber)
-        ).joinToString(separator = "")
+        ).joinToString(separator = " ")
     }
 
     private fun decodeBoard(boardString: String): Collection<PieceOnBoard> {
@@ -90,37 +89,33 @@ object Fen {
 
     private fun encodeBoard(board: Board): String
     {
-        TODO()
-        /*std::string encodedBoard;
-
-        for (square_t currentRow = MAX_ROW; currentRow >= 0; --currentRow) {
-        std::string encodedRow;
-        fastint emptySquaresCounter = 0;
-        for (square_t currentColumn = 0; currentColumn < COLUMN_COUNT; ++currentColumn) {
-        const square_t currentSquare = encodeSquare(currentRow, currentColumn);
-        if (board.isEmpty(currentSquare)) {
-            ++emptySquaresCounter;
+        return Board.RowsRange.reversed().joinToString(separator = ROWS_SEPARATOR.toString()) {
+            encodeBoardRow(it, board)
         }
-        else {
-            if (emptySquaresCounter != 0) {
-                encodedRow += std::to_string(emptySquaresCounter);
-                emptySquaresCounter = 0;
+    }
+
+    private fun encodeBoardRow(row: Int, board: Board): String {
+        var emptySquaresCounter = 0
+        var encodedRow = ""
+        Board.ColumnsRange.forEach { currentColumn ->
+            val currentSquare = Square(row, currentColumn)
+            if (board.isEmpty(currentSquare)) {
+                ++emptySquaresCounter
+            } else {
+                if (emptySquaresCounter != 0) {
+                    encodedRow += emptySquaresCounter.toString()
+                    emptySquaresCounter = 0
+                }
+                encodedRow += encodePlayerPieceType(
+                    board.getPlayerValue(currentSquare),
+                    board.getPieceValue(currentSquare)
+                )
             }
-            encodedRow.push_back(encodePlayerPieceType(
-                board.getPlayer(currentSquare),
-                board.getPieceTypeAt(currentSquare)));
         }
-    }
         if (emptySquaresCounter != 0) {
-            encodedRow += std::to_string(emptySquaresCounter);
+            encodedRow += emptySquaresCounter.toString()
         }
-        encodedBoard += encodedRow;
-        if (currentRow != 0) {
-            encodedBoard.push_back(ROWS_SEPARATOR);
-        }
-    }
-
-        return encodedBoard;*/
+        return encodedRow
     }
 
     private fun decodePlayer(c: Char): Player {
@@ -203,10 +198,10 @@ object Fen {
     private fun encodeCastleOptions(castleOptionsByPlayer: Map<Player, CastleOptions>): String {
         return with (castleOptionsByPlayer) {
             listOfNotNull(
-                FEN_BLACK_CAN_CASTLE_SHORT.takeIf { getValue(Player.Black).isCanCastleShort },
-                FEN_BLACK_CAN_CASTLE_LONG.takeIf { getValue(Player.Black).isCanCastleLong },
                 FEN_WHITE_CAN_CASTLE_SHORT.takeIf { getValue(Player.White).isCanCastleShort },
-                FEN_WHITE_CAN_CASTLE_LONG.takeIf { getValue(Player.White).isCanCastleLong }
+                FEN_WHITE_CAN_CASTLE_LONG.takeIf { getValue(Player.White).isCanCastleLong },
+                FEN_BLACK_CAN_CASTLE_SHORT.takeIf { getValue(Player.Black).isCanCastleShort },
+                FEN_BLACK_CAN_CASTLE_LONG.takeIf { getValue(Player.Black).isCanCastleLong }
             ).joinToString(separator = "").run {
                 if (isEmpty()) FEN_NO_ONE_CAN_CASTLE.toString() else this
             }

@@ -46,9 +46,13 @@ class Board(blackKingSquare: Square, whiteKingSquare: Square) {
         return boardSquares[square.encoded]?.piece
     }
 
+    fun getPieceValue(square: Square): Piece = getPieceTypeAt(square)!!
+
     fun getPlayer(square: Square): Player? {
         return boardSquares[square.encoded]?.player
     }
+
+    fun getPlayerValue(square: Square): Player = getPlayer(square)!!
 
 //    fun getKingSquare(player: Player): Square {
 //        TODO()
