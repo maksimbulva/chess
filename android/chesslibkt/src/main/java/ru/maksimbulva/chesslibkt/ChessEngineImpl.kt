@@ -1,8 +1,10 @@
 package ru.maksimbulva.chesslibkt
 
 import ru.maksimbulva.chesslibkt.board.Square
+import ru.maksimbulva.chesslibkt.move.ParsedMove
 import ru.maksimbulva.chesslibkt.search.SearchInfo
 import ru.maksimbulva.chesslibkt.search.Variation
+import kotlin.Exception
 
 class ChessEngineImpl : IChessEngine {
     private val playerSettings = mutableMapOf(
@@ -35,11 +37,28 @@ class ChessEngineImpl : IChessEngine {
         destSquare: Square,
         promoteToPieceType: Piece?
     ): Boolean {
-        TODO("Not yet implemented")
+        val moveToPlay = _game.getLegalMoves().firstOrNull { move ->
+            move.originSquare == originSquare &&
+                    move.destSquare == destSquare &&
+                    ((move.isPromotion && move.promoteToPiece == promoteToPieceType)
+                            || (!move.isPromotion && promoteToPieceType == null))
+        }
+
+        return if (moveToPlay != null) {
+            _game.playMove(moveToPlay)
+            true
+        } else {
+            false
+        }
     }
 
     override fun playMove(moveString: String): Boolean {
-        TODO("Not yet implemented")
+        return try {
+            val parsedMove = ParsedMove.fromCoordinateNotation(moveString)
+            playMove(parsedMove.originSquare, parsedMove.destSquare, parsedMove.promoteToPieceType)
+        } catch (e: Exception) {
+            false
+        }
     }
 
     override fun findBestVariation(progressCallback: (SearchInfo) -> Unit): Variation {

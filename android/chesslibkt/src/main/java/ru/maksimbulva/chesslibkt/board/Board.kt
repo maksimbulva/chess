@@ -2,13 +2,14 @@ package ru.maksimbulva.chesslibkt.board
 
 import ru.maksimbulva.chesslibkt.Piece
 import ru.maksimbulva.chesslibkt.Player
+import java.lang.IllegalStateException
 
 class Board(blackKingSquare: Square, whiteKingSquare: Square) {
 
     private val boardSquares = Array<BoardSquare?>(SQUARE_COUNT) { null }
 
-    private var blackKingNode = BoardSquare(Player.Black, Piece.King)
-    private var whiteKingNode = BoardSquare(Player.White, Piece.King)
+    private var blackKingNode = BoardSquare(blackKingSquare, Player.Black, Piece.King)
+    private var whiteKingNode = BoardSquare(whiteKingSquare, Player.White, Piece.King)
 
     init {
         require(blackKingSquare.encoded != whiteKingSquare.encoded)
@@ -77,13 +78,25 @@ class Board(blackKingSquare: Square, whiteKingSquare: Square) {
 //        }
 //    }
 
+    fun getPlayerPieces(player: Player): Sequence<BoardSquare> {
+        val startingBoardSquare = when (player) {
+            Player.Black -> blackKingNode
+            Player.White -> whiteKingNode
+        }
+        return Sequence { PieceIterator(boardSquares, startingBoardSquare) }
+    }
+
     fun addPiece(pieceOnBoard: PieceOnBoard) {
         require(pieceOnBoard.pieceType != Piece.King)
         require(isEmpty(pieceOnBoard.square))
 
         val kingNode = getKingNode(pieceOnBoard.player)
 
-        val pieceNode = BoardSquare(pieceOnBoard.player, pieceOnBoard.pieceType).apply {
+        val pieceNode = BoardSquare(
+            pieceOnBoard.square,
+            pieceOnBoard.player,
+            pieceOnBoard.pieceType
+        ).apply {
             next = kingNode.next
             prev = kingNode
         }
@@ -102,7 +115,11 @@ class Board(blackKingSquare: Square, whiteKingSquare: Square) {
     }
 
     fun updatePieceSquare(oldSquare: Square, newSquare: Square) {
-        TODO()
+        val boardSquare = boardSquares[oldSquare.encoded] ?: throw IllegalStateException()
+        boardSquare.square = newSquare
+
+        boardSquares[oldSquare.encoded] = null
+        boardSquares[newSquare.encoded] = boardSquare
     }
 
     fun promotePawn(square: Square, promoteTo: Piece) {
@@ -145,5 +162,10 @@ class Board(blackKingSquare: Square, whiteKingSquare: Square) {
             require(columnChar in 'a'..'h')
             return columnChar - 'a'
         }
+
+        const val COLUMN_A = 0
+        const val COLUMN_D = 3
+        const val COLUMN_F = 5
+        const val COLUMN_H = 7
     }
 }

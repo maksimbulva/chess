@@ -23,11 +23,12 @@ class GameImpl(position: Position) : IGame {
     override fun getRandomMove(): Move? = legalMoves.randomOrNull()
 
     override fun playMove(move: Move) {
-        TODO("Not yet implemented")
+        _currentPosition.playMove(move)
+        _currentPosition.updateMoveCounters(move)
+        updateLegalMoves()
     }
 
-    private fun updateLegalMoves()
-    {
+    private fun updateLegalMoves() {
         val newLegalMoves = mutableListOf<Move>()
 
         val pseudoLegalMoves = _currentPosition.generatePseudoLegalMoves(
@@ -37,10 +38,10 @@ class GameImpl(position: Position) : IGame {
         val tmpPosition = _currentPosition.clone()
 
         // TODO: optimize me
-        pseudoLegalMoves.forEach { scoredMove ->
-            tmpPosition.playMove(scoredMove.move)
+        pseudoLegalMoves.forEach { move ->
+            tmpPosition.playMove(move)
             if (tmpPosition.isValid()) {
-                newLegalMoves.add(scoredMove.move)
+                newLegalMoves.add(move)
             }
             tmpPosition.undoMove()
         }
