@@ -15,6 +15,9 @@ inline class Square(val encoded: Int) {
     operator fun plus(direction: Direction): Square {
         return Square(encoded + direction.encoded)
     }
+
+    operator fun plus(encodedValue: Int) = Square(encoded + encodedValue)
+
     companion object {
 
         fun of(str: String): Square {

@@ -108,26 +108,17 @@ class Position(
 //            capturedPieceType = move.getCapturedPieceType();
             // TODO: optimization - there is no need to clear the dest square first
             // if it is not an en passant capture
-//            _board.erasePieceAt(move.getCapturedPieceSquare())
-//            _board.updatePieceSquare(originSquare, destSquare)
+            _board.erasePieceAt(move.capturedPieceSquare)
+            _board.updatePieceSquare(originSquare, destSquare)
         } else {
             _board.updatePieceSquare(originSquare, destSquare)
-            if (move.isLongCastle) {
-                TODO()
-//                square_t rookOriginSquare = encodeSquare(originRow, COLUMN_A)
-//                square_t rookDestSquare = encodeSquare(originRow, COLUMN_D)
-//                board_.updatePieceSquare(rookOriginSquare, rookDestSquare)
-            } else if (move.isShortCastle) {
-                TODO()
-//                square_t rookOriginSquare = encodeSquare(originRow, COLUMN_H)
-//                square_t rookDestSquare = encodeSquare(originRow, COLUMN_F)
-//                board_.updatePieceSquare(rookOriginSquare, rookDestSquare)
+            if (move.isCastle) {
+                playCastleRookMovement(move)
             }
         }
 
         if (move.isPromotion) {
-            TODO()
-//            board_.promotePawn(destSquare, move.promoteToPiece)
+            _board.promotePawn(destSquare, move.promoteToPiece)
         }
 
         _positionFlags = _positionFlags.onMovePlayed()
@@ -161,15 +152,14 @@ class Position(
 //            positionFlags_.setCastleOptions(otherPlayer, otherCastleOptions);
 //        }
 
+        _playerToMove = getOtherPlayer(_playerToMove)
+
         _enPassantColumn = if (move.isPawnDoubleMove) {
             originSquare.column
         } else {
             null
         }
-//        positionFlags_.setEnPassantColumn(
-//            move.isPawnDoubleMove() ? OptionalColumn::fromColumn(getColumn(originSquare)) : OptionalColumn());
 
-        _playerToMove = getOtherPlayer(_playerToMove)
         _positionFlags = _positionFlags.setPlayerToMove(otherPlayer)
     }
 
@@ -185,10 +175,6 @@ class Position(
         }
     }
 
-    fun isCanUndoMove(): Boolean {
-        TODO()
-    }
-
     fun undoMove() {
         require(history.isNotEmpty())
 
@@ -200,24 +186,24 @@ class Position(
         _playerToMove = getOtherPlayer(_playerToMove)
         _enPassantColumn = historyToUndo.enPassantColumn
         _positionFlags = historyToUndo.positionFlags
-//        _moveCounters = historyToUndo.getPositionMoveCounters();
+        _halfmoveClock = historyToUndo.halfmoveClock
+        _fullmoveNumber = historyToUndo.fullmoveNumber
     }
 
     private fun undoMove(move: Move) {
         val originSquare = move.originSquare
-//        const square_t originRow = getRow(originSquare);
-//        const square_t destSquare = move.getDestSquare();
 
         // TODO
         if (move.isCapture) {
-            TODO()
-//            // TODO
-//            board_.updatePieceSquare(destSquare, originSquare);
-//
-//            const square_t capturedPieceSquare = move.isEnPassantCapture()
-//            ? encodeSquare(originRow, getColumn(destSquare))
-//            : destSquare;
-//            board_.addPiece({ playerToMove, move.getCapturedPieceType(), capturedPieceSquare });
+            _board.updatePieceSquare(move.destSquare, originSquare)
+            // TODO: optimize me, do not create temporary object
+            _board.addPiece(
+                PieceOnBoard(
+                    playerToMove,
+                    move.capturedPiece,
+                    move.capturedPieceSquare
+                )
+            )
         } else {
             _board.updatePieceSquare(move.destSquare, originSquare)
             if (move.isCastle) {
@@ -226,21 +212,37 @@ class Position(
         }
 
         if (move.isPromotion) {
-            TODO()
-//            board_.demoteToPawn(originSquare);
+            _board.demoteToPawn(originSquare)
+        }
+    }
+
+    private fun playCastleRookMovement(castleMove: Move) {
+        val originRow = castleMove.originSquare.row
+        if (castleMove.isLongCastle) {
+            _board.updatePieceSquare(
+                Square(originRow, Board.COLUMN_A),
+                Square(originRow, Board.COLUMN_D)
+            )
+        } else {
+            _board.updatePieceSquare(
+                Square(originRow, Board.COLUMN_H),
+                Square(originRow, Board.COLUMN_F)
+            )
         }
     }
 
     private fun undoCastleRookMovement(castleMove: Move) {
         val originRow = castleMove.originSquare.row
         if (castleMove.isLongCastle) {
-            val rookOriginSquare = Square(originRow, Board.COLUMN_A)
-            val rookDestSquare = Square(originRow, Board.COLUMN_D)
-            _board.updatePieceSquare(rookDestSquare, rookOriginSquare)
+            _board.updatePieceSquare(
+                Square(originRow, Board.COLUMN_D),
+                Square(originRow, Board.COLUMN_A)
+            )
         } else {
-            val rookOriginSquare = Square(originRow, Board.COLUMN_H)
-            val rookDestSquare = Square(originRow, Board.COLUMN_F)
-            _board.updatePieceSquare(rookDestSquare, rookOriginSquare);
+            _board.updatePieceSquare(
+                Square(originRow, Board.COLUMN_F),
+                Square(originRow, Board.COLUMN_H)
+            )
         }
     }
 }

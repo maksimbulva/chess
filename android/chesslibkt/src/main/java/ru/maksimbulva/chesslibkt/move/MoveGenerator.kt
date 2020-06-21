@@ -16,6 +16,32 @@ object MoveGenerator {
 
     private val pawnCaptureDeltaColumns = arrayOf(-1, 1)
 
+    private val knightMovesTable: Array<IntArray> = generateMovesTable(
+        arrayOf(
+            Vector2(-1, -2),
+            Vector2(1, -2),
+            Vector2(-2, -1),
+            Vector2(2, -1),
+            Vector2(-2, 1),
+            Vector2(2, 1),
+            Vector2(-1, 2),
+            Vector2(1, 2)
+        )
+    )
+
+    private val kingMovesTable: Array<IntArray> = generateMovesTable(
+        arrayOf(
+            Vector2(-1, -1),
+            Vector2(0, -1),
+            Vector2(1, -1),
+            Vector2(-1, 0),
+            Vector2(1, 0),
+            Vector2(-1, 1),
+            Vector2(0, 1),
+            Vector2(1, 1)
+        )
+    )
+
     fun fillWithPseudoLegalMoves(
         moves: MutableList<Move>,
         movesFilter: MoveGenerationFilter,
@@ -31,7 +57,11 @@ object MoveGenerator {
                         moves, movesFilter, position, boardSquare.square
                     )
                 }
-                Piece.Knight -> Unit
+                Piece.Knight -> {
+                    fillWithKnightMoves(
+                        moves, movesFilter, position, boardSquare.square
+                    )
+                }
                 Piece.Bishop -> Unit
                 Piece.Rook -> Unit
                 Piece.Queen -> Unit
@@ -141,6 +171,62 @@ object MoveGenerator {
     private fun generatePromotions(moveBuilder: MoveBuilder, moves: MutableList<Move>) {
         promotionPieces.forEach { piece ->
             moves.add(moveBuilder.setPromoteToPieceType(piece).build())
+        }
+    }
+
+    private fun fillWithKnightMoves(
+        moves: MutableList<Move>,
+        movesFilter: MoveGenerationFilter,
+        position: Position,
+        knightSquare: Square
+    ) {
+        fillWithTableMoves(
+            moves,
+            movesFilter,
+            position,
+            Piece.Knight,
+            knightSquare,
+            knightMovesTable
+        )
+    }
+
+    private fun fillWithTableMoves(
+        moves: MutableList<Move>,
+        movesFilter: MoveGenerationFilter,
+        position: Position,
+        piece: Piece,
+        originSquare: Square,
+        movesTable: Array<IntArray>
+    ) {
+//        const auto& deltas = pieceType == Knight ? KNIGHT_MOVE_DELTAS : KING_MOVE_DELTAS;
+//        const player_t myPlayer = position.getPlayerToMove();
+//        const Board& board = position.getBoard();
+//        const bitboard_t originBit = static_cast<bitboard_t>(1) << origin;
+        val moveBuilder = MoveBuilder(piece, originSquare)
+        val moveDeltas = movesTable[originSquare.encoded]
+
+        if (movesFilter == MoveGenerationFilter.AllMoves) {
+            moveDeltas.forEach { moveDelta ->
+                val destSquare = originSquare + moveDelta
+                val mb = moveBuilder.setDestSquare(destSquare)
+                if (position.board.isEmpty(destSquare)) {
+                    moves.add(mb.build())
+                } else if (position.board.getPlayer(destSquare) != position.playerToMove) {
+                    moves.add(mb.setCapture(position.board).build())
+                }
+            }
+        } else {
+            TODO()
+//            for (const auto& delta : deltas) {
+//                const square_t destSquare = origin + delta.delta;
+//                if ((delta.origins & originBit) && board.isNotEmpty(destSquare)
+//                && board.getPlayer(destSquare) != myPlayer) {
+//                moves.pushBack(moveBuilder
+//                    .setDestSquare(destSquare)
+//                    .setCapture(board)
+//                    .build());
+//            }
+//            }
         }
     }
 }

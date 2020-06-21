@@ -8,7 +8,7 @@ interface IGame {
 
     fun getLegalMoves(): List<Move>
 
-    fun getRandomMove(): Move?
-
     fun playMove(move: Move)
+
+    fun undoMove()
 }

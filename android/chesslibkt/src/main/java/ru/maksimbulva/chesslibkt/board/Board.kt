@@ -111,7 +111,9 @@ class Board(blackKingSquare: Square, whiteKingSquare: Square) {
     }
 
     fun erasePieceAt(square: Square) {
-        TODO()
+        val boardSquare = boardSquares[square.encoded]!!
+        removeFromList(boardSquare)
+        boardSquares[square.encoded] = null
     }
 
     fun updatePieceSquare(oldSquare: Square, newSquare: Square) {
@@ -123,11 +125,11 @@ class Board(blackKingSquare: Square, whiteKingSquare: Square) {
     }
 
     fun promotePawn(square: Square, promoteTo: Piece) {
-        TODO()
+        boardSquares[square.encoded]!!.piece = promoteTo
     }
 
     fun demoteToPawn(square: Square) {
-        TODO()
+        boardSquares[square.encoded]!!.piece = Piece.Pawn
     }
 
     private fun getKingNode(player: Player): BoardSquare {
@@ -141,6 +143,11 @@ class Board(blackKingSquare: Square, whiteKingSquare: Square) {
         boardSquares[square.encoded] = boardSquare
     }
 
+    private fun removeFromList(boardSquare: BoardSquare) {
+        boardSquare.prev?.next = boardSquare.next
+        boardSquare.next?.prev = boardSquare.prev
+    }
+
     companion object {
         const val COLUMN_MAX = 7
         const val COLUMN_COUNT = COLUMN_MAX + 1
@@ -152,6 +159,9 @@ class Board(blackKingSquare: Square, whiteKingSquare: Square) {
 
         val RowsRange = 0..ROW_MAX
         val ColumnsRange = 0..COLUMN_MAX
+
+        val allSquares: Sequence<Square>
+            get() = (0 until SQUARE_COUNT).asSequence().map { Square(it) }
 
         fun rowOf(rowChar: Char): Int {
             require(rowChar in '1'..'8')

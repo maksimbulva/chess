@@ -64,6 +64,14 @@ inline class Move(
             else -> Piece.Queen
         }
 
+    val capturedPieceSquare: Square
+        get() = if (isEnPassantCapture) {
+            // TODO: possibly this can be optimized
+            Square(originSquare.row, destSquare.column)
+        } else {
+            destSquare
+        }
+
     val isCapture: Boolean
         get() = (encoded and Capture) != 0
 

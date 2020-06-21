@@ -11,21 +11,24 @@ class GameImpl(position: Position) : IGame {
     override val currentPosition: Position
         get() = _currentPosition
 
-    private var legalMoves = emptyList<Move>()
+    private var legalMoves: List<Move>? = null
 
-    init {
-        updateLegalMoves()
+    override fun getLegalMoves(): List<Move> {
+        if (legalMoves == null) {
+            updateLegalMoves()
+        }
+        return legalMoves!!
     }
-
-    override fun getLegalMoves(): List<Move> = legalMoves
-
-    @ExperimentalStdlibApi
-    override fun getRandomMove(): Move? = legalMoves.randomOrNull()
 
     override fun playMove(move: Move) {
         _currentPosition.playMove(move)
         _currentPosition.updateMoveCounters(move)
-        updateLegalMoves()
+        legalMoves = null
+    }
+
+    override fun undoMove() {
+        _currentPosition.undoMove()
+        legalMoves = null
     }
 
     private fun updateLegalMoves() {
