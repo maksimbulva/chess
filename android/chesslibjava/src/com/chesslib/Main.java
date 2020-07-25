@@ -7,11 +7,12 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        final long legalMoveCount = countLegalMoves(
-                "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-                1);
-        System.out.println("Generated moves: " + legalMoveCount);
-	// write your code here
+        for (int depthPly = 1; depthPly <= 2; ++depthPly) {
+            final long legalMoveCount = countLegalMoves(
+                    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+                    depthPly);
+            System.out.println("Generated moves: " + legalMoveCount);
+        }
     }
 
     private static long countLegalMoves(final String fenString, final int depthPly)

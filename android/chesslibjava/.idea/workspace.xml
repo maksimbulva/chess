@@ -20,26 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d53e2b54-8ad6-4669-9a02-9a1b8761dc5f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/Fen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/Piece.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/PieceCode.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/Player.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/PlayerCode.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/board/Bitboard.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/board/Board.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/board/BoardSquare.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/board/Direction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/board/PieceBitboards.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/board/PieceOnBoard.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/move/Move.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/move/MoveEncoder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/move/MoveGenerationFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/move/MoveGenerator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/position/CastlingAvailability.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/position/Position.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/chesslib/position/PositionFlags.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/chesslib/collection/IntStack.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/chesslib/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/chesslib/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/chesslib/position/Position.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/chesslib/position/Position.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../data/database/positions.db" beforeDir="false" afterPath="$PROJECT_DIR$/../../data/database/positions.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -120,30 +104,30 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="690" y="267" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1595258992181" />
-    <state x="707" y="375" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1595624073478">
+    <state x="707" y="375" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1595707381970">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="707" y="375" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1920.1040@0.0.1920.1040" timestamp="1595624073478" />
+    <state x="707" y="375" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1920.1040@0.0.1920.1040" timestamp="1595707381970" />
     <state width="406" height="466" key="DebuggerActiveHint" timestamp="1595275018551">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="406" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1595275018550" />
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1595705906670">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1595707426191">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1595705906670" />
-    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1595705906670">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1595707426191" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1595707426191">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1595705906670" />
-    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1595705906670">
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1595707426191" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1595707426191">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1595705906670" />
-    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1595705906670">
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1595707426191" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1595707426191">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1595705906670" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1595707426191" />
     <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1595279263169">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

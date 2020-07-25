@@ -2,6 +2,7 @@ package com.chesslib.position;
 
 import com.chesslib.Player;
 import com.chesslib.board.Board;
+import com.chesslib.collection.IntStack;
 import com.chesslib.move.Move;
 import com.chesslib.move.MoveGenerator;
 
@@ -15,6 +16,8 @@ public final class Position {
 
     private Player playerToMove;
     private int positionFlags;
+
+    private final IntStack movesHistory = new IntStack();
 
     public Position(
             Board board,
@@ -52,9 +55,17 @@ public final class Position {
         }
 
         playerToMove = playerToMove.getOtherPlayer();
+        movesHistory.push(move);
     }
 
     public void undoMove() {
+        final int move = movesHistory.pop();
+        playerToMove = playerToMove.getOtherPlayer();
 
+        if (Move.isCapture(move)) {
+            throw new IllegalStateException("Not implemented yet");
+        } else {
+            board.movePiece(playerToMove, Move.getPiece(move), Move.getDestSquare(move), Move.getOriginSquare(move));
+        }
     }
 }
