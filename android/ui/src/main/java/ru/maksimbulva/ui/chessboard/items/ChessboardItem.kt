@@ -7,11 +7,5 @@ import ru.maksimbulva.chess.core.engine.board.Cell
 class ChessboardItem(
     val cell: Cell,
     val player: Player?,
-    val piece: Piece?,
-    val cellColor: CellColor
-) {
-    enum class CellColor {
-        Black,
-        White
-    }
-}
+    val piece: Piece?
+)

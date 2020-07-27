@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import ru.maksimbulva.chess.core.engine.board.Cell
 import ru.maksimbulva.ui.R
 import ru.maksimbulva.ui.chessboard.items.ChessboardItem
 import ru.maksimbulva.ui.core.IBindable
@@ -29,9 +30,9 @@ internal class ChessboardSquareView(context: Context, attrs: AttributeSet?, defS
     }
 
     override fun bind(item: ChessboardItem) {
-        background.setImageResource(when (item.cellColor) {
-            ChessboardItem.CellColor.Black -> theme.squareDark
-            ChessboardItem.CellColor.White -> theme.squareLight
+        background.setImageResource(when (getCellColor(item.cell)) {
+            CellColor.Black -> theme.squareDark
+            CellColor.White -> theme.squareLight
         })
         if (item.player != null && item.piece != null) {
             val drawableId = theme.pieceImage(item.player, item.piece)
@@ -44,5 +45,20 @@ internal class ChessboardSquareView(context: Context, attrs: AttributeSet?, defS
 
     fun setTheme(theme: ChessboardTheme) {
         this.theme = theme
+    }
+
+    private companion object {
+        private enum class CellColor {
+            Black,
+            White
+        }
+
+        fun getCellColor(cell: Cell): CellColor {
+            return if ((cell.row + cell.column) % 2 == 0) {
+                CellColor.Black
+            } else {
+                CellColor.White
+            }
+        }
     }
 }

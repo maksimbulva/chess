@@ -25,20 +25,11 @@ object ChessboardItemsGenerator {
             .asSequence()
     }
 
-    private fun getCellColor(cell: Cell): ChessboardItem.CellColor {
-        return if ((cell.row + cell.column) % 2 == 0) {
-            ChessboardItem.CellColor.Black
-        } else {
-            ChessboardItem.CellColor.White
-        }
-    }
-
     private fun createChessboardItem(cell: Cell, coloredPiece: ColoredPiece?): ChessboardItem {
         return ChessboardItem(
             cell = cell,
             player = coloredPiece?.player,
-            piece = coloredPiece?.piece,
-            cellColor = getCellColor(cell)
+            piece = coloredPiece?.piece
         )
     }
 }
