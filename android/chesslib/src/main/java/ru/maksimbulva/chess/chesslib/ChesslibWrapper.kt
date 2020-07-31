@@ -123,7 +123,6 @@ class ChesslibWrapper : AbsChesslibWrapper() {
         private fun getChesslibPlayerIndex(player: Player) = when (player) {
             Player.Black -> CHESSLIB_BLACK_PLAYER_INDEX
             Player.White -> CHESSLIB_WHITE_PLAYER_INDEX
-            else -> throw IllegalArgumentException()
         }
     }
 }

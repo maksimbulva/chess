@@ -20,28 +20,25 @@ class GameScreenPresenter(
     private val currentState: ViewState
         get() = viewModel.currentState
 
+    private val gameModeUseCase = GameModeUseCase(chessEngineService)
+
     override fun onCreate(viewModel: GameScreenViewModel) {
         super.onCreate(viewModel)
 
-        chessEngineService.setPlayers(
-            PlayerMap(
-                blackPlayerValue = personsRepository.alice,
-                whitePlayerValue = personsRepository.bob
-            )
+        chessEngineService.players = PlayerMap(
+            blackPlayerValue = personsRepository.alice,
+            whitePlayerValue = personsRepository.bob
         )
 
         replayControlsInteractor.resetControls()
 
         viewModel.currentState = ViewState(
             gameState = GameState(
-                players = PlayerMap(
-                    blackPlayerValue = personsRepository.alice,
-                    whitePlayerValue = personsRepository.bob
-                ),
+                players = chessEngineService.players,
                 moveHistory = emptyList(),
                 adjudicationResult = chessEngineService.adjudicateGame()
             ),
-            position = chessEngineService.currentPosition,
+            position = chessEngineService.currentState.position,
             selectedHistoryMove = null,
             playerOnTop = Player.Black,
             playersState = PlayerMap(
@@ -56,26 +53,35 @@ class GameScreenPresenter(
     override fun onAttachedView(view: IGameScreenView) {
         super.onAttachedView(view)
         interactor.start()
+        chessEngineService.start()
+        gameModeUseCase.start()
 
         addSubscription(
-            chessEngineService.position.subscribe(this::onPositionUpdated)
-        )
-
-        addSubscription(
-            chessEngineService.bestVariation.subscribe { bestVariation ->
-                val currentPlayersState = currentState.playersState
+            chessEngineService.engineState.subscribe { engineState ->
                 viewModel.currentState = currentState.copy(
-                    playersState = PlayerMap(
-                        blackPlayerValue = currentPlayersState.get(Player.Black).copy(
-                            evaluation = bestVariation.blackPlayerValue?.evaluation?.toDouble()
-                        ),
-                        whitePlayerValue = currentPlayersState.get(Player.White).copy(
-                            evaluation = bestVariation.whitePlayerValue?.evaluation?.toDouble()
-                        )
-                    )
+                    gameState = currentState.gameState.copy(
+                        players = engineState.players
+                    ),
+                    position = engineState.position
                 )
             }
         )
+
+//        addSubscription(
+//            chessEngineService.bestVariation.subscribe { bestVariation ->
+//                val currentPlayersState = currentState.playersState
+//                viewModel.currentState = currentState.copy(
+//                    playersState = PlayerMap(
+//                        blackPlayerValue = currentPlayersState.get(Player.Black).copy(
+//                            evaluation = bestVariation.blackPlayerValue?.evaluation?.toDouble()
+//                        ),
+//                        whitePlayerValue = currentPlayersState.get(Player.White).copy(
+//                            evaluation = bestVariation.whitePlayerValue?.evaluation?.toDouble()
+//                        )
+//                    )
+//                )
+//            }
+//        )
 
         addSubscription(
             replayControlsInteractor.replayControls.subscribe { replayControlItems ->
@@ -85,14 +91,16 @@ class GameScreenPresenter(
             }
         )
 
-        addSubscription(
-            interactor.engineState.subscribe(replayControlsInteractor::onEngineStateUpdate)
-        )
+//        addSubscription(
+//            interactor.engineState.subscribe(replayControlsInteractor::onEngineStateUpdate)
+//        )
     }
 
     override fun onDetachedView() {
-        super.onDetachedView()
+        gameModeUseCase.stop()
+        chessEngineService.stop()
         interactor.stop()
+        super.onDetachedView()
     }
 
     override fun onActionReceived(action: GameScreenAction) {

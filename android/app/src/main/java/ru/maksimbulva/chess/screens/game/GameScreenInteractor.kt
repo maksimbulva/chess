@@ -75,14 +75,14 @@ class GameScreenInteractor(private val chessEngineService: ChessEngineService) {
     }
 
     private fun onComputerToMove() {
-        if (currentEngineState == GameScreenEngineState.WaitingForUserMove) {
-            _engineState.onNext(GameScreenEngineState.Running)
-            engineTaskDisposable.replace(
-                chessEngineService.playBestMoveAsync(
-                    doOnEngineSearchFinished = this::onEngineSearchFinished
-                ).subscribe()
-            )
-        }
+//        if (currentEngineState == GameScreenEngineState.WaitingForUserMove) {
+//            _engineState.onNext(GameScreenEngineState.Running)
+//            engineTaskDisposable.replace(
+//                chessEngineService.playBestMoveAsync(
+//                    doOnEngineSearchFinished = this::onEngineSearchFinished
+//                ).subscribe()
+//            )
+//        }
     }
 
     private fun onHumanToMove() {

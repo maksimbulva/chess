@@ -99,10 +99,10 @@ class GameScreenFragment(
 
     private fun showPlayerPanelsState(viewState: GameScreenViewModel.ViewState) {
         Player.values().forEach {
-            val playerState = viewState.playersState.get(it)
             with (playerPanel(it, viewState.playerOnTop)) {
-                setState(playerState)
-                visibility = if (viewState.moveListCollapsed) View.VISIBLE else View.GONE
+                val person = viewState.gameState.players.get(it)
+                setName(person.nameResId)
+                setPortrait(person.portrait)
             }
         }
     }

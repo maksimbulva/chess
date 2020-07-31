@@ -18,4 +18,8 @@ class PersonsRepository {
         evaluationsLimit = 300_000,
         degreeOfRandomness = 64
     )
+
+    fun getDefaultPerson(): Person {
+        return Person.Human(R.drawable.portrait_001, R.string.person_human_name)
+    }
 }

@@ -14,9 +14,11 @@ import ru.maksimbulva.chess.settings.UserSettings
 
 class ChessApplication : Application() {
 
+    private val personsRepository = PersonsRepository()
+
     private val appModule = module {
-        single { PersonsRepository() }
-        single { ChessEngineService() }
+        single { personsRepository }
+        single { ChessEngineService(personsRepository.getDefaultPerson()) }
         single { GameScreenInteractor(get()) }
         single { GameScreenReplayControlsInteractor(get()) }
         single { UserSettings(LongAlgebraicNotation) }
