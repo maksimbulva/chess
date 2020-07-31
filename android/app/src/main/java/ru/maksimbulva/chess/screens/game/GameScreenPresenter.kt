@@ -34,17 +34,12 @@ class GameScreenPresenter(
 
         viewModel.currentState = ViewState(
             gameState = GameState(
-                players = chessEngineService.players,
                 moveHistory = emptyList(),
                 adjudicationResult = chessEngineService.adjudicateGame()
             ),
-            position = chessEngineService.currentState.position,
+            chessEngineState = chessEngineService.currentState,
             selectedHistoryMove = null,
             playerOnTop = Player.Black,
-            playersState = PlayerMap(
-                blackPlayerValue = createPersonPanelState(chessEngineService, Player.Black),
-                whitePlayerValue = createPersonPanelState(chessEngineService, Player.White)
-            ),
             moveListCollapsed = true,
             replayControlItems = replayControlsInteractor.currentReplayControls
         )
@@ -58,12 +53,7 @@ class GameScreenPresenter(
 
         addSubscription(
             chessEngineService.engineState.subscribe { engineState ->
-                viewModel.currentState = currentState.copy(
-                    gameState = currentState.gameState.copy(
-                        players = engineState.players
-                    ),
-                    position = engineState.position
-                )
+                viewModel.currentState = currentState.copy(chessEngineState = engineState)
             }
         )
 
@@ -151,7 +141,7 @@ class GameScreenPresenter(
                 moveHistory = moveHistory,
                 adjudicationResult = adjudicationResult
             ),
-            position = position,
+            chessEngineState = chessEngineService.currentState,
             replayControlItems = replayControlsInteractor.currentReplayControls
         )
         interactor.onPositionChanged(adjudicationResult)

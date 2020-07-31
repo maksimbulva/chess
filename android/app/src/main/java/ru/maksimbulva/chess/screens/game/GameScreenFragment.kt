@@ -92,7 +92,10 @@ class GameScreenFragment(
 
     private fun showChessboardState(viewState: GameScreenViewModel.ViewState) {
         with (viewState) {
-            val boardItems = ChessboardItemsGenerator.generateForBoard(position.board, playerOnTop)
+            val boardItems = ChessboardItemsGenerator.generateForBoard(
+                chessEngineState.position.board,
+                playerOnTop
+            )
             chessboardView.setItems(boardItems)
         }
     }
@@ -100,7 +103,7 @@ class GameScreenFragment(
     private fun showPlayerPanelsState(viewState: GameScreenViewModel.ViewState) {
         Player.values().forEach {
             with (playerPanel(it, viewState.playerOnTop)) {
-                val person = viewState.gameState.players.get(it)
+                val person = viewState.chessEngineState.players.get(it)
                 setName(person.nameResId)
                 setPortrait(person.portrait)
             }
