@@ -34,7 +34,6 @@ class GameScreenPresenter(
 
         viewModel.currentState = ViewState(
             gameState = GameState(
-                moveHistory = emptyList(),
                 adjudicationResult = chessEngineService.adjudicateGame()
             ),
             chessEngineState = chessEngineService.currentState,
@@ -120,7 +119,7 @@ class GameScreenPresenter(
             selectedHistoryMove = selectedHistoryMove
         )
         if (selectedHistoryMove != null) {
-            interactor.goBackToMove(selectedHistoryMove, currentState.gameState.moveHistory)
+            interactor.goBackToMove(selectedHistoryMove, currentState.chessEngineState.moveHistory)
         }
     }
 
@@ -129,7 +128,7 @@ class GameScreenPresenter(
         val moveHistory = if (rewriteMoveHistory) {
             chessEngineService.moveHistory
         } else {
-            currentState.gameState.moveHistory
+            currentState.chessEngineState.moveHistory
         }
         val adjudicationResult = if (rewriteMoveHistory) {
             chessEngineService.adjudicateGame()
@@ -138,7 +137,6 @@ class GameScreenPresenter(
         }
         viewModel.currentState = viewModel.currentState.copy(
             gameState = viewModel.currentState.gameState.copy(
-                moveHistory = moveHistory,
                 adjudicationResult = adjudicationResult
             ),
             chessEngineState = chessEngineService.currentState,
@@ -160,7 +158,7 @@ class GameScreenPresenter(
     }
 
     private fun shouldRewriteMoveHistory(): Boolean {
-        val currentMoveHistory = currentState.gameState.moveHistory
+        val currentMoveHistory = currentState.chessEngineState.moveHistory
         return currentMoveHistory.isSubsequenceOf(chessEngineService.moveHistory)
     }
 }

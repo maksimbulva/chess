@@ -134,6 +134,7 @@ class ChessEngineService(
         return ChessEngineState(
             players = players,
             position = engine.currentPosition,
+            moveHistory = engine.moveHistory,
             bestVariation = bestVariation
         )
     }

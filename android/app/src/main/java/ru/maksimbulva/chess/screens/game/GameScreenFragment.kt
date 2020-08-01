@@ -8,20 +8,21 @@ import org.koin.android.ext.android.get
 import ru.maksimbulva.chess.R
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.mvp.BaseFragment
+import ru.maksimbulva.chess.settings.UserSettings
+import ru.maksimbulva.chess.ui.ChessboardFacade
+import ru.maksimbulva.chess.ui.MoveListViewFacade
 import ru.maksimbulva.ui.person.PersonPanelView
-import ru.maksimbulva.ui.chessboard.ChessboardView
-import ru.maksimbulva.ui.move_list.MoveListView
 import ru.maksimbulva.ui.replay.ReplayGameControlsView
 
 class GameScreenFragment(
-    private val moveListItemsGenerator: MoveListItemsGenerator
+    private val userSettings: UserSettings
 ) : BaseFragment<GameScreenPresenter, IGameScreenView, GameScreenViewModel, GameScreenAction>(
         R.layout.fragment_game_screen
     ), IGameScreenView
 {
-    private lateinit var chessboardView: ChessboardView
+    private lateinit var chessboard: ChessboardFacade
     private lateinit var personPanelViews: Array<PersonPanelView>
-    private lateinit var moveListView: MoveListView
+    private lateinit var moveList: MoveListViewFacade
     private lateinit var replayGameControlsView: ReplayGameControlsView
 
     private val topPanelView: PersonPanelView
@@ -51,17 +52,19 @@ class GameScreenFragment(
     }
 
     override fun onViewCreated(view: View) {
-        chessboardView = view.findViewById(R.id.chessboard)
+        chessboard = ChessboardFacade(view.findViewById(R.id.chessboard))
         personPanelViews = arrayOf(
             view.findViewById(R.id.top_person_panel),
             view.findViewById(R.id.bottom_person_panel)
         )
-        moveListView = view.findViewById(R.id.move_list)
-        moveListView.setOnResizeButtonClicked {
-            publishAction(GameScreenAction.MoveListResizeButtonClicked(it))
-        }
-        moveListView.onMoveItemClickListener = { moveItem, player ->
-            publishAction(GameScreenAction.MoveListItemClicked(moveItem, player))
+        moveList = MoveListViewFacade(view.findViewById(R.id.move_list), userSettings)
+        with (moveList.view) {
+            setOnResizeButtonClicked {
+                publishAction(GameScreenAction.MoveListResizeButtonClicked(it))
+            }
+            onMoveItemClickListener = { moveItem, player ->
+                publishAction(GameScreenAction.MoveListItemClicked(moveItem, player))
+            }
         }
         replayGameControlsView = view.findViewById(R.id.replay_game_controls)
         replayGameControlsView.onClickListener = {
@@ -70,34 +73,18 @@ class GameScreenFragment(
     }
 
     private fun showState(viewState: GameScreenViewModel.ViewState) {
-        showChessboardState(viewState)
+        chessboard.update(viewState.chessEngineState.position.board, viewState.playerOnTop)
         showPlayerPanelsState(viewState)
 
-        val lastMove = viewState.gameState.moveHistory.lastOrNull()
+        val lastMove = viewState.chessEngineState.moveHistory.lastOrNull()
         actionBarWrapper.showState(viewState, lastMove)
 
-        with (moveListView) {
-            setCollapsed(viewState.moveListCollapsed)
-            setItems(
-                moveListItemsGenerator.generateMoveListItems(
-                    context!!.resources,
-                    viewState.gameState.moveHistory,
-                    viewState.selectedHistoryMove
-                )
-            )
+        with (moveList) {
+            view.setCollapsed(viewState.moveListCollapsed)
+            update(viewState.chessEngineState.moveHistory, viewState.selectedHistoryMove)
         }
 
         replayGameControlsView.setItems(viewState.replayControlItems)
-    }
-
-    private fun showChessboardState(viewState: GameScreenViewModel.ViewState) {
-        with (viewState) {
-            val boardItems = ChessboardItemsGenerator.generateForBoard(
-                chessEngineState.position.board,
-                playerOnTop
-            )
-            chessboardView.setItems(boardItems)
-        }
     }
 
     private fun showPlayerPanelsState(viewState: GameScreenViewModel.ViewState) {

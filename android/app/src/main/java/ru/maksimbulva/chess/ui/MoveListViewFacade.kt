@@ -1,20 +1,28 @@
-package ru.maksimbulva.chess.screens.game
+package ru.maksimbulva.chess.ui
 
 import android.content.res.Resources
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.move.DetailedMove
 import ru.maksimbulva.chess.settings.UserSettings
+import ru.maksimbulva.ui.move_list.MoveListView
 import ru.maksimbulva.ui.move_list.items.MoveListItem
 import ru.maksimbulva.ui.move_list.items.PlayerMoveListItem
 
-class MoveListItemsGenerator(private val userSettings: UserSettings) {
+class MoveListViewFacade(
+    val view: MoveListView,
+    private val userSettings: UserSettings
+) {
 
-    fun generateMoveListItems(
-        resources: Resources,
+    fun update(moveHistory: List<DetailedMove>, selectedHistoryMove: DetailedMove?) {
+        view.setItems(generateMoveListItems(moveHistory, selectedHistoryMove))
+    }
+
+    private fun generateMoveListItems(
         moveHistory: List<DetailedMove>,
         selectedHistoryMove: DetailedMove?
     ): List<MoveListItem> {
         val moveItems = mutableListOf<MoveListItem>()
+        val resources = view.resources
 
         var i = 0
         while (i < moveHistory.size) {
