@@ -58,7 +58,11 @@ class MoveListView(context: Context, attributeSet: AttributeSet?, defStyleAttr: 
         }
 
         adapter.setItems(items)
-        moves_recycler_view.scrollToPosition(items.lastIndex)
+
+        val indexOfItemToScrollTo =
+            items.indexOfFirst { it.selectedPlayerMove != null }.takeIf { it >= 0 }
+                ?: items.lastIndex
+        moves_recycler_view.scrollToPosition(indexOfItemToScrollTo)
     }
 
     fun setOnResizeButtonClicked(listener: (Boolean) -> Unit) {

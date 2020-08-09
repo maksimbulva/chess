@@ -3,12 +3,9 @@ package ru.maksimbulva.chess.screens.game
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import ru.maksimbulva.chess.chess.ChessEngineService
 import ru.maksimbulva.chess.chess.ChessEngineState
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.move.DetailedMove
-import ru.maksimbulva.chess.core.engine.position.Position
-import ru.maksimbulva.ui.person.PersonPanelState
 import ru.maksimbulva.ui.replay.items.ReplayGameControlItem
 
 class GameScreenViewModel : ViewModel() {

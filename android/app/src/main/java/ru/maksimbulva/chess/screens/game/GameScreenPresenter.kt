@@ -3,24 +3,24 @@ package ru.maksimbulva.chess.screens.game
 import ru.maksimbulva.chess.chess.ChessEngineService
 import ru.maksimbulva.chess.core.PlayerMap
 import ru.maksimbulva.chess.core.engine.Player
-import ru.maksimbulva.chess.core.engine.move.DetailedMove
-import ru.maksimbulva.chess.core.engine.position.Position
 import ru.maksimbulva.chess.mvp.BasePresenter
 import ru.maksimbulva.chess.person.PersonsRepository
 import ru.maksimbulva.chess.screens.game.GameScreenViewModel.ViewState
 import ru.maksimbulva.ui.move_list.items.MoveListItem
+import ru.maksimbulva.ui.replay.items.ReplayGameControlItem
 
 class GameScreenPresenter(
     private val chessEngineService: ChessEngineService,
-    private val personsRepository: PersonsRepository,
-    private val interactor: GameScreenInteractor,
-    private val replayControlsInteractor: GameScreenReplayControlsInteractor
+    private val personsRepository: PersonsRepository
 ) : BasePresenter<IGameScreenView, GameScreenViewModel, GameScreenAction>() {
 
     private val currentState: ViewState
         get() = viewModel.currentState
 
     private val gameModeUseCase = GameModeUseCase(chessEngineService)
+    private val analysisModeUseCase = AnalysisModeUseCase()
+
+    private var isInAnalysisMode = false
 
     override fun onCreate(viewModel: GameScreenViewModel) {
         super.onCreate(viewModel)
@@ -30,8 +30,6 @@ class GameScreenPresenter(
             whitePlayerValue = personsRepository.bob
         )
 
-        replayControlsInteractor.resetControls()
-
         viewModel.currentState = ViewState(
             gameState = GameState(
                 adjudicationResult = chessEngineService.adjudicateGame()
@@ -40,55 +38,42 @@ class GameScreenPresenter(
             selectedHistoryMove = null,
             playerOnTop = Player.Black,
             moveListCollapsed = true,
-            replayControlItems = replayControlsInteractor.currentReplayControls
+            replayControlItems = getBottomBarButtons()
         )
     }
 
     override fun onAttachedView(view: IGameScreenView) {
         super.onAttachedView(view)
-        interactor.start()
+
         chessEngineService.start()
         gameModeUseCase.start()
 
         addSubscription(
             chessEngineService.engineState.subscribe { engineState ->
+                android.util.Log.w("TXL", "Set game mode position")
                 viewModel.currentState = currentState.copy(chessEngineState = engineState)
             }
         )
 
-//        addSubscription(
-//            chessEngineService.bestVariation.subscribe { bestVariation ->
-//                val currentPlayersState = currentState.playersState
-//                viewModel.currentState = currentState.copy(
-//                    playersState = PlayerMap(
-//                        blackPlayerValue = currentPlayersState.get(Player.Black).copy(
-//                            evaluation = bestVariation.blackPlayerValue?.evaluation?.toDouble()
-//                        ),
-//                        whitePlayerValue = currentPlayersState.get(Player.White).copy(
-//                            evaluation = bestVariation.whitePlayerValue?.evaluation?.toDouble()
-//                        )
-//                    )
-//                )
-//            }
-//        )
-
         addSubscription(
-            replayControlsInteractor.replayControls.subscribe { replayControlItems ->
-                viewModel.currentState = currentState.copy(
-                    replayControlItems = replayControlItems
-                )
+            analysisModeUseCase.analysisPosition.subscribe { position ->
+                if (isInAnalysisMode) {
+                    android.util.Log.w("TXL", "Set analysis mode position")
+                    viewModel.currentState = currentState.copy(
+                        chessEngineState = currentState.chessEngineState.copy(
+                            position = position,
+                            bestVariation = null
+                        ),
+                        selectedHistoryMove = analysisModeUseCase.currentMove
+                    )
+                }
             }
         )
-
-//        addSubscription(
-//            interactor.engineState.subscribe(replayControlsInteractor::onEngineStateUpdate)
-//        )
     }
 
     override fun onDetachedView() {
         gameModeUseCase.stop()
         chessEngineService.stop()
-        interactor.stop()
         super.onDetachedView()
     }
 
@@ -98,11 +83,36 @@ class GameScreenPresenter(
                 onExpandMoveListClicked(action.expand)
             }
             is GameScreenAction.ReplayControlButtonClicked -> {
-                replayControlsInteractor.onReplayControlButtonClicked(action.item)
+                onReplayControlButtonClicked(action.item)
             }
             is GameScreenAction.MoveListItemClicked -> {
                 onMoveHistoryItemClicked(action.item, action.player)
             }
+        }
+    }
+
+    private fun switchToAnalysisMode() {
+        gameModeUseCase.stop()
+        isInAnalysisMode = true
+        onModeChanged()
+    }
+
+    private fun switchToGameMode() {
+        isInAnalysisMode = false
+        gameModeUseCase.start()
+        onModeChanged()
+    }
+
+    private fun onModeChanged() {
+        viewModel.currentState = currentState.copy(
+            replayControlItems = getBottomBarButtons()
+        )
+    }
+
+    private fun onReplayControlButtonClicked(item: ReplayGameControlItem) {
+        when (item) {
+            ReplayGameControlItem.Pause -> switchToAnalysisMode()
+            ReplayGameControlItem.Play -> switchToGameMode()
         }
     }
 
@@ -114,51 +124,33 @@ class GameScreenPresenter(
     }
 
     private fun onMoveHistoryItemClicked(item: MoveListItem, player: Player) {
-        val selectedHistoryMove = item.getMoveItem(player)?.detailedMove
-        viewModel.currentState = currentState.copy(
-            selectedHistoryMove = selectedHistoryMove
-        )
-        if (selectedHistoryMove != null) {
-            interactor.goBackToMove(selectedHistoryMove, currentState.chessEngineState.moveHistory)
+        android.util.Log.w("TXL", "Marker 1")
+        if (!isInAnalysisMode) {
+            return
         }
-    }
-
-    private fun onPositionUpdated(position: Position) {
-        val rewriteMoveHistory = shouldRewriteMoveHistory()
-        val moveHistory = if (rewriteMoveHistory) {
-            chessEngineService.moveHistory
-        } else {
+        android.util.Log.w("TXL", "Marker 2")
+        val selectedHistoryMove = item.getMoveItem(player)?.detailedMove ?: return
+        analysisModeUseCase.goBackToMove(
+            selectedHistoryMove,
             currentState.chessEngineState.moveHistory
-        }
-        val adjudicationResult = if (rewriteMoveHistory) {
-            chessEngineService.adjudicateGame()
-        } else {
-            currentState.gameState.adjudicationResult
-        }
-        viewModel.currentState = viewModel.currentState.copy(
-            gameState = viewModel.currentState.gameState.copy(
-                adjudicationResult = adjudicationResult
-            ),
-            chessEngineState = chessEngineService.currentState,
-            replayControlItems = replayControlsInteractor.currentReplayControls
         )
-        interactor.onPositionChanged(adjudicationResult)
     }
 
-    private fun List<DetailedMove>.isSubsequenceOf(other: List<DetailedMove>): Boolean {
-        if (size > other.size) {
-            return false
+    private fun getBottomBarButtons(): List<ReplayGameControlItem> {
+        return if (isInAnalysisMode) {
+            ANALYSIS_MODE_BOTTOM_BAR_BUTTONS
+        } else {
+            GAME_MODE_BOTTOM_BAR_BUTTONS
         }
-        for (i in indices) {
-            if (this[i] != other[i]) {
-                return false
-            }
-        }
-        return true
     }
 
-    private fun shouldRewriteMoveHistory(): Boolean {
-        val currentMoveHistory = currentState.chessEngineState.moveHistory
-        return currentMoveHistory.isSubsequenceOf(chessEngineService.moveHistory)
+    private companion object {
+        private val GAME_MODE_BOTTOM_BAR_BUTTONS = listOf(
+            ReplayGameControlItem.Pause
+        )
+
+        private val ANALYSIS_MODE_BOTTOM_BAR_BUTTONS = listOf(
+            ReplayGameControlItem.Play
+        )
     }
 }

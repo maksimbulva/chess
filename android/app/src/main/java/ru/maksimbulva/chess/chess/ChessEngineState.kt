@@ -7,7 +7,7 @@ import ru.maksimbulva.chess.core.engine.move.Move
 import ru.maksimbulva.chess.core.engine.position.Position
 import ru.maksimbulva.chess.person.Person
 
-class ChessEngineState(
+data class ChessEngineState(
     val players: PlayerMap<Person>,
     val position: Position,
     val moveHistory: List<DetailedMove>,
