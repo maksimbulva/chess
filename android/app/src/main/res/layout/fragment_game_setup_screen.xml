@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_purple"
     >
+    
+    <Button
+        android:id="@+id/start_game_button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="@dimen/indent"
+        android:layout_marginRight="@dimen/indent"
+        android:layout_marginBottom="@dimen/indent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/game_setup_start_game_button"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        />
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
