@@ -5,6 +5,7 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.getKoin
 import ru.maksimbulva.chess.R
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.mvp.BaseFragment
@@ -14,12 +15,12 @@ import ru.maksimbulva.chess.ui.MoveListViewFacade
 import ru.maksimbulva.ui.person.PersonPanelView
 import ru.maksimbulva.ui.replay.ReplayGameControlsView
 
-class GameScreenFragment(
-    private val userSettings: UserSettings
-) : BaseFragment<GameScreenPresenter, IGameScreenView, GameScreenViewModel, GameScreenAction>(
-        R.layout.fragment_game_screen
-    ), IGameScreenView
+class GameScreenFragment : BaseFragment<GameScreenPresenter, IGameScreenView, GameScreenViewModel, GameScreenAction>(
+    R.layout.fragment_game_screen
+), IGameScreenView
 {
+    private val userSettings: UserSettings = getKoin().get()
+
     private lateinit var chessboard: ChessboardFacade
     private lateinit var personPanelViews: Array<PersonPanelView>
     private lateinit var moveList: MoveListViewFacade

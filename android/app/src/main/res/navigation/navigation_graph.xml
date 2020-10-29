@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/gameSetupScreenFragment">
+
+    <fragment
+        android:id="@+id/gameScreenFragment"
+        android:name="ru.maksimbulva.chess.screens.game.GameScreenFragment"
+        android:label="GameScreenFragment" />
+
+    <fragment
+        android:id="@+id/gameSetupScreenFragment"
+        android:name="ru.maksimbulva.chess.screens.game_setup.GameSetupScreenFragment"
+        android:label="GameSetupScreenFragment">
+
+        <action
+            android:id="@+id/nav_acton_start_game"
+            app:destination="@id/gameScreenFragment" />
+    </fragment>
+
+</navigation>
