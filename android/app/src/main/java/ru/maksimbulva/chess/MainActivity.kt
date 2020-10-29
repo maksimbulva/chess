@@ -18,6 +18,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             screenManager = ScreenManager(supportFragmentManager, FragmentFactory())
         }
 
-        screenManager.show(Screen.Game)
+        screenManager.show(Screen.GameSetup)
     }
 }
