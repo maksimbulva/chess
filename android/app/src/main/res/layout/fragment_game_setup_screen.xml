@@ -4,15 +4,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="@dimen/indent"
     >
-    
+
+    <ru.maksimbulva.chess.screens.game_setup.PlayerSetupCardView
+        android:id="@+id/game_setup_player_white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/game_setup_player_black"
+        app:title="@string/game_setup_white_pieces_player_title"
+        />
+
+    <ru.maksimbulva.chess.screens.game_setup.PlayerSetupCardView
+        android:id="@+id/game_setup_player_black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/start_game_button"
+        app:title="@string/game_setup_black_pieces_player_title"
+        />
+
     <Button
         android:id="@+id/start_game_button"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginLeft="@dimen/indent"
-        android:layout_marginRight="@dimen/indent"
-        android:layout_marginBottom="@dimen/indent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:text="@string/game_setup_start_game_button"
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
