@@ -15,6 +15,7 @@ sealed class Person(
     ) : Person(portrait, nameResId)
 
     class Computer(
+        val id: Int,
         @DrawableRes portrait: Int,
         @StringRes nameResId: Int,
         val evaluationsLimit: Long = DEFAULT_EVALUATIONS_LIMIT,

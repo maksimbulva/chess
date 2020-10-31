@@ -6,6 +6,8 @@
 
     <dimen name="person_panel_height">96dp</dimen>
 
+    <dimen name="person_card_portrait_size">64dp</dimen>
+
     <dimen name="move_list_expand_button_size">24dp</dimen>
     <dimen name="replay_game_controls_button_size">32dp</dimen>
 </resources>

@@ -1,3 +1,9 @@
 package ru.maksimbulva.ui.person
 
-class PersonCardItem
+import androidx.annotation.DrawableRes
+
+class PersonCardItem(
+    val personId: Int?,
+    @DrawableRes val portrait: Int,
+    val personName: String
+)

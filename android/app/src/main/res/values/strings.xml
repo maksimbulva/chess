@@ -33,5 +33,6 @@
 
     <string name="game_setup_black_pieces_player_title">Black pieces</string>
     <string name="game_setup_white_pieces_player_title">White pieces</string>
+    <string name="game_setup_replace_player_button">Replace</string>
     <string name="game_setup_start_game_button">Start game</string>
 </resources>
