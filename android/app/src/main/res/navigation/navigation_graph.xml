@@ -8,7 +8,14 @@
     <fragment
         android:id="@+id/gameScreenFragment"
         android:name="ru.maksimbulva.chess.screens.game.GameScreenFragment"
-        android:label="GameScreenFragment" />
+        android:label="GameScreenFragment" >
+        <argument
+            android:name="personBlackPieces"
+            app:argType="integer" />
+        <argument
+            android:name="personWhitePieces"
+            app:argType="integer" />
+    </fragment>
 
     <fragment
         android:id="@+id/gameSetupScreenFragment"

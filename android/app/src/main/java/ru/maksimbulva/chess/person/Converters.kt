@@ -5,7 +5,7 @@ import ru.maksimbulva.ui.person.PersonCardItem
 
 fun convertToPersonCardItem(resources: Resources, person: Person): PersonCardItem {
     return PersonCardItem(
-        personId = if (person is Person.Computer) person.id else null,
+        personId = person.id,
         portrait = person.portrait,
         personName = resources.getString(person.nameResId)
     )

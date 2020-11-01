@@ -10,7 +10,7 @@ import ru.maksimbulva.chess.screens.game_setup.GameSetupScreenViewModel.ViewStat
 
 class GameSetupScreenPresenter(
     private val personsRepository: PersonsRepository,
-    private val startGame: () -> Unit
+    private val startGame: (PlayerMap<Person?>) -> Unit
 ) : BasePresenter<IGameSetupScreenView, GameSetupScreenViewModel, GameSetupScreenAction>() {
 
     private val currentState: ViewState
@@ -55,10 +55,6 @@ class GameSetupScreenPresenter(
     }
 
     private fun onStartGameButtonClicked() {
-        startGame()
-    }
-
-    private fun updatePlayer(person: Person, piecesColor: Player) {
-
+        startGame(currentState.players)
     }
 }

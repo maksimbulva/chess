@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.getKoin
 import ru.maksimbulva.chess.R
+import ru.maksimbulva.chess.core.PlayerMap
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.mvp.BaseFragment
 import ru.maksimbulva.chess.settings.UserSettings
@@ -20,6 +22,8 @@ class GameScreenFragment : BaseFragment<GameScreenPresenter, IGameScreenView, Ga
 ), IGameScreenView
 {
     private val userSettings: UserSettings = getKoin().get()
+
+    private val args: GameScreenFragmentArgs by navArgs()
 
     private lateinit var chessboard: ChessboardFacade
     private lateinit var personPanelViews: Array<PersonPanelView>
@@ -43,9 +47,11 @@ class GameScreenFragment : BaseFragment<GameScreenPresenter, IGameScreenView, Ga
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        presenter.initializePlayers(PlayerMap(args.personBlackPieces, args.personWhitePieces))
+
         super.onCreate(savedInstanceState)
 
-        actionBarWrapper = GameScreenActionBarWrapper(context!!.resources, get()) {
+        actionBarWrapper = GameScreenActionBarWrapper(requireContext().resources, get()) {
             actionBarPresenter
         }
 

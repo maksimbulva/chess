@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.koin.android.ext.android.getKoin
 import ru.maksimbulva.chess.R
+import ru.maksimbulva.chess.core.PlayerMap
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.mvp.BaseFragment
+import ru.maksimbulva.chess.person.Person
 import ru.maksimbulva.chess.person.convertToPersonCardItem
 import ru.maksimbulva.chess.screens.game_setup.GameSetupScreenAction.*
 import ru.maksimbulva.chess.screens.game_setup.GameSetupScreenViewModel.ViewState
@@ -33,7 +35,7 @@ class GameSetupScreenFragment
 
     override fun createPresenter() = GameSetupScreenPresenter(
         personsRepository = getKoin().get(),
-        startGame = ::goToGame
+        startGame = ::navigateToGame
     )
 
     override fun obtainViewModel(): GameSetupScreenViewModel {
@@ -96,7 +98,11 @@ class GameSetupScreenFragment
         publishAction(SelectPerson(item.personId))
     }
 
-    private fun goToGame() {
-        findNavController().navigate(R.id.nav_acton_start_game)
+    private fun navigateToGame(players: PlayerMap<Person?>) {
+        val navigationAction = GameSetupScreenFragmentDirections.navActonStartGame(
+            personBlackPieces = players.get(Player.Black)?.id ?: Person.PERSON_HUMAN_ID,
+            personWhitePieces = players.get(Player.White)?.id ?: Person.PERSON_HUMAN_ID
+        )
+        findNavController().navigate(navigationAction)
     }
 }

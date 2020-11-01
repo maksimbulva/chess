@@ -4,6 +4,7 @@ import ru.maksimbulva.chess.chess.ChessEngineService
 import ru.maksimbulva.chess.core.PlayerMap
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.mvp.BasePresenter
+import ru.maksimbulva.chess.person.Person
 import ru.maksimbulva.chess.person.PersonsRepository
 import ru.maksimbulva.chess.screens.game.GameScreenViewModel.ViewState
 import ru.maksimbulva.ui.move_list.items.MoveListItem
@@ -20,14 +21,15 @@ class GameScreenPresenter(
     private val gameModeUseCase = GameModeUseCase(chessEngineService)
     private val analysisModeUseCase = AnalysisModeUseCase()
 
+    private lateinit var playerIds: PlayerMap<Int>
     private var isInAnalysisMode = false
 
     override fun onCreate(viewModel: GameScreenViewModel) {
         super.onCreate(viewModel)
 
         chessEngineService.players = PlayerMap(
-            blackPlayerValue = personsRepository.alice,
-            whitePlayerValue = personsRepository.bob
+            blackPlayerValue = getPerson(Player.Black),
+            whitePlayerValue = getPerson(Player.White)
         )
 
         viewModel.currentState = ViewState(
@@ -91,6 +93,10 @@ class GameScreenPresenter(
         }
     }
 
+    fun initializePlayers(playerIds: PlayerMap<Int>) {
+        this.playerIds = playerIds
+    }
+
     private fun switchToAnalysisMode() {
         gameModeUseCase.stop()
         isInAnalysisMode = true
@@ -142,6 +148,11 @@ class GameScreenPresenter(
         } else {
             GAME_MODE_BOTTOM_BAR_BUTTONS
         }
+    }
+
+    private fun getPerson(player: Player): Person {
+        val personId = playerIds.get(player)
+        return personsRepository.findPerson(personId) ?: personsRepository.getHuman()
     }
 
     private companion object {

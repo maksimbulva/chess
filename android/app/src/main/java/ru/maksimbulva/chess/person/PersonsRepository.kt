@@ -5,7 +5,12 @@ import ru.maksimbulva.chess.R
 class PersonsRepository {
     // TODO: read profiles from some data source
 
-    val alice = Person.Computer(
+    private val human = Person.Human(
+        portrait = R.drawable.portrait_001,
+        nameResId = R.string.person_human_name
+    )
+
+    private val alice = Person.Computer(
         id = 1,
         portrait = R.drawable.portrait_001,
         nameResId = R.string.person_alice_name,
@@ -13,7 +18,7 @@ class PersonsRepository {
         degreeOfRandomness = 32
     )
 
-    val bob = Person.Computer(
+    private val bob = Person.Computer(
         id = 2,
         portrait = R.drawable.portrait_001,
         nameResId = R.string.person_bob_name,
@@ -21,15 +26,13 @@ class PersonsRepository {
         degreeOfRandomness = 64
     )
 
-    fun getDefaultPerson(): Person {
-        return Person.Human(R.drawable.portrait_001, R.string.person_human_name)
-    }
-
     fun getAllPersons(): List<Person> {
         return listOf(alice, bob)
     }
 
+    fun getHuman() = human
+
     fun findPerson(personId: Int): Person? {
-        return getAllPersons().find { it is Person.Computer && it.id == personId }
+        return getAllPersons().find { it.id == personId }
     }
 }
