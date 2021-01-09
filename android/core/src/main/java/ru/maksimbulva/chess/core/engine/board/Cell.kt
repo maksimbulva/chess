@@ -3,10 +3,15 @@ package ru.maksimbulva.chess.core.engine.board
 import ru.maksimbulva.chess.core.engine.columnToString
 import ru.maksimbulva.chess.core.engine.rowToString
 
-data class Cell(val row: Int, val column: Int) {
-    val index: Int = row * 8 + column
+inline class Cell(val index: Int) {
 
-    constructor(index: Int) : this(index shr 3, index and 7)
+    val row: Int
+        get() = index shr 3
+
+    val column: Int
+        get() = index and 7
+
+    constructor(row: Int, column: Int): this(row * 8 + column)
 
     operator fun plus(vec: Vector2): Cell? {
         val newRow = row + vec.deltaRow

@@ -1,11 +1,16 @@
 package ru.maksimbulva.chess.core.engine.board
 
+import ru.maksimbulva.chess.core.engine.Bitmask64
 import ru.maksimbulva.chess.core.engine.ColoredPiece
 import ru.maksimbulva.chess.core.engine.Piece
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.move.Move
 
 class Board(private val cells: Array<ColoredPiece?>) {
+
+    private var blackOccupiedCells = Bitmask64(0L)
+    private var whiteOccupiedCells = Bitmask64(0L)
+    private var occupiedCells = Bitmask64(0L)
 
     constructor(piecesOnBoard: Sequence<PieceOnBoard>) : this(
         Array<ColoredPiece?>(size = BOARD_CELL_COUNT) { null }.apply {
@@ -17,18 +22,32 @@ class Board(private val cells: Array<ColoredPiece?>) {
 
     init {
         require(cells.size == BOARD_CELL_COUNT)
+
+        cells.forEachIndexed { index, coloredPiece ->
+            if (coloredPiece != null) {
+                if (coloredPiece.player == Player.Black) {
+                    blackOccupiedCells = blackOccupiedCells.setBit(index)
+                } else {
+                    whiteOccupiedCells = whiteOccupiedCells.setBit(index)
+                }
+            }
+        }
+
+        occupiedCells = Bitmask64(blackOccupiedCells.value or whiteOccupiedCells.value)
     }
 
     fun isEmpty(row: Int, column: Int): Boolean {
-        return cells[Cell.encode(row, column)] == null
+        return isEmpty(Cell(row, column))
     }
 
-    fun isEmpty(cell: Cell): Boolean {
-        return cells[cell.index] == null
-    }
+    fun isEmpty(cell: Cell): Boolean = !occupiedCells[cell.index]
 
     fun isOccupiedByPlayer(cell: Cell, player: Player): Boolean {
-        return cells[cell.index]?.player == player
+        return if (player == Player.Black) {
+            blackOccupiedCells[cell.index]
+        } else {
+            whiteOccupiedCells[cell.index]
+        }
     }
 
     fun rowSequence(row: Int): Sequence<ColoredPiece?> {
