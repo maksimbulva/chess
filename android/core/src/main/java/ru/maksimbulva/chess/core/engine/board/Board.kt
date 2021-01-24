@@ -25,14 +25,12 @@ class Board(private val cells: Array<ColoredPiece?>) {
     init {
         require(cells.size == BOARD_CELL_COUNT)
 
-        cells.forEachIndexed { index, coloredPiece ->
-            if (coloredPiece != null) {
-                if (coloredPiece.player == Player.Black) {
-                    blackOccupiedCells = blackOccupiedCells.setBit(index)
-                } else {
-                    whiteOccupiedCells = whiteOccupiedCells.setBit(index)
-                }
-            }
+        for (piece in piecesLists.pieceLinkedList(Player.Black)) {
+            blackOccupiedCells = blackOccupiedCells.setBit(piece.cell.index)
+        }
+
+        for (piece in piecesLists.pieceLinkedList(Player.White)) {
+            whiteOccupiedCells = whiteOccupiedCells.setBit(piece.cell.index)
         }
 
         occupiedCells = Bitmask64(blackOccupiedCells.value or whiteOccupiedCells.value)
