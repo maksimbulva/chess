@@ -18,6 +18,8 @@ internal class PieceLinkedListsOnBoard(pieces: Array<ColoredPiece?>) {
         }
     }
 
+    fun pieceAt(cell: Cell) = nodesBoard[cell.index]?.value
+
     fun movePiece(from: Cell, dest: Cell) {
         removePieceAt(dest)
         val nodeToMove = nodesBoard[from.index]!!

@@ -26,7 +26,7 @@ object FenEncoder {
 
     private fun encodeBoard(board: Board): String {
         return (0 until Board.ROW_COUNT).reversed().map { row ->
-            encodeRow(board.rowSequence(row))
+            encodeRow(rowSequence(board, row))
         }
             .joinToString(FenFormat.rowSeparator)
     }
@@ -107,6 +107,13 @@ object FenEncoder {
         return when (options) {
             EncodingOptions.None -> fullMoveCounter.toString()
             EncodingOptions.SetMovesCountToOne -> "1"
+        }
+    }
+
+    private fun rowSequence(board: Board, row: Int): Sequence<ColoredPiece?> {
+        return (0 until Board.COLUMN_COUNT).asSequence().map { column ->
+            val pieceOnBoard = board.pieceAt(row, column) ?: return@map null
+            ColoredPiece(pieceOnBoard.player, pieceOnBoard.piece)
         }
     }
 

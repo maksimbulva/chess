@@ -1,6 +1,5 @@
 package ru.maksimbulva.chess.core.engine.move
 
-import ru.maksimbulva.chess.core.engine.ColoredPiece
 import ru.maksimbulva.chess.core.engine.Piece
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.board.Board
@@ -158,7 +157,9 @@ object MoveGenerator {
                         } else {
                             Cell.of("e1")
                         }
-                        if (board.pieceAt(kingCell) == ColoredPiece(position.playerToMove, Piece.King)) {
+                        val pieceOnKingCell = board.pieceAt(kingCell)
+                        if (pieceOnKingCell?.piece == Piece.King &&
+                            pieceOnKingCell.player == position.playerToMove) {
                             if (castlings.canCastleShort) {
                                 generateCastleMove(position, 7, moves)
                             }
@@ -273,7 +274,9 @@ object MoveGenerator {
         val board = position.board
         val otherPlayer = position.playerToMove.otherPlayer()
         val baseRow = if (position.playerToMove == Player.Black) 7 else 0
-        if (board.pieceAt(baseRow, rookColumn) != ColoredPiece(position.playerToMove, Piece.Rook)) {
+        val pieceAtRookCell = board.pieceAt(baseRow, rookColumn) ?: return
+        if (pieceAtRookCell.piece != Piece.Rook ||
+            pieceAtRookCell.player != position.playerToMove) {
             return
         }
         if (isAttacksCell(position, otherPlayer, Cell(baseRow, kingColumn))) {

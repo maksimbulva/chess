@@ -1,11 +1,11 @@
 package ru.maksimbulva.chess.core.engine.fen
 
-import org.junit.Test
 import org.junit.Assert.*
-import ru.maksimbulva.chess.core.engine.ColoredPiece
+import org.junit.Test
 import ru.maksimbulva.chess.core.engine.Piece
 import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.board.Cell
+import ru.maksimbulva.chess.core.engine.board.PieceOnBoard
 
 internal class FenDecoderTest {
 
@@ -17,13 +17,13 @@ internal class FenDecoderTest {
                 assertTrue(board.isEmpty(row, column))
             }
         }
-        assertEquals(ColoredPiece(Player.White, Piece.Rook), board.pieceAt(Cell.of("a1")))
-        assertEquals(ColoredPiece(Player.White, Piece.Bishop), board.pieceAt(Cell.of("f1")))
-        assertEquals(ColoredPiece(Player.White, Piece.Pawn), board.pieceAt(Cell.of("e2")))
+        assertPiece(Player.White, Piece.Rook, board.pieceAt(Cell.of("a1")))
+        assertPiece(Player.White, Piece.Bishop, board.pieceAt(Cell.of("f1")))
+        assertPiece(Player.White, Piece.Pawn, board.pieceAt(Cell.of("e2")))
         assertNull(board.pieceAt(Cell.of("d4")))
-        assertEquals(ColoredPiece(Player.Black, Piece.King), board.pieceAt(Cell.of("e8")))
-        assertEquals(ColoredPiece(Player.Black, Piece.Queen), board.pieceAt(Cell.of("d8")))
-        assertEquals(ColoredPiece(Player.Black, Piece.Knight), board.pieceAt(Cell.of("g8")))
+        assertPiece(Player.Black, Piece.King, board.pieceAt(Cell.of("e8")))
+        assertPiece(Player.Black, Piece.Queen, board.pieceAt(Cell.of("d8")))
+        assertPiece(Player.Black, Piece.Knight, board.pieceAt(Cell.of("g8")))
     }
 
     @Test
@@ -78,5 +78,10 @@ internal class FenDecoderTest {
     companion object {
         private const val initialPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
         private const val endgamePosition = "6k1/5p2/6p1/8/7p/8/6PP/6K1 b - - 0 0"
+
+        private fun assertPiece(player: Player, piece: Piece, pieceOnBoard: PieceOnBoard?) {
+            assertEquals(player, pieceOnBoard?.player)
+            assertEquals(piece, pieceOnBoard?.piece)
+        }
     }
 }
