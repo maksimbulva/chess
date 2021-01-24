@@ -78,7 +78,7 @@ object MoveGenerator {
         return board.pieces(attacker).any { pieceOnBoard ->
             val fromCell = pieceOnBoard.cell
             val delta = targetCell - fromCell
-            when (pieceOnBoard.coloredPiece.piece) {
+            when (pieceOnBoard.piece) {
                 Piece.Pawn -> delta.isPawnAttack(attacker)
                 Piece.Knight -> delta.isKnightAttack()
                 Piece.Bishop -> {
@@ -102,7 +102,7 @@ object MoveGenerator {
         val moves = mutableListOf<Move>()
         val board = position.board
         board.pieces(position.playerToMove).forEach { pieceOnBoard ->
-            when (pieceOnBoard.coloredPiece.piece) {
+            when (pieceOnBoard.piece) {
                 Piece.Pawn -> {
                     generatePawnMoves(pieceOnBoard.cell, position, moves)
                 }

@@ -12,10 +12,12 @@ class Board(private val cells: Array<ColoredPiece?>) {
     private var whiteOccupiedCells = Bitmask64(0L)
     private var occupiedCells = Bitmask64(0L)
 
+    private val piecesLists = PieceLinkedListsOnBoard(cells)
+
     constructor(piecesOnBoard: Sequence<PieceOnBoard>) : this(
         Array<ColoredPiece?>(size = BOARD_CELL_COUNT) { null }.apply {
             piecesOnBoard.forEach {
-                this[it.cell.index] = it.coloredPiece
+                this[it.cell.index] = ColoredPiece(it.player, it.piece)
             }
         }
     )
@@ -59,23 +61,11 @@ class Board(private val cells: Array<ColoredPiece?>) {
     fun pieceAt(cell: Cell): ColoredPiece? = cells[cell.index]
 
     fun pieces(player: Player): Iterable<PieceOnBoard> {
-        // TODO - optimize me
-        return cells
-            .mapIndexed { index, coloredPiece ->
-                if (coloredPiece?.player == player) {
-                    PieceOnBoard(coloredPiece, Cell(index))
-                } else {
-                    null
-                }
-            }
-            .filterNotNull()
+        return piecesLists.pieceLinkedList(player)
     }
 
     fun kingCell(player: Player): Cell {
-        // TODO - optimize me
-        return pieces(player)
-            .first { it.coloredPiece.piece == Piece.King }
-            .cell
+        return piecesLists.pieceLinkedList(player).king.cell
     }
 
     fun playMove(move: Move, player: Player): Board {
@@ -83,15 +73,18 @@ class Board(private val cells: Array<ColoredPiece?>) {
         val newCells = cells.clone()
         val movingPiece = pieceAt(move.fromCell)
         newCells[move.fromCell.index] = null
+//        piecesLists.movePiece(move.fromCell, move.toCell)
         newCells[move.toCell.index] = if (move.promoteTo == null) {
             movingPiece
         } else {
+//            piecesLists.updatePieceAt(move.toCell, move.promoteTo)
             ColoredPiece(player, move.promoteTo)
         }
 
         if (move.isEnPassantCapture) {
             val capturedCell = Cell(move.fromCell.row, move.toCell.column)
             newCells[capturedCell.index] = null
+//            piecesLists.removePieceAt(capturedCell)
         }
 
         if (move.isCastle) {
@@ -107,6 +100,7 @@ class Board(private val cells: Array<ColoredPiece?>) {
             val movingRook = newCells[rookFromCell.index]
             newCells[rookFromCell.index] = null
             newCells[rookToCell.index] = movingRook
+//            piecesLists.movePiece(rookFromCell, rookToCell)
         }
 
         return Board(newCells)
