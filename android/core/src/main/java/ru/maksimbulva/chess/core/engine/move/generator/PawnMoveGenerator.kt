@@ -5,6 +5,7 @@ import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.board.Cell
 import ru.maksimbulva.chess.core.engine.board.Vector2
 import ru.maksimbulva.chess.core.engine.move.Move
+import ru.maksimbulva.chess.core.engine.move.MoveBuilder
 import ru.maksimbulva.chess.core.engine.otherPlayer
 import ru.maksimbulva.chess.core.engine.position.Position
 import kotlin.math.abs
@@ -29,6 +30,8 @@ internal class PawnMoveGenerator(
 
     override fun generateMoves(fromCell: Cell, position: Position, moves: MutableList<Move>) {
         val board = position.board
+        val moveBuilder = MoveBuilder(fromCell)
+
         val moveForwardCell = fromCell + moveForwardDelta
         if (moveForwardCell != null && board.isEmpty(moveForwardCell)) {
             generatePawnMoveOrPromotions(fromCell, moveForwardCell, moves)
@@ -36,7 +39,7 @@ internal class PawnMoveGenerator(
             if (fromCell.row == initialRow) {
                 val moveForwardTwiceCell = moveForwardCell + moveForwardDelta
                 if (moveForwardTwiceCell != null && board.isEmpty(moveForwardTwiceCell)) {
-                    moves.add(Move(fromCell, moveForwardTwiceCell))
+                    moves.add(moveBuilder.setToCell(moveForwardTwiceCell).build())
                 }
             }
         }
@@ -54,7 +57,7 @@ internal class PawnMoveGenerator(
         ) {
 
             val toCell = Cell(fromCell.row + deltaRow, position.enPassantCaptureColumn)
-            moves.add(Move(fromCell, toCell, isEnPassantCapture = true))
+            moves.add(moveBuilder.setToCell(toCell).setAsEnPassantCapture().build())
         }
     }
 
@@ -63,12 +66,13 @@ internal class PawnMoveGenerator(
         toCell: Cell,
         moves: MutableList<Move>
     ) {
+        val moveBuilder = MoveBuilder(fromCell).setToCell(toCell)
         if (toCell.row == promotionRow) {
             for (promoteTo in PAWN_PROMOTIONS) {
-                moves.add(Move(fromCell, toCell, promoteTo))
+                moves.add(moveBuilder.setPromoteTo(promoteTo).build())
             }
         } else {
-            moves.add(Move(fromCell, toCell))
+            moves.add(moveBuilder.build())
         }
     }
 }

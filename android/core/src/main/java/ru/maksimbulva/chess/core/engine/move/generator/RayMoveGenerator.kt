@@ -3,6 +3,7 @@ package ru.maksimbulva.chess.core.engine.move.generator
 import ru.maksimbulva.chess.core.engine.board.Cell
 import ru.maksimbulva.chess.core.engine.board.Vector2
 import ru.maksimbulva.chess.core.engine.move.Move
+import ru.maksimbulva.chess.core.engine.move.MoveBuilder
 import ru.maksimbulva.chess.core.engine.otherPlayer
 import ru.maksimbulva.chess.core.engine.position.Position
 
@@ -24,12 +25,13 @@ internal class RayMoveGenerator(
     ) {
         val otherPlayer = position.playerToMove.otherPlayer()
         val board = position.board
+        val moveBuilder = MoveBuilder(fromCell)
         var curCell: Cell? = fromCell + rayDelta
         while (curCell != null) {
             if (board.isEmpty(curCell)) {
-                moves.add(Move(fromCell, curCell))
+                moves.add(moveBuilder.setToCell(curCell).build())
             } else if (board.isOccupiedByPlayer(curCell, otherPlayer)) {
-                moves.add(Move(fromCell, curCell))
+                moves.add(moveBuilder.setToCell(curCell).build())
                 break
             } else {
                 break
