@@ -1,8 +1,9 @@
 package ru.maksimbulva.chess.core.engine.move
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.Assert.*
 import ru.maksimbulva.chess.core.engine.fen.FenDecoder
+import ru.maksimbulva.chess.core.engine.move.generator.MoveGenerator
 import ru.maksimbulva.chess.core.engine.position.Position
 
 internal class MoveGeneratorTest {

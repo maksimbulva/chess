@@ -1,5 +1,6 @@
 package ru.maksimbulva.chess.core.engine.move
 
+import ru.maksimbulva.chess.core.engine.move.generator.MoveGenerator
 import ru.maksimbulva.chess.core.engine.otherPlayer
 import ru.maksimbulva.chess.core.engine.position.Position
 

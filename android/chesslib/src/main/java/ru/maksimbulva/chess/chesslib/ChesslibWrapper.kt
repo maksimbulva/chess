@@ -5,7 +5,7 @@ import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.Variation
 import ru.maksimbulva.chess.core.engine.fen.FenDecoder
 import ru.maksimbulva.chess.core.engine.move.Move
-import ru.maksimbulva.chess.core.engine.move.MoveGenerator
+import ru.maksimbulva.chess.core.engine.move.generator.MoveGenerator
 import ru.maksimbulva.chess.core.notation.CoordinateNotation
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock

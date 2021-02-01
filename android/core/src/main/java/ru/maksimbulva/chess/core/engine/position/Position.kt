@@ -5,7 +5,7 @@ import ru.maksimbulva.chess.core.engine.Player
 import ru.maksimbulva.chess.core.engine.board.Board
 import ru.maksimbulva.chess.core.engine.board.Cell
 import ru.maksimbulva.chess.core.engine.move.Move
-import ru.maksimbulva.chess.core.engine.move.MoveGenerator
+import ru.maksimbulva.chess.core.engine.move.generator.isAttacksCell
 import ru.maksimbulva.chess.core.engine.otherPlayer
 import kotlin.math.abs
 
@@ -23,7 +23,7 @@ class Position(
         get() = enPassantCaptureColumn != null
 
     val isInCheck: Boolean by lazy {
-        MoveGenerator.isAttacksCell(
+        isAttacksCell(
             this,
             playerToMove.otherPlayer(),
             board.kingCell(playerToMove)

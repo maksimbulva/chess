@@ -4,7 +4,7 @@ import ru.maksimbulva.chess.core.engine.fen.FenDecoder
 import ru.maksimbulva.chess.core.engine.move.DetailedMove
 import ru.maksimbulva.chess.core.engine.move.DetailedMovesFactory
 import ru.maksimbulva.chess.core.engine.move.Move
-import ru.maksimbulva.chess.core.engine.move.MoveGenerator
+import ru.maksimbulva.chess.core.engine.move.generator.MoveGenerator
 import ru.maksimbulva.chess.core.engine.position.Position
 
 class Engine {
