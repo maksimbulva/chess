@@ -17,7 +17,9 @@ internal class ChessboardFacade(private val view: ChessboardView) {
         private fun generateItemsForBoard(board: Board, playerOnTop: Player): List<ChessboardItem> {
             return createCellsSequence(playerOnTop)
                 .map { cell ->
-                    createChessboardItem(cell, board.pieceAt(cell))
+                    val pieceAtCell = board.pieceAt(cell)
+                    val coloredPiece = pieceAtCell?.let { ColoredPiece(it.player, it.piece) }
+                    createChessboardItem(cell, coloredPiece)
                 }
                 .toList()
         }
