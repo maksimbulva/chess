@@ -23,6 +23,11 @@ internal data class MoveBuilder(
         return this.copy(isEnPassantCapture = true)
     }
 
+    fun setAsCapture(capturedPiece: Piece): MoveBuilder {
+        // TODO
+        return this
+    }
+
     fun build(): Move {
         return Move(
             fromCell,

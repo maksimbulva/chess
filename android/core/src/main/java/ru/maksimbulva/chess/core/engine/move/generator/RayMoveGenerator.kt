@@ -28,12 +28,14 @@ internal class RayMoveGenerator(
         val moveBuilder = MoveBuilder(fromCell)
         var curCell: Cell? = fromCell + rayDelta
         while (curCell != null) {
+            val curMoveBuilder = moveBuilder.setToCell(curCell)
             if (board.isEmpty(curCell)) {
-                moves.add(moveBuilder.setToCell(curCell).build())
-            } else if (board.isOccupiedByPlayer(curCell, otherPlayer)) {
-                moves.add(moveBuilder.setToCell(curCell).build())
-                break
+                moves.add(curMoveBuilder.build())
             } else {
+                val obstaclePiece = board.pieceAt(curCell)
+                if (obstaclePiece?.player == otherPlayer) {
+                    moves.add(curMoveBuilder.setAsCapture(obstaclePiece.piece).build())
+                }
                 break
             }
             curCell += rayDelta

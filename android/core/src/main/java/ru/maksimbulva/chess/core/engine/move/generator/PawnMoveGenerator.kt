@@ -2,6 +2,7 @@ package ru.maksimbulva.chess.core.engine.move.generator
 
 import ru.maksimbulva.chess.core.engine.Piece
 import ru.maksimbulva.chess.core.engine.Player
+import ru.maksimbulva.chess.core.engine.board.Board
 import ru.maksimbulva.chess.core.engine.board.Cell
 import ru.maksimbulva.chess.core.engine.board.Vector2
 import ru.maksimbulva.chess.core.engine.move.Move
@@ -34,7 +35,11 @@ internal class PawnMoveGenerator(
 
         val moveForwardCell = fromCell + moveForwardDelta
         if (moveForwardCell != null && board.isEmpty(moveForwardCell)) {
-            generatePawnMoveOrPromotions(fromCell, moveForwardCell, moves)
+            if (moveForwardCell.row == promotionRow) {
+                generatePromotions(moveBuilder.setToCell(moveForwardCell), moves)
+            } else {
+                moves.add(moveBuilder.setToCell(moveForwardCell).build())
+            }
 
             if (fromCell.row == initialRow) {
                 val moveForwardTwiceCell = moveForwardCell + moveForwardDelta
@@ -44,35 +49,46 @@ internal class PawnMoveGenerator(
             }
         }
 
-        for (captureDelta in captureDeltas) {
-            val captureCell = fromCell + captureDelta
-            if (captureCell != null && board.isOccupiedByPlayer(captureCell, otherPlayer)) {
-                generatePawnMoveOrPromotions(fromCell, captureCell, moves)
-            }
-        }
+        generateCaptures(fromCell, board, moves)
 
         if (position.enPassantCaptureColumn != null
             && (fromCell.row == enPassantCaptureRow)
             && abs(fromCell.column - position.enPassantCaptureColumn) == 1
         ) {
-
             val toCell = Cell(fromCell.row + deltaRow, position.enPassantCaptureColumn)
             moves.add(moveBuilder.setToCell(toCell).setAsEnPassantCapture().build())
         }
     }
 
-    private fun generatePawnMoveOrPromotions(
+    private fun generateCaptures(
         fromCell: Cell,
-        toCell: Cell,
+        board: Board,
         moves: MutableList<Move>
     ) {
-        val moveBuilder = MoveBuilder(fromCell).setToCell(toCell)
-        if (toCell.row == promotionRow) {
-            for (promoteTo in PAWN_PROMOTIONS) {
-                moves.add(moveBuilder.setPromoteTo(promoteTo).build())
+        for (captureDelta in captureDeltas) {
+            val captureCell = fromCell + captureDelta
+            if (captureCell != null && !board.isEmpty(captureCell)) {
+                val pieceAtCaptureCell = board.pieceAt(captureCell)
+                if (pieceAtCaptureCell?.player == otherPlayer) {
+                    val moveBuilder = MoveBuilder(fromCell)
+                        .setToCell(captureCell)
+                        .setAsCapture(pieceAtCaptureCell.piece)
+                    if (captureCell.row == promotionRow) {
+                        generatePromotions(moveBuilder, moves)
+                    } else {
+                        moves.add(moveBuilder.build())
+                    }
+                }
             }
-        } else {
-            moves.add(moveBuilder.build())
+        }
+    }
+
+    private fun generatePromotions(
+        moveBuilder: MoveBuilder,
+        moves: MutableList<Move>
+    ) {
+        for (promoteTo in PAWN_PROMOTIONS) {
+            moves.add(moveBuilder.setPromoteTo(promoteTo).build())
         }
     }
 }
