@@ -7,6 +7,7 @@ import ru.maksimbulva.chess.core.engine.board.Cell
 import ru.maksimbulva.chess.core.engine.move.Move
 import ru.maksimbulva.chess.core.engine.move.generator.isAttacksCell
 import ru.maksimbulva.chess.core.engine.otherPlayer
+import ru.maksimbulva.chess.core.engine.position.history.PositionHistoryItem
 import kotlin.math.abs
 
 class Position(
@@ -16,7 +17,8 @@ class Position(
     val blackCastlingAvailability: CastlingAvailability,
     val enPassantCaptureColumn: Int?,
     val halfMoveClock: Int,
-    val fullMoveNumber: Int
+    val fullMoveNumber: Int,
+    private val moveHistory: List<PositionHistoryItem> = emptyList()
 ) {
 
     val isCanCaptureEnPassant: Boolean
@@ -47,6 +49,18 @@ class Position(
             blackCastlingAvailability
         }
 
+        val newMoveHistory = moveHistory.toMutableList().apply {
+            add(
+                PositionHistoryItem(
+                movePlayed = move,
+                whiteCastlingAvailability = whiteCastlingAvailability,
+                blackCastlingAvailability = blackCastlingAvailability,
+                enPassantCaptureColumn = enPassantCaptureColumn,
+                halfMoveClock = halfMoveClock,
+                fullMoveNumber = fullMoveNumber
+            ))
+        }
+
         return Position(
             board.playMove(move, playerToMove),
             playerToMove.otherPlayer(),
@@ -54,7 +68,8 @@ class Position(
             newBlackCastlingAvailability,
             newEnPassantCaptureColumn,
             updateHalfmoveClock(halfMoveClock, move),
-            fullMoveNumber + if (playerToMove == Player.Black) 1 else 0
+            fullMoveNumber + if (playerToMove == Player.Black) 1 else 0,
+            newMoveHistory
         )
     }
 
@@ -65,7 +80,11 @@ class Position(
         }
     }
 
-    fun updateCastlingAvailability(currentValue: CastlingAvailability, move: Move): CastlingAvailability {
+    private fun updateCastlingAvailability(
+        currentValue: CastlingAvailability,
+        move: Move
+    ): CastlingAvailability {
+
         val movedPiece = board.pieceAt(move.fromCell)!!.piece
         return when (movedPiece) {
             Piece.King -> CastlingAvailability(false, false)
