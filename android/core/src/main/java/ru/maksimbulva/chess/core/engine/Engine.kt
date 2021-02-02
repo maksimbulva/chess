@@ -1,5 +1,6 @@
 package ru.maksimbulva.chess.core.engine
 
+import ru.maksimbulva.chess.core.engine.board.Cell
 import ru.maksimbulva.chess.core.engine.fen.FenDecoder
 import ru.maksimbulva.chess.core.engine.move.DetailedMove
 import ru.maksimbulva.chess.core.engine.move.DetailedMovesFactory
@@ -38,6 +39,15 @@ class Engine {
             add(DetailedMovesFactory.create(move, oldPosition, currentPosition))
         }
         _legalMoves = null
+    }
+
+    fun playMove(detailedMove: DetailedMove) {
+        playMove(detailedMove.fromCell, detailedMove.toCell)
+    }
+
+    fun playMove(fromCell: Cell, toCell: Cell) {
+        val moveToPlay = legalMoves.first { it.fromCell == fromCell && it.toCell == toCell }
+        playMove(moveToPlay)
     }
 
     companion object {

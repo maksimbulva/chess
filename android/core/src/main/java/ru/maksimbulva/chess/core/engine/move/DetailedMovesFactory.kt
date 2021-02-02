@@ -1,7 +1,6 @@
 package ru.maksimbulva.chess.core.engine.move
 
 import ru.maksimbulva.chess.core.engine.move.generator.MoveGenerator
-import ru.maksimbulva.chess.core.engine.otherPlayer
 import ru.maksimbulva.chess.core.engine.position.Position
 
 object DetailedMovesFactory {
@@ -15,8 +14,8 @@ object DetailedMovesFactory {
             fromCell = move.fromCell,
             toCell = move.toCell,
             promoteTo = move.promoteTo,
-            isCapture = move.isEnPassantCapture ||
-                    board.pieceAt(move.toCell)?.player == position.playerToMove.otherPlayer(),
+            capturedPiece = move.capturedPiece,
+            isCapture = move.isCapture,
             isCheck = nextPosition.isInCheck,
             isCheckmate = nextPosition.isInCheck && !hasMovesInNextPosition,
             isEnPassantCapture = move.isEnPassantCapture,
@@ -31,6 +30,7 @@ object DetailedMovesFactory {
         toCell = detailedMove.toCell,
         promoteTo = detailedMove.promoteTo,
         isEnPassantCapture = detailedMove.isEnPassantCapture,
+        capturedPiece = detailedMove.capturedPiece,
         isCastle = detailedMove.isShortCastle || detailedMove.isLongCastle
     )
 }

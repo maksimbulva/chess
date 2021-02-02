@@ -14,6 +14,24 @@ internal class KingMoveGenerator(private val player: Player) : BaseDeltasMoveGen
     private val baseRow = if (player == Player.Black) 7 else 0
     private val initialKingCell= Cell(baseRow, INITIAL_KING_COLUMN)
 
+    private val shortCastleMove = Move(
+        fromCell = initialKingCell,
+        toCell = Cell(baseRow, 6),
+        promoteTo = null,
+        isEnPassantCapture = false,
+        capturedPiece = null,
+        isCastle = true
+    )
+
+    private val longCastleMove = Move(
+        fromCell = initialKingCell,
+        toCell = Cell(baseRow, 2),
+        promoteTo = null,
+        isEnPassantCapture = false,
+        capturedPiece = null,
+        isCastle = true
+    )
+
     override fun generateMoves(fromCell: Cell, position: Position, moves: MutableList<Move>) {
         generateMoves(fromCell, position, KING_DELTAS, moves)
         generateCastleMoves(fromCell, position, moves)
@@ -56,7 +74,7 @@ internal class KingMoveGenerator(private val player: Player) : BaseDeltasMoveGen
         if (isAttacksCell(position, otherPlayer, Cell(baseRow, INITIAL_KING_COLUMN + 1))) {
             return
         }
-        moves.add(Move.createShortCastle(player))
+        moves.add(shortCastleMove)
     }
 
     private fun generateLongCastleMove(position: Position, moves: MutableList<Move>) {
@@ -72,7 +90,7 @@ internal class KingMoveGenerator(private val player: Player) : BaseDeltasMoveGen
         if (isAttacksCell(position, otherPlayer, Cell(baseRow, INITIAL_KING_COLUMN - 1))) {
             return
         }
-        moves.add(Move.createLongCastle(player))
+        moves.add(longCastleMove)
     }
 }
 

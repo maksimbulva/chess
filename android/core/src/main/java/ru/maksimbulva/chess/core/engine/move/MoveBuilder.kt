@@ -8,6 +8,7 @@ internal data class MoveBuilder(
     private val toCell: Cell? = null,
     private val promoteTo: Piece? = null,
     private val isEnPassantCapture: Boolean = false,
+    private val capturedPiece: Piece? = null,
     private val isCastle: Boolean = false
 ) {
 
@@ -20,12 +21,11 @@ internal data class MoveBuilder(
     }
 
     fun setAsEnPassantCapture(): MoveBuilder {
-        return this.copy(isEnPassantCapture = true)
+        return this.copy(capturedPiece = Piece.Pawn, isEnPassantCapture = true)
     }
 
     fun setAsCapture(capturedPiece: Piece): MoveBuilder {
-        // TODO
-        return this
+        return this.copy(capturedPiece = capturedPiece)
     }
 
     fun build(): Move {
@@ -34,6 +34,7 @@ internal data class MoveBuilder(
             toCell!!,
             promoteTo,
             isEnPassantCapture,
+            capturedPiece,
             isCastle
         )
     }

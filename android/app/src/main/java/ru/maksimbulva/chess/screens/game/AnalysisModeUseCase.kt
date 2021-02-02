@@ -5,7 +5,7 @@ import io.reactivex.Flowable
 import io.reactivex.subjects.BehaviorSubject
 import ru.maksimbulva.chess.core.engine.Engine
 import ru.maksimbulva.chess.core.engine.move.DetailedMove
-import ru.maksimbulva.chess.core.engine.move.Move
+import ru.maksimbulva.chess.core.engine.move.DetailedMovesFactory
 import ru.maksimbulva.chess.core.engine.position.Position
 
 class AnalysisModeUseCase {
@@ -24,8 +24,8 @@ class AnalysisModeUseCase {
     fun goBackToMove(moveToDisplay: DetailedMove, moveHistory: List<DetailedMove>) {
         engine.resetToInitialPosition()
         moveHistory.takeWhile { currentMove -> currentMove != moveToDisplay }
-            .forEach { engine.playMove(Move(it)) }
-        with (Move(moveToDisplay)) {
+            .forEach(engine::playMove)
+        with (DetailedMovesFactory.convertToMove(moveToDisplay)) {
             if (this in engine.legalMoves) {
                 engine.playMove(this)
             }

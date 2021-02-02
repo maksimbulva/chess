@@ -10,6 +10,7 @@ data class DetailedMove(
     val fromCell: Cell,
     val toCell: Cell,
     val promoteTo: Piece?,
+    val capturedPiece: Piece?,
     val isCapture: Boolean,
     val isCheck: Boolean,
     val isCheckmate: Boolean,

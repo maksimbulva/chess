@@ -68,11 +68,11 @@ class Board(private val cells: Array<ColoredPiece?>) {
         val movingPiece = pieceAt(move.fromCell)!!
         newCells[move.fromCell.index] = null
 //        piecesLists.movePiece(move.fromCell, move.toCell)
-        newCells[move.toCell.index] = if (move.promoteTo == null) {
-            ColoredPiece(movingPiece.player, movingPiece.piece)
+        newCells[move.toCell.index] = if (move.isPawnPromotion) {
+            ColoredPiece(player, move.promoteTo!!)
         } else {
 //            piecesLists.updatePieceAt(move.toCell, move.promoteTo)
-            ColoredPiece(player, move.promoteTo)
+            ColoredPiece(movingPiece.player, movingPiece.piece)
         }
 
         if (move.isEnPassantCapture) {
