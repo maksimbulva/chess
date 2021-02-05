@@ -21,6 +21,8 @@ namespace ChessEngine.Board
 
         public bool IsEmpty(int squareIndex) => _table[squareIndex] == null;
 
+        public IEnumerable<PieceOnBoard> GetPieces(Player player) => _playerPieces[(int)player];
+
         public PieceOnBoard GetPieceAt(int squareIndex) => _table[squareIndex].Value;
 
         private void FillTableWithPieces(LinkedList<PieceOnBoard> pieces)

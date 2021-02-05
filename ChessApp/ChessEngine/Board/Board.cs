@@ -25,6 +25,13 @@ namespace ChessEngine.Board
             return !_occupiedSquares.IsBitSet(ToSquareIndex(row, column));
         }
 
+        public bool IsEmpty(BoardSquare square)
+        {
+            return !_occupiedSquares.IsBitSet(square.IntValue);
+        }
+
+        public IEnumerable<PieceOnBoard> GetPieces(Player player) => _pieceTable.GetPieces(player);
+
         public PieceOnBoard GetPieceAt(BoardSquare square)
         {
             return _pieceTable.GetPieceAt(square.IntValue);

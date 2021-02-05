@@ -1,52 +1,37 @@
-﻿using ChessEngine.Board;
-using ChessEngine.Search;
+﻿using ChessEngine.Fen;
+using ChessEngine.Move.Generator;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ChessEngine.Internal
 {
-    internal class ChessEngine : IChessEngine
+    internal sealed class ChessEngine : IChessEngine
     {
-        public string Name => throw new NotImplementedException();
+        private const string InitialPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-        public IGame Game => throw new NotImplementedException();
+        private Position.Position currentPosition;
 
-        public SearchInfo SearchInfo => throw new NotImplementedException();
+        private List<Move.Move> legalMoves;
 
-        public Variation FindBestVariation(Action<SearchInfo> progressCallback)
+        public ChessEngine()
         {
-            throw new NotImplementedException();
-        }
-
-        public PlayerSettings GetPlayerSettings(Player player)
-        {
-            throw new NotImplementedException();
-        }
-
-        public SearchInfo GetSearchInfo()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void PlayMove(Square originSquare, Square destSquare, Piece? promoteToPieceType = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void PlayMove(string moveString)
-        {
-            throw new NotImplementedException();
+            ResetGame();
         }
 
         public void ResetGame()
         {
-            throw new NotImplementedException();
+            currentPosition = FenDecoder.Decode(InitialPosition);
         }
 
-        public void ResetGame(string positionFen)
+        public IEnumerable<Move.Move> GetLegalMoves()
         {
-            throw new NotImplementedException();
+            if (legalMoves == null)
+            {
+                legalMoves = GenerateLegalMoves();
+            }
+            return legalMoves;
         }
+
+        private List<Move.Move> GenerateLegalMoves() => MoveGenerator.GenerateLegalMoves(currentPosition);
     }
 }
