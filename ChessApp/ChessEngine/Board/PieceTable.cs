@@ -25,6 +25,15 @@ namespace ChessEngine.Board
 
         public PieceOnBoard GetPieceAt(int squareIndex) => _table[squareIndex].Value;
 
+        public void MovePiece(int originIndex, int destIndex)
+        {
+            var nodeToMove = _table[originIndex];
+            var p = nodeToMove.Value;
+            nodeToMove.Value = new PieceOnBoard(p.player, p.piece, new BoardSquare(destIndex));
+            _table[destIndex] = nodeToMove;
+            _table[originIndex] = null;
+        }
+
         private void FillTableWithPieces(LinkedList<PieceOnBoard> pieces)
         {
             var currentNode = pieces.First;

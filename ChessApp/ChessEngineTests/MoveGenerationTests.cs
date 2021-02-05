@@ -1,5 +1,7 @@
 ﻿using ChessEngine;
+using ChessEngine.Move;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ChessEngineTests
@@ -7,14 +9,36 @@ namespace ChessEngineTests
     [TestClass]
     public class MoveGenerationTests
     {
-        private readonly IChessEngine engine = ChessEngineFactory.CreateChessEngine();
-
         [DataRow(1, 20L)]
+        [DataRow(2, 400L)]
         [DataTestMethod]
         public void MoveGenerationFromInitialPositionTest(int depthPly, long actualMoveCount)
         {
-            engine.ResetGame();
-            Assert.AreEqual(actualMoveCount, engine.GetLegalMoves().Count());
+            var engine = ChessEngineFactory.CreateChessEngine();
+            Assert.AreEqual(actualMoveCount, CountMoves(engine, depthPly));
+        }
+
+        private static long CountMoves(IChessEngine engine, int depthPly)
+        {
+            if (depthPly < 0)
+            {
+                return 0L;
+            }
+            else if (depthPly == 1)
+            {
+                return engine.GetLegalMoves().LongCount();
+            }
+            else
+            {
+                var legalMoves = new List<Move>(engine.GetLegalMoves());
+                return legalMoves.Sum(move =>
+                {
+                    Assert.IsTrue(engine.TryPlayMove(move.OriginSquare, move.DestSquare));
+                    var result = CountMoves(engine, depthPly - 1);
+                    Assert.IsTrue(engine.TryUndoMove());
+                    return result;
+                });
+            }
         }
     }
 }

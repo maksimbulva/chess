@@ -2,22 +2,27 @@
 using Optional;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using static ChessEngine.Internal.Utils;
 
 namespace ChessEngine.Position
 {
     public sealed class Position
     {
-        private CastlingAvailability _whiteCastlingAvailability;
-        private CastlingAvailability _blackCastlingAvailability;
-        private Option<int> _enPassantCaptureColumn;
+        private CastlingAvailability whiteCastlingAvailability;
+        private CastlingAvailability blackCastlingAvailability;
+        private Option<int> enPassantCaptureColumn;
+        private readonly List<Move.Move> history = new List<Move.Move>();
 
         public Board.Board Board { get; }
         public Player PlayerToMove { get; private set; }
         public int HalfMoveClock { get; }
         public int FullMoveNumber { get; }
 
-        public bool IsCanCaptureEnPassant => _enPassantCaptureColumn.HasValue;
+        public bool IsCanCaptureEnPassant => enPassantCaptureColumn.HasValue;
+
+        public bool HasMoveToUndo => history.Count > 0;
 
         internal Position(
             List<PieceOnBoard> pieces,
@@ -30,9 +35,9 @@ namespace ChessEngine.Position
         {
             Board = new Board.Board(pieces);
             PlayerToMove = playerToMove;
-            _whiteCastlingAvailability = whiteCastlingAvailability;
-            _blackCastlingAvailability = blackCastlingAvailability;
-            _enPassantCaptureColumn = enPassantCaptureColumn;
+            this.whiteCastlingAvailability = whiteCastlingAvailability;
+            this.blackCastlingAvailability = blackCastlingAvailability;
+            this.enPassantCaptureColumn = enPassantCaptureColumn;
             HalfMoveClock = halfMoveClock;
             FullMoveNumber = fullMoveNumber;
         }
@@ -41,12 +46,28 @@ namespace ChessEngine.Position
         {
             if (player == Player.Black)
             {
-                return _blackCastlingAvailability;
+                return blackCastlingAvailability;
             }
             else
             {
-                return _whiteCastlingAvailability;
+                return whiteCastlingAvailability;
             }
+        }
+
+        internal void PlayMove(Move.Move legalMove)
+        {
+            Board.PlayMove(legalMove);
+            PlayerToMove = GetOtherPlayer(PlayerToMove);
+            history.Add(legalMove);
+        }
+
+        internal void UndoMove()
+        {
+            var moveToUndo = history.Last();
+            history.RemoveAt(history.Count - 1);
+
+            Board.UndoMove(moveToUndo);
+            PlayerToMove = GetOtherPlayer(PlayerToMove);
         }
     }
 }

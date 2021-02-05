@@ -37,6 +37,26 @@ namespace ChessEngine.Board
             return _pieceTable.GetPieceAt(square.IntValue);
         }
 
+        internal void PlayMove(Move.Move legalMove)
+        {
+            // TODO: Proceed captures, en passant captures, promotions, castles etc.
+            int originIndex = legalMove.OriginSquare.IntValue;
+            int destIndex = legalMove.DestSquare.IntValue;
+            _pieceTable.MovePiece(originIndex, destIndex);
+            _occupiedSquares.UnsetBit(originIndex);
+            _occupiedSquares.SetBit(destIndex);
+        }
+
+        internal void UndoMove(Move.Move move)
+        {
+            // TODO: Proceed captures, en passant captures, promotions, castles etc.
+            int originIndex = move.OriginSquare.IntValue;
+            int destIndex = move.DestSquare.IntValue;
+            _pieceTable.MovePiece(destIndex, originIndex);
+            _occupiedSquares.UnsetBit(destIndex);
+            _occupiedSquares.SetBit(originIndex);
+        }
+
         private static int ToSquareIndex(int row, int column) => row << 3 | column;
 
         private Bitmask64 CalculateOccupiedSquaresBitmask()

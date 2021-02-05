@@ -1,7 +1,9 @@
-﻿using ChessEngine.Fen;
+﻿using ChessEngine.Board;
+using ChessEngine.Fen;
 using ChessEngine.Move.Generator;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ChessEngine.Internal
 {
@@ -30,6 +32,32 @@ namespace ChessEngine.Internal
                 legalMoves = GenerateLegalMoves();
             }
             return legalMoves;
+        }
+
+        public bool TryPlayMove(BoardSquare originSquare, BoardSquare destSquare)
+        {
+            var moveToPlay = GetLegalMoves()
+                .Where(x => x.OriginSquare == originSquare && x.DestSquare == destSquare)
+                .FirstOrDefault();
+
+            if (moveToPlay.IsNullMove)
+            {
+                return false;
+            }
+
+            currentPosition.PlayMove(moveToPlay);
+            return true;
+        }
+
+        public bool TryUndoMove()
+        {
+            if (!currentPosition.HasMoveToUndo)
+            {
+                return false;
+            }
+
+            currentPosition.UndoMove();
+            return true;
         }
 
         private List<Move.Move> GenerateLegalMoves() => MoveGenerator.GenerateLegalMoves(currentPosition);

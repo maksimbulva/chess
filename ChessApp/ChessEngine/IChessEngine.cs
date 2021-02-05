@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ChessEngine.Board;
+using System.Collections.Generic;
 
 namespace ChessEngine
 {
@@ -7,5 +8,9 @@ namespace ChessEngine
         void ResetGame();
 
         IEnumerable<Move.Move> GetLegalMoves();
+
+        bool TryPlayMove(BoardSquare originSquare, BoardSquare destSquare);
+
+        bool TryUndoMove();
     }
 }

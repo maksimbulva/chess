@@ -14,6 +14,11 @@
             _value |= 1L << bitIndex;
         }
 
+        public void UnsetBit(int bitIndex)
+        {
+            _value &= ~(1L << bitIndex);
+        }
+
         public bool IsBitSet(int bitIndex)
         {
             return (_value & (1L << bitIndex)) != 0L;
