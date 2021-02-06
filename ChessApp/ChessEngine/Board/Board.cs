@@ -39,20 +39,32 @@ namespace ChessEngine.Board
 
         internal void PlayMove(Move.Move legalMove)
         {
-            // TODO: Proceed captures, en passant captures, promotions, castles etc.
+            // TODO: Proceed en passant captures, promotions, castles etc.
             int originIndex = legalMove.OriginSquare.IntValue;
             int destIndex = legalMove.DestSquare.IntValue;
+            if (legalMove.IsCapture)
+            {
+                _pieceTable.RemovePieceAt(destIndex);
+            }
             _pieceTable.MovePiece(originIndex, destIndex);
             _occupiedSquares.UnsetBit(originIndex);
             _occupiedSquares.SetBit(destIndex);
         }
 
-        internal void UndoMove(Move.Move move)
+        internal void UndoMove(Move.Move move, Player player)
         {
-            // TODO: Proceed captures, en passant captures, promotions, castles etc.
+            // TODO: Proceed en passant captures, promotions, castles etc.
             int originIndex = move.OriginSquare.IntValue;
             int destIndex = move.DestSquare.IntValue;
             _pieceTable.MovePiece(destIndex, originIndex);
+            if (move.IsCapture)
+            {
+                var pieceToRessurect = new PieceOnBoard(
+                    player,
+                    move.GetCapturedPiece(),
+                    move.DestSquare);
+                _pieceTable.InsertPiece(pieceToRessurect);
+            }
             _occupiedSquares.UnsetBit(destIndex);
             _occupiedSquares.SetBit(originIndex);
         }

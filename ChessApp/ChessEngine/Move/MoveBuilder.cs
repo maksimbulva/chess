@@ -24,5 +24,10 @@ namespace ChessEngine.Move
         {
             return new MoveBuilder(packedValue | (destSquare.IntValue << 6));
         }
+
+        public MoveBuilder SetCapture(Piece capturedPiece)
+        {
+            return new MoveBuilder(packedValue | Move.CaptureFlag | ((int)capturedPiece << 18));
+        }
     }
 }

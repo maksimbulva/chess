@@ -8,6 +8,7 @@ namespace ChessEngine.Move.Generator
         public void AppendMoves(BoardSquare originSquare, Position.Position position, List<Move> moves)
         {
             var board = position.Board;
+            var playerToMove = position.PlayerToMove;
             var moveDeltas = GetMoveDeltas();
             var moveBuilder = new MoveBuilder(GetPiece(), originSquare);
 
@@ -24,7 +25,14 @@ namespace ChessEngine.Move.Generator
                 }
                 else
                 {
-                    // TODO: Proceed with captures
+                    var pieceAtDestSquare = board.GetPieceAt(destSquare);
+                    if (pieceAtDestSquare.player != playerToMove)
+                    {
+                        moves.Add(moveBuilder
+                            .SetDestSquare(destSquare)
+                            .SetCapture(pieceAtDestSquare.piece)
+                            .Build());
+                    }
                 }
             }
         }

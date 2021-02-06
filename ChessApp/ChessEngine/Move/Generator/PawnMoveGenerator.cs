@@ -7,11 +7,13 @@ namespace ChessEngine.Move.Generator
 {
     internal sealed class PawnMoveGenerator : IPieceMoveGenerator
     {
+        private readonly Player player;
         private readonly int initialRow;
         private readonly int deltaRow;
 
         public PawnMoveGenerator(Player player)
         {
+            this.player = player;
             initialRow = GetInitialRow(player);
             deltaRow = GetDeltaRow(player);
         }
@@ -33,6 +35,44 @@ namespace ChessEngine.Move.Generator
                         moves.Add(moveBuilder.SetDestSquare(moveDoubleForwardSquare).Build());
                     }
                 }
+            }
+
+            if (originSquare.Column > 0)
+            {
+                AppendIfCanCapture(
+                    new BoardSquare(originSquare.Row + deltaRow, originSquare.Column - 1),
+                    moveBuilder,
+                    board,
+                    moves);
+            }
+            if (originSquare.Column + 1 < Board.Board.ColumnCount)
+            {
+                AppendIfCanCapture(
+                    new BoardSquare(originSquare.Row + deltaRow, originSquare.Column + 1),
+                    moveBuilder,
+                    board,
+                    moves);
+            }
+        }
+
+        private void AppendIfCanCapture(
+            BoardSquare destSquare,
+            MoveBuilder moveBuilder,
+            Board.Board board,
+            List<Move> moves)
+        {
+            if (board.IsEmpty(destSquare))
+            {
+                return;
+            }
+
+            var pieceAtDestSquare = board.GetPieceAt(destSquare);
+            if (pieceAtDestSquare.player != player)
+            {
+                moves.Add(moveBuilder
+                    .SetDestSquare(destSquare)
+                    .SetCapture(pieceAtDestSquare.piece)
+                    .Build());
             }
         }
 

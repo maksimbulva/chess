@@ -46,6 +46,7 @@ namespace ChessEngine.Internal
             }
 
             currentPosition.PlayMove(moveToPlay);
+            legalMoves = null;
             return true;
         }
 
@@ -57,6 +58,7 @@ namespace ChessEngine.Internal
             }
 
             currentPosition.UndoMove();
+            legalMoves = null;
             return true;
         }
 

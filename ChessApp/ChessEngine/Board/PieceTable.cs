@@ -34,6 +34,19 @@ namespace ChessEngine.Board
             _table[originIndex] = null;
         }
 
+        public void RemovePieceAt(int squareIndex)
+        {
+            var nodeToRemove = _table[squareIndex];
+            nodeToRemove.List.Remove(nodeToRemove);
+            _table[squareIndex] = null;
+        }
+
+        public void InsertPiece(PieceOnBoard pieceOnBoard)
+        {
+            var linkedList = _playerPieces[(int)pieceOnBoard.player];
+            _table[pieceOnBoard.square.IntValue] = linkedList.AddLast(pieceOnBoard);
+        }
+
         private void FillTableWithPieces(LinkedList<PieceOnBoard> pieces)
         {
             var currentNode = pieces.First;

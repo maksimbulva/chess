@@ -2,7 +2,7 @@
 {
     internal sealed class KnightMoveGenerator : BaseDeltasMoveGenerator
     {
-        private static MoveDelta[] KnightDeltas = new MoveDelta[]
+        private static readonly MoveDelta[] KnightDeltas = new MoveDelta[]
         {
             new MoveDelta(-1, -2),
             new MoveDelta(1, -2),
