@@ -4,19 +4,25 @@ namespace ChessEngine.Move
 {
     internal readonly struct MoveDelta
     {
-        private readonly int deltaRow;
-        private readonly int deltaColumn;
+        public int DeltaRow { get; }
+        public int DeltaColumn { get; }
 
         public MoveDelta(int deltaRow, int deltaColumn)
         {
-            this.deltaRow = deltaRow;
-            this.deltaColumn = deltaColumn;
+            DeltaRow = deltaRow;
+            DeltaColumn = deltaColumn;
+        }
+
+        public MoveDelta(BoardSquare originSquare, BoardSquare destSquare)
+        {
+            DeltaRow = destSquare.Row - originSquare.Row;
+            DeltaColumn = destSquare.Column - originSquare.Column;
         }
 
         public bool IsCanApplyTo(BoardSquare originSquare)
         {
-            var destRow = originSquare.Row + deltaRow;
-            var destColumn = originSquare.Column + deltaColumn;
+            var destRow = originSquare.Row + DeltaRow;
+            var destColumn = originSquare.Column + DeltaColumn;
             return destRow >= 0 && destRow < Board.Board.RowCount &&
                 destColumn >= 0 && destColumn < Board.Board.ColumnCount;
         }
@@ -24,8 +30,8 @@ namespace ChessEngine.Move
         public BoardSquare GetDestSquare(BoardSquare originSquare)
         {
             return new BoardSquare(
-                originSquare.Row + deltaRow,
-                originSquare.Column + deltaColumn);
+                originSquare.Row + DeltaRow,
+                originSquare.Column + DeltaColumn);
         }
     }
 }

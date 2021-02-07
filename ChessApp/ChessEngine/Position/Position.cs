@@ -66,7 +66,6 @@ namespace ChessEngine.Position
             var moveToUndo = history.Last();
             history.RemoveAt(history.Count - 1);
 
-
             PlayerToMove = GetOtherPlayer(PlayerToMove);
             Board.UndoMove(moveToUndo, PlayerToMove);
         }

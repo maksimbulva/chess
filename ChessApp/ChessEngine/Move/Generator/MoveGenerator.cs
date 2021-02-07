@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using static ChessEngine.Board.BoardAttackUtils;
+using static ChessEngine.Internal.Utils;
 
 namespace ChessEngine.Move.Generator
 {
@@ -11,7 +12,7 @@ namespace ChessEngine.Move.Generator
             return GeneratePseudoLegalMoves(position).Where(x => IsLegalMove(position, x)).ToList();
         }
 
-        private static List<Move> GeneratePseudoLegalMoves(Position.Position position)
+        internal static List<Move> GeneratePseudoLegalMoves(Position.Position position)
         {
             var moves = new List<Move>(capacity: 32);
             foreach (var pieceOnBoard in position.Board.GetPieces(position.PlayerToMove))
@@ -24,8 +25,20 @@ namespace ChessEngine.Move.Generator
 
         private static bool IsLegalMove(Position.Position position, Move move)
         {
-            // TODO: Implement me
-            return true;
+            if (move.IsCapture && move.GetCapturedPiece() == Piece.King)
+            {
+                throw new System.Exception();
+            }
+            var myPlayer = position.PlayerToMove;
+            var board = position.Board;
+            board.PlayMove(move);
+            var myKingSquare = board.GetKingSquare(myPlayer);
+            var myKingBecameAttacked = IsBoardSquareAttacked(
+                myKingSquare,
+                board,
+                GetOtherPlayer(position.PlayerToMove));
+            board.UndoMove(move, position.PlayerToMove);
+            return !myKingBecameAttacked;
         }
     }
 }

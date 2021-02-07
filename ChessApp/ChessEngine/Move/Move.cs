@@ -25,6 +25,11 @@ namespace ChessEngine.Move
             get { return new BoardSquare((packedValue >> 6) & 0x3F); }
         }
 
+        public Piece Piece
+        {
+            get { return (Piece)((packedValue >> 12) & 7); }
+        }
+
         public bool IsCapture => (packedValue & CaptureFlag) != 0;
 
         // Use MoveBuilder class to generate packedValue
@@ -36,6 +41,11 @@ namespace ChessEngine.Move
         public Piece GetCapturedPiece()
         {
             return (Piece)((packedValue >> 18) & 7);
+        }
+
+        public override string ToString()
+        {
+            return $"{Piece} {OriginSquare}-{DestSquare}";
         }
     }
 }

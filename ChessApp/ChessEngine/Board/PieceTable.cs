@@ -23,6 +23,8 @@ namespace ChessEngine.Board
 
         public IEnumerable<PieceOnBoard> GetPieces(Player player) => _playerPieces[(int)player];
 
+        public BoardSquare GetKingSquare(Player player) => _playerPieces[(int)player].First.Value.square;
+
         public PieceOnBoard GetPieceAt(int squareIndex) => _table[squareIndex].Value;
 
         public void MovePiece(int originIndex, int destIndex)
@@ -44,7 +46,15 @@ namespace ChessEngine.Board
         public void InsertPiece(PieceOnBoard pieceOnBoard)
         {
             var linkedList = _playerPieces[(int)pieceOnBoard.player];
-            _table[pieceOnBoard.square.IntValue] = linkedList.AddLast(pieceOnBoard);
+            var squareIndex = pieceOnBoard.square.IntValue;
+            if (pieceOnBoard.piece == Piece.King)
+            {
+                _table[squareIndex] = linkedList.AddFirst(pieceOnBoard);
+            }
+            else
+            {
+                _table[squareIndex] = linkedList.AddLast(pieceOnBoard);
+            }
         }
 
         private void FillTableWithPieces(LinkedList<PieceOnBoard> pieces)

@@ -1,4 +1,5 @@
 ﻿using ChessEngine.Bitmask;
+using ChessEngine.Internal;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,9 @@ namespace ChessEngine.Board
         public const int SquareCount = RowCount * ColumnCount;
 
         private readonly PieceTable _pieceTable;
+
         private Bitmask64 _occupiedSquares;
+        internal Bitmask64 OccupiedSquares => _occupiedSquares;
 
         public Board(List<PieceOnBoard> pieces)
         {
@@ -31,6 +34,8 @@ namespace ChessEngine.Board
         }
 
         public IEnumerable<PieceOnBoard> GetPieces(Player player) => _pieceTable.GetPieces(player);
+
+        public BoardSquare GetKingSquare(Player player) => _pieceTable.GetKingSquare(player);
 
         public PieceOnBoard GetPieceAt(BoardSquare square)
         {
@@ -60,12 +65,15 @@ namespace ChessEngine.Board
             if (move.IsCapture)
             {
                 var pieceToRessurect = new PieceOnBoard(
-                    player,
+                    Utils.GetOtherPlayer(player),
                     move.GetCapturedPiece(),
                     move.DestSquare);
                 _pieceTable.InsertPiece(pieceToRessurect);
             }
-            _occupiedSquares.UnsetBit(destIndex);
+            else
+            {
+                _occupiedSquares.UnsetBit(destIndex);
+            }
             _occupiedSquares.SetBit(originIndex);
         }
 

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ChessEngine.Move.Generator
 {
     internal static class PieceMoveGeneratorFactory
     {
-        private static readonly MoveDelta[] BishopRayDeltas = new MoveDelta[]
+        public static readonly MoveDelta[] BishopRayDeltas = new MoveDelta[]
         {
             new MoveDelta(-1, -1),
             new MoveDelta(-1, 1),
@@ -14,7 +13,7 @@ namespace ChessEngine.Move.Generator
             new MoveDelta(1, 1)
         };
 
-        private static readonly MoveDelta[] RookRayDeltas = new MoveDelta[]
+        public static readonly MoveDelta[] RookRayDeltas = new MoveDelta[]
         {
             new MoveDelta(-1, 0),
             new MoveDelta(0, -1),
