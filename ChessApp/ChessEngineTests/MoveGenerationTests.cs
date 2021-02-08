@@ -13,6 +13,7 @@ namespace ChessEngineTests
         [DataRow(2, 400L)]
         [DataRow(3, 8902)]
         [DataRow(4, 197_281)]
+        [DataRow(5, 4_865_609L)]
         [DataTestMethod]
         public void MoveGenerationFromInitialPositionTest(int depthPly, long actualMoveCount)
         {

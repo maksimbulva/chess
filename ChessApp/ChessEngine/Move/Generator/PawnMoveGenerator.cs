@@ -1,7 +1,6 @@
 ﻿using ChessEngine.Board;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using static System.Math;
 
 namespace ChessEngine.Move.Generator
 {
@@ -10,12 +9,14 @@ namespace ChessEngine.Move.Generator
         private readonly Player player;
         private readonly int initialRow;
         private readonly int deltaRow;
+        private readonly int enPassantCaptureRow;
 
         public PawnMoveGenerator(Player player)
         {
             this.player = player;
             initialRow = GetInitialRow(player);
             deltaRow = GetDeltaRow(player);
+            enPassantCaptureRow = GetEnPassantCaptureRow(player);
         }
 
         public void AppendMoves(BoardSquare originSquare, Position.Position position, List<Move> moves)
@@ -32,7 +33,10 @@ namespace ChessEngine.Move.Generator
                     var moveDoubleForwardSquare = GetDoubleForwardMoveSquare(originSquare);
                     if (board.IsEmpty(moveDoubleForwardSquare))
                     {
-                        moves.Add(moveBuilder.SetDestSquare(moveDoubleForwardSquare).Build());
+                        moves.Add(moveBuilder
+                            .SetDestSquare(moveDoubleForwardSquare)
+                            .SetPawnDoubleMove()
+                            .Build());
                     }
                 }
             }
@@ -52,6 +56,18 @@ namespace ChessEngine.Move.Generator
                     moveBuilder,
                     board,
                     moves);
+            }
+
+            if (originSquare.Row == enPassantCaptureRow &&
+                position.EnPassantCaptureColumn.Exists(x => Abs(originSquare.Column - x) == 1))
+            {
+                var enPassantDstSquare = new BoardSquare(
+                    originSquare.Row + deltaRow,
+                    position.EnPassantCaptureColumn.ValueOr(0));
+                moves.Add(moveBuilder
+                    .SetDestSquare(enPassantDstSquare)
+                    .SetEnPassantCapture()
+                    .Build());
             }
         }
 
@@ -84,5 +100,10 @@ namespace ChessEngine.Move.Generator
         private static int GetInitialRow(Player player) => player == Player.Black ? 6 : 1;
 
         private static int GetDeltaRow(Player player) => player == Player.Black ? -1 : 1;
+
+        private static int GetEnPassantCaptureRow(Player player)
+        {
+            return player == Player.Black ? 3 : 4;
+        }
     }
 }

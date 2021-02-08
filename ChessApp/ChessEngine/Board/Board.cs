@@ -44,12 +44,14 @@ namespace ChessEngine.Board
 
         internal void PlayMove(Move.Move legalMove)
         {
-            // TODO: Proceed en passant captures, promotions, castles etc.
+            // TODO: Proceed promotions, castles etc.
             int originIndex = legalMove.OriginSquare.IntValue;
             int destIndex = legalMove.DestSquare.IntValue;
             if (legalMove.IsCapture)
             {
-                _pieceTable.RemovePieceAt(destIndex);
+                var capturedPieceSquareIndex = GetCapturedPieceSquare(legalMove).IntValue;
+                _pieceTable.RemovePieceAt(capturedPieceSquareIndex);
+                _occupiedSquares.UnsetBit(capturedPieceSquareIndex);
             }
             _pieceTable.MovePiece(originIndex, destIndex);
             _occupiedSquares.UnsetBit(originIndex);
@@ -58,26 +60,23 @@ namespace ChessEngine.Board
 
         internal void UndoMove(Move.Move move, Player player)
         {
-            // TODO: Proceed en passant captures, promotions, castles etc.
+            // TODO: promotions, castles etc.
             int originIndex = move.OriginSquare.IntValue;
             int destIndex = move.DestSquare.IntValue;
             _pieceTable.MovePiece(destIndex, originIndex);
+            _occupiedSquares.UnsetBit(destIndex);
+            _occupiedSquares.SetBit(originIndex);
             if (move.IsCapture)
             {
+                var capturedPieceSquare = GetCapturedPieceSquare(move);
                 var pieceToRessurect = new PieceOnBoard(
                     Utils.GetOtherPlayer(player),
                     move.GetCapturedPiece(),
-                    move.DestSquare);
+                    capturedPieceSquare);
                 _pieceTable.InsertPiece(pieceToRessurect);
+                _occupiedSquares.SetBit(capturedPieceSquare.IntValue);
             }
-            else
-            {
-                _occupiedSquares.UnsetBit(destIndex);
-            }
-            _occupiedSquares.SetBit(originIndex);
         }
-
-        private static int ToSquareIndex(int row, int column) => row << 3 | column;
 
         private Bitmask64 CalculateOccupiedSquaresBitmask()
         {
@@ -90,6 +89,20 @@ namespace ChessEngine.Board
                 }
             }
             return occupiedSquares;
+        }
+
+        private static int ToSquareIndex(int row, int column) => row << 3 | column;
+
+        private static BoardSquare GetCapturedPieceSquare(Move.Move captureMove)
+        {
+            if (captureMove.IsEnPassantCapture)
+            {
+                return new BoardSquare(captureMove.OriginSquare.Row, captureMove.DestSquare.Column);
+            }
+            else
+            {
+                return captureMove.DestSquare;
+            }
         }
     }
 }

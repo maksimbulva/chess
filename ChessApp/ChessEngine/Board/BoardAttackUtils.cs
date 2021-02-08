@@ -17,6 +17,11 @@ namespace ChessEngine.Board
             Board board,
             Player attacker)
         {
+            if (IsAttackedByPawn(targetSquare, board, attacker))
+            {
+                return true;
+            }
+
             var targetBishopMovesBitmask = GetBishopBitmask(targetSquare);
             var targetRookMovesBitmask = GetRookBitmask(targetSquare);
 
@@ -27,6 +32,9 @@ namespace ChessEngine.Board
             {
                 switch (attackingPiece.piece)
                 {
+                    case Piece.Pawn:
+                        // Already checked
+                        break;
                     case Piece.Knight:
                         {
                             if (IsKnightDelta(new MoveDelta(targetSquare, attackingPiece.square)))
@@ -85,6 +93,45 @@ namespace ChessEngine.Board
                 }
             }
             return false;
+        }
+
+        private static bool IsAttackedByPawn(
+            BoardSquare targetSquare,
+            Board board,
+            Player attacker)
+        {
+            var pawnAttackDeltaRow = attacker == Player.Black ? -1 : 1;
+            if (targetSquare.Column > 0)
+            {
+                var possiblePawnSquare = new BoardSquare(
+                    targetSquare.Row - pawnAttackDeltaRow,
+                    targetSquare.Column - 1);
+                if (IsAttackerPawnAt(possiblePawnSquare, attacker, board))
+                {
+                    return true;
+                }
+            }
+            if (targetSquare.Column + 1 < Board.ColumnCount)
+            {
+                var possiblePawnSquare = new BoardSquare(
+                    targetSquare.Row - pawnAttackDeltaRow,
+                    targetSquare.Column + 1);
+                if (IsAttackerPawnAt(possiblePawnSquare, attacker, board))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static bool IsAttackerPawnAt(BoardSquare square, Player player, Board board)
+        {
+            if (board.IsEmpty(square))
+            {
+                return false;
+            }
+            var pieceAtSquare = board.GetPieceAt(square);
+            return pieceAtSquare.player == player && pieceAtSquare.piece == Piece.Pawn;
         }
 
         private static bool IsKnightDelta(MoveDelta moveDelta)

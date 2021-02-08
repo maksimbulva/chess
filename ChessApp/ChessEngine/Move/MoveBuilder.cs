@@ -29,5 +29,16 @@ namespace ChessEngine.Move
         {
             return new MoveBuilder(packedValue | Move.CaptureFlag | ((int)capturedPiece << 18));
         }
+
+        public MoveBuilder SetEnPassantCapture()
+        {
+            return new MoveBuilder(packedValue | Move.CaptureFlag | Move.EnPassantCapture |
+                ((int)Piece.Pawn << 18));
+        }
+
+        public MoveBuilder SetPawnDoubleMove()
+        {
+            return new MoveBuilder(packedValue | Move.PawnDoubleMove);
+        }
     }
 }

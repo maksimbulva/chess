@@ -1,7 +1,4 @@
 ﻿using ChessEngine.Board;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ChessEngine.Move
 {
@@ -10,6 +7,8 @@ namespace ChessEngine.Move
         public static readonly Move NullMove = new Move(0);
 
         internal const int CaptureFlag = 1 << 21;
+        internal const int EnPassantCapture = 1 << 22;
+        internal const int PawnDoubleMove = 1 << 26;
 
         private readonly int packedValue;
 
@@ -31,6 +30,10 @@ namespace ChessEngine.Move
         }
 
         public bool IsCapture => (packedValue & CaptureFlag) != 0;
+
+        public bool IsEnPassantCapture => (packedValue & EnPassantCapture) != 0;
+
+        public bool IsPawnDoubleMove => (packedValue & PawnDoubleMove) != 0;
 
         // Use MoveBuilder class to generate packedValue
         internal Move(int packedValue)
