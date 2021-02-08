@@ -7,6 +7,8 @@ namespace ChessEngine
     {
         void ResetGame();
 
+        bool ResetGame(string fenEcondedPosition);
+
         IEnumerable<Move.Move> GetLegalMoves();
 
         bool TryPlayMove(BoardSquare originSquare, BoardSquare destSquare);

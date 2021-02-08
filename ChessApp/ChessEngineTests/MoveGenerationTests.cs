@@ -9,8 +9,8 @@ namespace ChessEngineTests
     [TestClass]
     public class MoveGenerationTests
     {
-        [DataRow(1, 20L)]
-        [DataRow(2, 400L)]
+        [DataRow(1, 20)]
+        [DataRow(2, 400)]
         [DataRow(3, 8902)]
         [DataRow(4, 197_281)]
         [DataRow(5, 4_865_609L)]
@@ -18,6 +18,15 @@ namespace ChessEngineTests
         public void MoveGenerationFromInitialPositionTest(int depthPly, long actualMoveCount)
         {
             var engine = ChessEngineFactory.CreateChessEngine();
+            Assert.AreEqual(actualMoveCount, CountMoves(engine, depthPly));
+        }
+
+        [DataRow(1, 48)]
+        [DataTestMethod]
+        public void MoveCountFromKiwipetePositionTest(int depthPly, long actualMoveCount)
+        {
+            var engine = ChessEngineFactory.CreateChessEngine();
+            engine.ResetGame("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
             Assert.AreEqual(actualMoveCount, CountMoves(engine, depthPly));
         }
 

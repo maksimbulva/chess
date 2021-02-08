@@ -36,6 +36,16 @@ namespace ChessEngine.Move
                 ((int)Piece.Pawn << 18));
         }
 
+        public MoveBuilder SetShortCastle()
+        {
+            return new MoveBuilder(packedValue | Move.ShortCastle);
+        }
+
+        public MoveBuilder SetLongCastle()
+        {
+            return new MoveBuilder(packedValue | Move.LongCastle);
+        }
+
         public MoveBuilder SetPawnDoubleMove()
         {
             return new MoveBuilder(packedValue | Move.PawnDoubleMove);

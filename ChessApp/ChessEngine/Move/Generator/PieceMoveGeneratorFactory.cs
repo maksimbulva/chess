@@ -39,8 +39,11 @@ namespace ChessEngine.Move.Generator
         private static readonly RayMoveGenerator queenMoveGenerator =
             new RayMoveGenerator(Piece.Queen, GenerateQueenRayDeltas());
 
-        private static readonly KingMoveGenerator kingMoveGenerator =
-            new KingMoveGenerator();
+        private static readonly KingMoveGenerator blackKingMoveGenerator =
+            new KingMoveGenerator(Player.Black);
+
+        private static readonly KingMoveGenerator whiteKingMoveGenerator =
+            new KingMoveGenerator(Player.White);
 
         public static IPieceMoveGenerator GetPieceMoveGenerator(Player player, Piece piece)
         {
@@ -57,7 +60,7 @@ namespace ChessEngine.Move.Generator
                 case Piece.Queen:
                     return queenMoveGenerator;
                 case Piece.King:
-                    return kingMoveGenerator;
+                    return GetKingMoveGenerator(player);
                 default:
                     throw new ArgumentException($"Unexpeced piece {piece}");
             }
@@ -66,6 +69,11 @@ namespace ChessEngine.Move.Generator
         private static PawnMoveGenerator GetPawnMoveGenerator(Player player)
         {
             return (player == Player.Black) ? blackPawnMoveGenerator : whitePawnMoveGenerator;
+        }
+
+        private static KingMoveGenerator GetKingMoveGenerator(Player player)
+        {
+            return (player == Player.Black) ? blackKingMoveGenerator : whiteKingMoveGenerator;
         }
 
         private static MoveDelta[] GenerateQueenRayDeltas()

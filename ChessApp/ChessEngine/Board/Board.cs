@@ -44,28 +44,31 @@ namespace ChessEngine.Board
 
         internal void PlayMove(Move.Move legalMove)
         {
-            // TODO: Proceed promotions, castles etc.
-            int originIndex = legalMove.OriginSquare.IntValue;
-            int destIndex = legalMove.DestSquare.IntValue;
+            // TODO: Proceed promotions etc.
             if (legalMove.IsCapture)
             {
                 var capturedPieceSquareIndex = GetCapturedPieceSquare(legalMove).IntValue;
                 _pieceTable.RemovePieceAt(capturedPieceSquareIndex);
                 _occupiedSquares.UnsetBit(capturedPieceSquareIndex);
             }
-            _pieceTable.MovePiece(originIndex, destIndex);
-            _occupiedSquares.UnsetBit(originIndex);
-            _occupiedSquares.SetBit(destIndex);
+
+            MovePiece(legalMove.OriginSquare, legalMove.DestSquare);
+
+            if (legalMove.IsShortCastle)
+            {
+                MoveShortCastleRook(legalMove.OriginSquare.Row);
+            }
+            else if (legalMove.IsLongCastle)
+            {
+                MoveLongCastleRook(legalMove.OriginSquare.Row);
+            }
         }
 
         internal void UndoMove(Move.Move move, Player player)
         {
-            // TODO: promotions, castles etc.
-            int originIndex = move.OriginSquare.IntValue;
-            int destIndex = move.DestSquare.IntValue;
-            _pieceTable.MovePiece(destIndex, originIndex);
-            _occupiedSquares.UnsetBit(destIndex);
-            _occupiedSquares.SetBit(originIndex);
+            // TODO: promotions etc.
+            MovePiece(move.DestSquare, move.OriginSquare);
+
             if (move.IsCapture)
             {
                 var capturedPieceSquare = GetCapturedPieceSquare(move);
@@ -76,6 +79,50 @@ namespace ChessEngine.Board
                 _pieceTable.InsertPiece(pieceToRessurect);
                 _occupiedSquares.SetBit(capturedPieceSquare.IntValue);
             }
+
+            if (move.IsShortCastle)
+            {
+                UndoMoveShortCastleRook(move.OriginSquare.Row);
+            }
+            else if (move.IsLongCastle)
+            {
+                UndoMoveLongCastleRook(move.OriginSquare.Row);
+            }
+        }
+
+        private void MovePiece(BoardSquare originSquare, BoardSquare destSquare)
+        {
+            _pieceTable.MovePiece(originSquare.IntValue, destSquare.IntValue);
+            _occupiedSquares.UnsetBit(originSquare.IntValue);
+            _occupiedSquares.SetBit(destSquare.IntValue);
+        }
+
+        private void MoveShortCastleRook(int castleRow)
+        {
+            var originSquare = new BoardSquare(castleRow, ColumnCount - 1);
+            var destSquare = new BoardSquare(castleRow, ColumnCount - 3);
+            MovePiece(originSquare, destSquare);
+        }
+
+        private void UndoMoveShortCastleRook(int castleRow)
+        {
+            var originSquare = new BoardSquare(castleRow, ColumnCount - 1);
+            var destSquare = new BoardSquare(castleRow, ColumnCount - 3);
+            MovePiece(destSquare, originSquare);
+        }
+
+        private void MoveLongCastleRook(int castleRow)
+        {
+            var originSquare = new BoardSquare(castleRow, 0);
+            var destSquare = new BoardSquare(castleRow, 3);
+            MovePiece(originSquare, destSquare);
+        }
+
+        private void UndoMoveLongCastleRook(int castleRow)
+        {
+            var originSquare = new BoardSquare(castleRow, 0);
+            var destSquare = new BoardSquare(castleRow, 3);
+            MovePiece(destSquare, originSquare);
         }
 
         private Bitmask64 CalculateOccupiedSquaresBitmask()

@@ -22,7 +22,21 @@ namespace ChessEngine.Internal
 
         public void ResetGame()
         {
-            currentPosition = FenDecoder.Decode(InitialPosition);
+            ResetGame(InitialPosition);
+        }
+
+        public bool ResetGame(string fenEcondedPosition)
+        {
+            try
+            {
+                // TODO: Check whether parsed position is valid (no pawns on 8th rank and so on)
+                currentPosition = FenDecoder.Decode(fenEcondedPosition);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public IEnumerable<Move.Move> GetLegalMoves()

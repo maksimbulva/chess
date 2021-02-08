@@ -8,6 +8,8 @@ namespace ChessEngine.Move
 
         internal const int CaptureFlag = 1 << 21;
         internal const int EnPassantCapture = 1 << 22;
+        internal const int ShortCastle = 1 << 24;
+        internal const int LongCastle = 1 << 25;
         internal const int PawnDoubleMove = 1 << 26;
 
         private readonly int packedValue;
@@ -32,6 +34,10 @@ namespace ChessEngine.Move
         public bool IsCapture => (packedValue & CaptureFlag) != 0;
 
         public bool IsEnPassantCapture => (packedValue & EnPassantCapture) != 0;
+
+        public bool IsShortCastle => (packedValue & ShortCastle) != 0;
+
+        public bool IsLongCastle => (packedValue & LongCastle) != 0;
 
         public bool IsPawnDoubleMove => (packedValue & PawnDoubleMove) != 0;
 
