@@ -27,7 +27,6 @@ namespace ChessEngine.Board
 
             long freeSquares = ~board.OccupiedSquares.Value;
 
-            // TODO: Check pawn, knight and king attacks
             foreach (var attackingPiece in board.GetPieces(attacker))
             {
                 switch (attackingPiece.piece)
@@ -87,8 +86,13 @@ namespace ChessEngine.Board
                             }
                         }
                         break;
-                    default:
-                        // TODO: Implement me
+                    case Piece.King:
+                        {
+                            if (IsKingDelta(new MoveDelta(targetSquare, attackingPiece.square)))
+                            {
+                                return true;
+                            }
+                        }
                         break;
                 }
             }
@@ -101,10 +105,15 @@ namespace ChessEngine.Board
             Player attacker)
         {
             var pawnAttackDeltaRow = attacker == Player.Black ? -1 : 1;
+            var possiblePawnRow = targetSquare.Row - pawnAttackDeltaRow;
+            if (possiblePawnRow < 0 || possiblePawnRow >= Board.RowCount)
+            {
+                return false;
+            }
             if (targetSquare.Column > 0)
             {
                 var possiblePawnSquare = new BoardSquare(
-                    targetSquare.Row - pawnAttackDeltaRow,
+                    possiblePawnRow,
                     targetSquare.Column - 1);
                 if (IsAttackerPawnAt(possiblePawnSquare, attacker, board))
                 {
@@ -114,7 +123,7 @@ namespace ChessEngine.Board
             if (targetSquare.Column + 1 < Board.ColumnCount)
             {
                 var possiblePawnSquare = new BoardSquare(
-                    targetSquare.Row - pawnAttackDeltaRow,
+                    possiblePawnRow,
                     targetSquare.Column + 1);
                 if (IsAttackerPawnAt(possiblePawnSquare, attacker, board))
                 {
@@ -148,6 +157,14 @@ namespace ChessEngine.Board
         {
             return (moveDelta.DeltaRow == moveDelta.DeltaColumn) ||
                 (moveDelta.DeltaRow == -moveDelta.DeltaColumn);
+        }
+
+        private static bool IsKingDelta(MoveDelta moveDelta)
+        {
+            return moveDelta.DeltaRow >= -1 &&
+                moveDelta.DeltaRow <= 1 &&
+                moveDelta.DeltaColumn >= -1 &&
+                moveDelta.DeltaColumn <= 1;
         }
 
         private static bool IsBishopAttack(

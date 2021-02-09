@@ -1,6 +1,8 @@
 ﻿using ChessEngine.Board;
 using System.Collections.Generic;
 using static ChessEngine.Board.BoardAttackUtils;
+using static ChessEngine.Board.Columns;
+using static ChessEngine.Board.Rows;
 using static ChessEngine.Internal.Utils;
 
 namespace ChessEngine.Move.Generator
@@ -60,20 +62,14 @@ namespace ChessEngine.Move.Generator
 
         private bool IsLegalToCastleShort(Board.Board board)
         {
-            return IsAllSquaresAlongCastleAreEmpty(initialKingSquare.Column + 1, 6, board) &&
-                IsNoneSquareAlongCastleIsAttacked(
-                    initialKingSquare.Column - 2,
-                    initialKingSquare.Column - 1,
-                    board);
+            return IsAllSquaresAlongCastleAreEmpty(ColumnF, ColumnG, board) &&
+                IsNoneSquareAlongCastleIsAttacked(ColumnF, ColumnG, board);
         }
 
         private bool IsLegalToCaslteLong(Board.Board board)
         {
-            return IsAllSquaresAlongCastleAreEmpty(1, initialKingSquare.Column - 1, board) &&
-                IsNoneSquareAlongCastleIsAttacked(
-                    initialKingSquare.Column + 1,
-                    initialKingSquare.Column + 2,
-                    board);
+            return IsAllSquaresAlongCastleAreEmpty(ColumnB, ColumnD, board) &&
+                IsNoneSquareAlongCastleIsAttacked(ColumnC, ColumnD, board);
         }
 
         private bool IsAllSquaresAlongCastleAreEmpty(int column1, int column2, Board.Board board)
@@ -119,18 +115,17 @@ namespace ChessEngine.Move.Generator
 
         private BoardSquare GetShortCastleDestSquare()
         {
-            return new BoardSquare(initialKingRow, initialKingSquare.Column + 2);
+            return new BoardSquare(initialKingRow, ColumnG);
         }
 
         private BoardSquare GetLongCastleDestSquare()
         {
-            return new BoardSquare(initialKingRow, initialKingSquare.Column - 2);
+            return new BoardSquare(initialKingRow, ColumnC);
         }
 
         private static BoardSquare GetKingInitialSquare(Player player)
         {
-            var initialRow = player == Player.Black ? Board.Board.RowCount - 1 : 0;
-            return new BoardSquare(initialRow, 4);
+            return new BoardSquare(GetInitialRow(player), ColumnE);
         }
 
         private sealed class KingDeltasMoveGenerator : BaseDeltasMoveGenerator

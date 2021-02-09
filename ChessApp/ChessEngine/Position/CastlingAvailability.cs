@@ -11,7 +11,7 @@ namespace ChessEngine.Position
 
         private readonly Bitmask32 flags;
 
-        public bool CanCastle => flags.Value == 0;
+        public bool CanCastle => flags.Value != 0;
         public bool CanCastleShort => flags.IsBitSet(BitCanCastleShort);
         public bool CanCastleLong => flags.IsBitSet(BitCanCastleLong);
 
@@ -27,5 +27,8 @@ namespace ChessEngine.Position
                 flags.SetBit(BitCanCastleLong);
             }
         }
+
+        public CastlingAvailability WithoutShortCastle() => new CastlingAvailability(false, CanCastleLong);
+        public CastlingAvailability WithoutLongCastle() => new CastlingAvailability(CanCastleShort, false);
     }
 }

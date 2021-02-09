@@ -1,5 +1,4 @@
 ﻿using ChessEngine.Board;
-using System;
 using System.Collections.Generic;
 
 namespace ChessEngine.Move.Generator

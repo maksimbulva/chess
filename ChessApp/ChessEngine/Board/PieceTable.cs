@@ -57,6 +57,12 @@ namespace ChessEngine.Board
             }
         }
 
+        public void UpdatePiece(int squareIndex, Piece newPiece)
+        {
+            var oldValue = _table[squareIndex].Value;
+            _table[squareIndex].Value = new PieceOnBoard(oldValue.player, newPiece, oldValue.square);
+        }
+
         private void FillTableWithPieces(LinkedList<PieceOnBoard> pieces)
         {
             var currentNode = pieces.First;

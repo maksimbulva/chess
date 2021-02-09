@@ -8,6 +8,7 @@ import ru.maksimbulva.chess.core.engine.board.Cell
 import ru.maksimbulva.chess.core.engine.position.CastlingAvailability
 import ru.maksimbulva.chess.core.engine.position.Position
 import ru.maksimbulva.chess.core.extensions.toUpperCaseIf
+import java.util.*
 
 object FenDecoder {
 
@@ -51,7 +52,7 @@ object FenDecoder {
     }
 
     private fun decodePlayerToMove(encoded: String): Player {
-        return when (encoded.toLowerCase()) {
+        return when (encoded.toLowerCase(Locale.ROOT)) {
             FenFormat.blackToMove -> Player.Black
             FenFormat.whiteToMove -> Player.White
             else -> throw Exception()

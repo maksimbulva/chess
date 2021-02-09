@@ -36,6 +36,11 @@ namespace ChessEngine.Move
                 ((int)Piece.Pawn << 18));
         }
 
+        public MoveBuilder SetPromotion(Piece promoteToPiece)
+        {
+            return new MoveBuilder(packedValue | Move.Promotion | ((int)promoteToPiece << 15));
+        }
+
         public MoveBuilder SetShortCastle()
         {
             return new MoveBuilder(packedValue | Move.ShortCastle);

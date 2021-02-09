@@ -1,8 +1,7 @@
 ﻿using ChessEngine.Bitmask;
 using ChessEngine.Internal;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using static ChessEngine.Move.Move;
 
 namespace ChessEngine.Board
 {
@@ -42,9 +41,8 @@ namespace ChessEngine.Board
             return _pieceTable.GetPieceAt(square.IntValue);
         }
 
-        internal void PlayMove(Move.Move legalMove)
+        internal void PlayMove(Move.Move legalMove, Player player)
         {
-            // TODO: Proceed promotions etc.
             if (legalMove.IsCapture)
             {
                 var capturedPieceSquareIndex = GetCapturedPieceSquare(legalMove).IntValue;
@@ -54,19 +52,22 @@ namespace ChessEngine.Board
 
             MovePiece(legalMove.OriginSquare, legalMove.DestSquare);
 
-            if (legalMove.IsShortCastle)
+            if (legalMove.IsPromotion)
             {
-                MoveShortCastleRook(legalMove.OriginSquare.Row);
+                _pieceTable.UpdatePiece(legalMove.DestSquare.IntValue, legalMove.GetPromoteToPiece());
+            }
+            else if (legalMove.IsShortCastle)
+            {
+                PlayMove(GetShortCastleRookMove(player), player);
             }
             else if (legalMove.IsLongCastle)
             {
-                MoveLongCastleRook(legalMove.OriginSquare.Row);
+                PlayMove(GetLongCastleRookMove(player), player);
             }
         }
 
         internal void UndoMove(Move.Move move, Player player)
         {
-            // TODO: promotions etc.
             MovePiece(move.DestSquare, move.OriginSquare);
 
             if (move.IsCapture)
@@ -80,13 +81,17 @@ namespace ChessEngine.Board
                 _occupiedSquares.SetBit(capturedPieceSquare.IntValue);
             }
 
-            if (move.IsShortCastle)
+            if (move.IsPromotion)
             {
-                UndoMoveShortCastleRook(move.OriginSquare.Row);
+                _pieceTable.UpdatePiece(move.OriginSquare.IntValue, Piece.Pawn);
+            }
+            else if (move.IsShortCastle)
+            {
+                UndoMove(GetShortCastleRookMove(player), player);
             }
             else if (move.IsLongCastle)
             {
-                UndoMoveLongCastleRook(move.OriginSquare.Row);
+                UndoMove(GetLongCastleRookMove(player), player);
             }
         }
 
@@ -95,34 +100,6 @@ namespace ChessEngine.Board
             _pieceTable.MovePiece(originSquare.IntValue, destSquare.IntValue);
             _occupiedSquares.UnsetBit(originSquare.IntValue);
             _occupiedSquares.SetBit(destSquare.IntValue);
-        }
-
-        private void MoveShortCastleRook(int castleRow)
-        {
-            var originSquare = new BoardSquare(castleRow, ColumnCount - 1);
-            var destSquare = new BoardSquare(castleRow, ColumnCount - 3);
-            MovePiece(originSquare, destSquare);
-        }
-
-        private void UndoMoveShortCastleRook(int castleRow)
-        {
-            var originSquare = new BoardSquare(castleRow, ColumnCount - 1);
-            var destSquare = new BoardSquare(castleRow, ColumnCount - 3);
-            MovePiece(destSquare, originSquare);
-        }
-
-        private void MoveLongCastleRook(int castleRow)
-        {
-            var originSquare = new BoardSquare(castleRow, 0);
-            var destSquare = new BoardSquare(castleRow, 3);
-            MovePiece(originSquare, destSquare);
-        }
-
-        private void UndoMoveLongCastleRook(int castleRow)
-        {
-            var originSquare = new BoardSquare(castleRow, 0);
-            var destSquare = new BoardSquare(castleRow, 3);
-            MovePiece(destSquare, originSquare);
         }
 
         private Bitmask64 CalculateOccupiedSquaresBitmask()

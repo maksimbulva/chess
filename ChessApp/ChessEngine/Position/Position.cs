@@ -2,6 +2,8 @@
 using Optional;
 using System.Collections.Generic;
 using System.Linq;
+using static ChessEngine.Board.Columns;
+using static ChessEngine.Board.Rows;
 using static ChessEngine.Internal.Utils;
 
 namespace ChessEngine.Position
@@ -70,7 +72,7 @@ namespace ChessEngine.Position
                 whiteCastlingAvailability,
                 blackCastlingAvailability));
 
-            Board.PlayMove(legalMove);
+            Board.PlayMove(legalMove, PlayerToMove);
             UpdateCastlingAvailability(legalMove);
 
             PlayerToMove = GetOtherPlayer(PlayerToMove);
@@ -91,19 +93,39 @@ namespace ChessEngine.Position
 
         private void UpdateCastlingAvailability(Move.Move move)
         {
-            if (PlayerToMove == Player.Black)
+            SetCastlingAvailability(
+                UpdateCastlingAvailability(move, PlayerToMove),
+                PlayerToMove);
+
+            if (move.IsCapture && move.GetCapturedPiece() == Piece.Rook)
             {
-                blackCastlingAvailability = UpdateCastlingAvailability(
-                    blackCastlingAvailability,
-                    move,
-                    Player.Black);
+                var playerWhoLostRook = GetOtherPlayer(PlayerToMove);
+                if (move.DestSquare.Column == ColumnH)
+                {
+                    SetCastlingAvailability(
+                        GetCastlingAvailability(playerWhoLostRook).WithoutShortCastle(),
+                        playerWhoLostRook);
+                }
+                else if (move.DestSquare.Column == ColumnA)
+                {
+                    SetCastlingAvailability(
+                        GetCastlingAvailability(playerWhoLostRook).WithoutLongCastle(),
+                        playerWhoLostRook);
+                }
+            }
+        }
+
+        public void SetCastlingAvailability(
+            CastlingAvailability castlingAvailability,
+            Player player)
+        {
+            if (player == Player.Black)
+            {
+                blackCastlingAvailability = castlingAvailability;
             }
             else
             {
-                whiteCastlingAvailability = UpdateCastlingAvailability(
-                    whiteCastlingAvailability,
-                    move,
-                    Player.White);
+                whiteCastlingAvailability = castlingAvailability;
             }
         }
 
@@ -165,19 +187,16 @@ namespace ChessEngine.Position
             return Option.None<int>();
         }
 
-        private static CastlingAvailability UpdateCastlingAvailability(
-            CastlingAvailability currentFlags,
+        private CastlingAvailability UpdateCastlingAvailability(
             Move.Move move,
             Player player)
         {
-            if (!currentFlags.CanCastle ||
-                move.Piece == Piece.King ||
-                move.IsShortCastle ||
-                move.IsLongCastle)
+            if (move.Piece == Piece.King)
             {
                 return CastlingAvailability.None;
             }
 
+            var currentFlags = GetCastlingAvailability(player);
             if (move.Piece != Piece.Rook)
             {
                 return currentFlags;
@@ -192,26 +211,25 @@ namespace ChessEngine.Position
 
         private static BoardSquare[] GetShortCastleRookInitialSquares()
         {
-            return GetRookInitialSquares(7);
+            return GetRookInitialSquares(ColumnH);
         }
 
         private static BoardSquare[] GetLongCastleRookInitialSquares()
         {
-            return GetRookInitialSquares(0);
+            return GetRookInitialSquares(ColumnA);
         }
 
         private static BoardSquare[] GetRookInitialSquares(int column)
         {
             var result = new BoardSquare[2];
-            result[(int)Player.Black] = new BoardSquare(7, column);
-            result[(int)Player.White] = new BoardSquare(0, column);
+            result[(int)Player.Black] = new BoardSquare(BlackInitialRow, column);;
+            result[(int)Player.White] = new BoardSquare(WhiteInitialRow, column);
             return result;
         }
 
         private static BoardSquare GetInitialKingSquare(Player player)
         {
-            var initialRow = player == Player.Black ? 7 : 0;
-            return new BoardSquare(initialRow, 4);
+            return new BoardSquare(GetInitialRow(player), ColumnE);
         }
     }
 }

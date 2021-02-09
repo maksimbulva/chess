@@ -25,7 +25,7 @@
             return $"{BoardNotation.ColumnToChar(Column)}{BoardNotation.RowToChar(Row)}";
         }
 
-        public static bool operator==(BoardSquare lhs, BoardSquare rhs)
+        public static bool operator ==(BoardSquare lhs, BoardSquare rhs)
         {
             return lhs.IntValue == rhs.IntValue;
         }

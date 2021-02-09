@@ -13,6 +13,8 @@ namespace ChessEngine
 
         bool TryPlayMove(BoardSquare originSquare, BoardSquare destSquare);
 
+        bool TryPlayMove(BoardSquare originSquare, BoardSquare destSquare, Piece promoteToPiece);
+
         bool TryUndoMove();
     }
 }

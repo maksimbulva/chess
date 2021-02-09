@@ -1,4 +1,5 @@
 ﻿using ChessEngine.Board;
+using System;
 using System.Collections.Generic;
 using static System.Math;
 
@@ -8,6 +9,7 @@ namespace ChessEngine.Move.Generator
     {
         private readonly Player player;
         private readonly int initialRow;
+        private readonly int prePromotionRow;
         private readonly int deltaRow;
         private readonly int enPassantCaptureRow;
 
@@ -15,6 +17,7 @@ namespace ChessEngine.Move.Generator
         {
             this.player = player;
             initialRow = GetInitialRow(player);
+            prePromotionRow = GetPrePromotionRow(player);
             deltaRow = GetDeltaRow(player);
             enPassantCaptureRow = GetEnPassantCaptureRow(player);
         }
@@ -23,11 +26,12 @@ namespace ChessEngine.Move.Generator
         {
             var board = position.Board;
             var moveBuilder = new MoveBuilder(Piece.Pawn, originSquare);
+            var moveAppender = GetMoveAppender(originSquare);
 
             var moveForwardSquare = new BoardSquare(originSquare.Row + deltaRow, originSquare.Column);
             if (board.IsEmpty(moveForwardSquare))
             {
-                moves.Add(moveBuilder.SetDestSquare(moveForwardSquare).Build());
+                moveAppender(moveBuilder.SetDestSquare(moveForwardSquare), moves);
                 if (originSquare.Row == initialRow)
                 {
                     var moveDoubleForwardSquare = GetDoubleForwardMoveSquare(originSquare);
@@ -47,7 +51,8 @@ namespace ChessEngine.Move.Generator
                     new BoardSquare(originSquare.Row + deltaRow, originSquare.Column - 1),
                     moveBuilder,
                     board,
-                    moves);
+                    moves,
+                    moveAppender);
             }
             if (originSquare.Column + 1 < Board.Board.ColumnCount)
             {
@@ -55,7 +60,8 @@ namespace ChessEngine.Move.Generator
                     new BoardSquare(originSquare.Row + deltaRow, originSquare.Column + 1),
                     moveBuilder,
                     board,
-                    moves);
+                    moves,
+                    moveAppender);
             }
 
             if (originSquare.Row == enPassantCaptureRow &&
@@ -75,7 +81,8 @@ namespace ChessEngine.Move.Generator
             BoardSquare destSquare,
             MoveBuilder moveBuilder,
             Board.Board board,
-            List<Move> moves)
+            List<Move> moves,
+            Action<MoveBuilder, List<Move>> moveAppender)
         {
             if (board.IsEmpty(destSquare))
             {
@@ -85,10 +92,9 @@ namespace ChessEngine.Move.Generator
             var pieceAtDestSquare = board.GetPieceAt(destSquare);
             if (pieceAtDestSquare.player != player)
             {
-                moves.Add(moveBuilder
-                    .SetDestSquare(destSquare)
-                    .SetCapture(pieceAtDestSquare.piece)
-                    .Build());
+                moveAppender(
+                    moveBuilder.SetDestSquare(destSquare).SetCapture(pieceAtDestSquare.piece),
+                    moves);
             }
         }
 
@@ -97,13 +103,40 @@ namespace ChessEngine.Move.Generator
             return new BoardSquare(originSquare.Row + deltaRow * 2, originSquare.Column);
         }
 
+        private Action<MoveBuilder, List<Move>> GetMoveAppender(BoardSquare square)
+        {
+            if (square.Row == prePromotionRow)
+            {
+                return AppendMoveWithPromotions;
+            }
+            else
+            {
+                return AppendMoveAsIs;
+            }
+        }
+
         private static int GetInitialRow(Player player) => player == Player.Black ? 6 : 1;
+
+        private static int GetPrePromotionRow(Player player) => player == Player.Black ? 1 : 6;
 
         private static int GetDeltaRow(Player player) => player == Player.Black ? -1 : 1;
 
         private static int GetEnPassantCaptureRow(Player player)
         {
             return player == Player.Black ? 3 : 4;
+        }
+
+        private static void AppendMoveAsIs(MoveBuilder moveBuilder, List<Move> moves)
+        {
+            moves.Add(moveBuilder.Build());
+        }
+
+        private static void AppendMoveWithPromotions(MoveBuilder moveBuilder, List<Move> moves)
+        {
+            moves.Add(moveBuilder.SetPromotion(Piece.Queen).Build());
+            moves.Add(moveBuilder.SetPromotion(Piece.Rook).Build());
+            moves.Add(moveBuilder.SetPromotion(Piece.Bishop).Build());
+            moves.Add(moveBuilder.SetPromotion(Piece.Knight).Build());
         }
     }
 }

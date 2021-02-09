@@ -51,17 +51,23 @@ namespace ChessEngine.Internal
         public bool TryPlayMove(BoardSquare originSquare, BoardSquare destSquare)
         {
             var moveToPlay = GetLegalMoves()
-                .Where(x => x.OriginSquare == originSquare && x.DestSquare == destSquare)
+                .Where(x => x.OriginSquare == originSquare && x.DestSquare == destSquare && !x.IsPromotion)
                 .FirstOrDefault();
+            return TryPlayMove(moveToPlay);
+        }
 
-            if (moveToPlay.IsNullMove)
-            {
-                return false;
-            }
-
-            currentPosition.PlayMove(moveToPlay);
-            legalMoves = null;
-            return true;
+        public bool TryPlayMove(BoardSquare originSquare, BoardSquare destSquare, Piece promoteToPiece)
+        {
+            var moveToPlay = GetLegalMoves()
+                .Where(x =>
+                {
+                    return x.OriginSquare == originSquare &&
+                        x.DestSquare == destSquare &&
+                        x.IsPromotion &&
+                        x.GetPromoteToPiece() == promoteToPiece;
+                })
+                .FirstOrDefault();
+            return TryPlayMove(moveToPlay);
         }
 
         public bool TryUndoMove()
@@ -77,5 +83,17 @@ namespace ChessEngine.Internal
         }
 
         private List<Move.Move> GenerateLegalMoves() => MoveGenerator.GenerateLegalMoves(currentPosition);
+
+        private bool TryPlayMove(Move.Move moveToPlay)
+        {
+            if (moveToPlay.IsNullMove)
+            {
+                return false;
+            }
+
+            currentPosition.PlayMove(moveToPlay);
+            legalMoves = null;
+            return true;
+        }
     }
 }
