@@ -34,5 +34,12 @@
         {
             return !(lhs == rhs);
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is BoardSquare otherSquare && this == otherSquare;
+        }
+
+        public override int GetHashCode() => _intValue;
     }
 }

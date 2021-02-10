@@ -11,7 +11,16 @@ namespace ChessEngine.Internal
     {
         private const string InitialPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-        private Position.Position currentPosition;
+        private Position.Position _currentPosition;
+        private Position.Position CurrentPosition
+        {
+            get => _currentPosition;
+            set
+            {
+                legalMoves = null;
+                _currentPosition = value;
+            }
+        }
 
         private List<Move.Move> legalMoves;
 
@@ -30,7 +39,7 @@ namespace ChessEngine.Internal
             try
             {
                 // TODO: Check whether parsed position is valid (no pawns on 8th rank and so on)
-                currentPosition = FenDecoder.Decode(fenEcondedPosition);
+                CurrentPosition = FenDecoder.Decode(fenEcondedPosition);
                 return true;
             }
             catch (Exception)
@@ -72,17 +81,17 @@ namespace ChessEngine.Internal
 
         public bool TryUndoMove()
         {
-            if (!currentPosition.HasMoveToUndo)
+            if (!CurrentPosition.HasMoveToUndo)
             {
                 return false;
             }
 
-            currentPosition.UndoMove();
+            CurrentPosition.UndoMove();
             legalMoves = null;
             return true;
         }
 
-        private List<Move.Move> GenerateLegalMoves() => MoveGenerator.GenerateLegalMoves(currentPosition);
+        private List<Move.Move> GenerateLegalMoves() => MoveGenerator.GenerateLegalMoves(CurrentPosition);
 
         private bool TryPlayMove(Move.Move moveToPlay)
         {
@@ -91,7 +100,7 @@ namespace ChessEngine.Internal
                 return false;
             }
 
-            currentPosition.PlayMove(moveToPlay);
+            CurrentPosition.PlayMove(moveToPlay);
             legalMoves = null;
             return true;
         }

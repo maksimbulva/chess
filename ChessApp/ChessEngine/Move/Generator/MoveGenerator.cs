@@ -31,7 +31,7 @@ namespace ChessEngine.Move.Generator
             }
             var myPlayer = position.PlayerToMove;
             var board = position.Board;
-            board.PlayMove(move);
+            board.PlayMove(move, myPlayer);
             var myKingSquare = board.GetKingSquare(myPlayer);
             var myKingBecameAttacked = IsBoardSquareAttacked(
                 myKingSquare,

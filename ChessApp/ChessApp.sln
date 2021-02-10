@@ -11,10 +11,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{35F8
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game", "Game\Game.csproj", "{8A0E8F86-CC60-4A84-9DAB-9E98BD14DCED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessEngineTests", "ChessEngineTests\ChessEngineTests.csproj", "{E4DF42E6-3A3B-4107-BC3E-765C35C0C10E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChessEngineTests", "ChessEngineTests\ChessEngineTests.csproj", "{E4DF42E6-3A3B-4107-BC3E-765C35C0C10E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{406B0762-7141-4C39-93D1-1036D5288CAB} = {406B0762-7141-4C39-93D1-1036D5288CAB}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UCIConsoleApp", "UCIConsoleApp\UCIConsoleApp.csproj", "{065E6A6B-49A4-48DD-8561-98103BC14D1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +46,10 @@ Global
 		{E4DF42E6-3A3B-4107-BC3E-765C35C0C10E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4DF42E6-3A3B-4107-BC3E-765C35C0C10E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4DF42E6-3A3B-4107-BC3E-765C35C0C10E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{065E6A6B-49A4-48DD-8561-98103BC14D1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{065E6A6B-49A4-48DD-8561-98103BC14D1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{065E6A6B-49A4-48DD-8561-98103BC14D1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{065E6A6B-49A4-48DD-8561-98103BC14D1A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
