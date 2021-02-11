@@ -12,10 +12,10 @@ namespace ChessEngine.Internal
         private const string InitialPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
         private Position.Position _currentPosition;
-        private Position.Position CurrentPosition
+        public Position.Position CurrentPosition
         {
             get => _currentPosition;
-            set
+            private set
             {
                 legalMoves = null;
                 _currentPosition = value;

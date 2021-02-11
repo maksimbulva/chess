@@ -5,6 +5,8 @@ namespace ChessEngine
 {
     public interface IChessEngine
     {
+        Position.Position CurrentPosition { get; }
+
         void ResetGame();
 
         bool ResetGame(string fenEcondedPosition);

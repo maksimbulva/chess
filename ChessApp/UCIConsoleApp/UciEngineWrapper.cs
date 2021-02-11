@@ -15,8 +15,8 @@ namespace UCIConsoleApp
         private readonly BlockingCollection<string> consoleOutputQueue;
 
         private readonly IChessEngine chessEngine = ChessEngineFactory.CreateChessEngine();
+        private readonly IDecisionMaker decisionMaker = DecisionMakerFactory.CreateDecisionMaker();
 
-        private readonly Random rnd = new Random();
         private bool isQuitRequested;
 
         public UciEngineWrapper(
@@ -59,7 +59,7 @@ namespace UCIConsoleApp
                     SetPositionFromUciCommand(commandTokens);
                     break;
                 case "go":
-                    PlayRandomMove();
+                    StartThinkingAndPlayMove();
                     break;
                 case "quit":
                     isQuitRequested = true;
@@ -74,16 +74,14 @@ namespace UCIConsoleApp
             consoleOutputQueue.Add("uciok");
         }
 
-        // TODO: Temporary method, let engine to think for a while instead
-        private void PlayRandomMove()
+        private void StartThinkingAndPlayMove()
         {
-            var legalMoves = chessEngine.GetLegalMoves().ToList();
-            if (legalMoves.Count == 0)
-            {
-                return;
-            }
-            var moveToPlay = legalMoves[rnd.Next(legalMoves.Count)];
-            consoleOutputQueue.Add($"bestmove {MoveToUciNotation(moveToPlay)}");
+            // TODO: Run thinking on background thread
+            var moveToPlay = decisionMaker
+                .FindBestMove(chessEngine.CurrentPosition)
+                .Result;
+
+            moveToPlay.MatchSome(x => consoleOutputQueue.Add($"bestmove {MoveToUciNotation(x)}"));
         }
 
         private void SetPositionFromUciCommand(string[] tokens)
