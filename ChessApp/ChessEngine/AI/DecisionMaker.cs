@@ -1,14 +1,13 @@
-﻿using ChessEngine.Move.Generator;
+﻿using ChessEngine.AI.Evaluation;
+using ChessEngine.AI.Search;
+using ChessEngine.Move.Generator;
 using Optional;
-using System;
 using System.Threading.Tasks;
 
 namespace ChessEngine.AI
 {
     internal sealed class DecisionMaker : IDecisionMaker
     {
-        private readonly Random rnd = new Random();
-
         public Task<Option<Move.Move>> FindBestMove(Position.Position position)
         {
             var legalMoves = MoveGenerator.GenerateLegalMoves(position);
@@ -21,8 +20,9 @@ namespace ChessEngine.AI
                 return Task.Run(() =>Option.Some(legalMoves[0]));
             }
 
-            var moveToPlay = legalMoves[rnd.Next(legalMoves.Count - 1)];
-            return Task.Run(() => Option.Some(moveToPlay));
+            var evaluator = new Evaluator();
+            var searchManager = new SearchManager();
+            return Task.Run(() => searchManager.FindBestMove(position, evaluator));
         }
     }
 }
