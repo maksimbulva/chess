@@ -25,10 +25,6 @@ namespace ChessEngine.Move.Generator
 
         private static bool IsLegalMove(Position.Position position, Move move)
         {
-            if (move.IsCapture && move.GetCapturedPiece() == Piece.King)
-            {
-                throw new System.Exception();
-            }
             var myPlayer = position.PlayerToMove;
             var board = position.Board;
             board.PlayMove(move, myPlayer);

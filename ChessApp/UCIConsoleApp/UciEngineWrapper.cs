@@ -105,7 +105,6 @@ namespace UCIConsoleApp
             foreach (var uciMove in uciEncodedMoves)
             {
                 var parsedMove = ParseUciMove(uciMove);
-                Console.WriteLine($"REM parsed {uciMove} as {parsedMove}");
                 bool isMovePlayed = false;
                 parsedMove.MatchSome(move =>
                 {

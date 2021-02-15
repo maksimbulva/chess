@@ -6,6 +6,8 @@ namespace ChessEngine.AI.Evaluation
 {
     internal sealed class Evaluator
     {
+        public const int StalemateEvaluation = 0;
+
         private readonly MaterialFactorEvaluation materialEvaluator =
             new MaterialFactorEvaluation();
 
@@ -40,6 +42,12 @@ namespace ChessEngine.AI.Evaluation
         public void OnUndoMove()
         {
             factorsHistory.Pop();
+        }
+
+        public static int GetCheckmatedEvaluation()
+        {
+            // TODO: Add checkmate depth as input parameter
+            return -int.MaxValue;
         }
 
         private FactorsRecord CalculateFactorsForPosition(Position.Position position)

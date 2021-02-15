@@ -13,16 +13,15 @@ namespace ChessEngine.AI
             var legalMoves = MoveGenerator.GenerateLegalMoves(position);
             if (legalMoves.Count == 0)
             {
-                return Task.Run(() => Option.None<Move.Move>());
+                return Task.FromResult(Option.None<Move.Move>());
             }
             else if (legalMoves.Count == 1)
             {
-                return Task.Run(() =>Option.Some(legalMoves[0]));
+                return Task.FromResult(Option.Some(legalMoves[0]));
             }
 
-            var evaluator = new Evaluator();
-            var searchManager = new SearchManager();
-            return Task.Run(() => searchManager.FindBestMove(position, evaluator));
+            var searchManager = new SearchManager(new Evaluator());
+            return Task.Run(() => searchManager.FindBestMove(position));
         }
     }
 }
