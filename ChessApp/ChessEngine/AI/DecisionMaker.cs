@@ -20,7 +20,7 @@ namespace ChessEngine.AI
                 return Task.FromResult(Option.Some(legalMoves[0]));
             }
 
-            var searchManager = new SearchManager(new Evaluator());
+            var searchManager = new SearchManager(new Evaluator(), 2);
             return Task.Run(() => searchManager.FindBestMove(position));
         }
     }

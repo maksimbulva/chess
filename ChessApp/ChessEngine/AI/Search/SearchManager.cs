@@ -8,11 +8,21 @@ namespace ChessEngine.AI.Search
 {
     internal sealed class SearchManager
     {
-        private readonly Evaluator evaluator;
+        private const int MinEvaluationValue = -int.MaxValue;
 
-        public SearchManager(Evaluator evaluator)
+        private const int MinPriorityToConsiderMove = 0;
+        private const int PriorityPerDepthLevel = 100;
+        private const int PriorityBonusMoveChangesMaterial = 1000;
+
+        private readonly Evaluator evaluator;
+        private readonly int recommendedMaxDepth;
+
+        public SearchManager(
+            Evaluator evaluator,
+            int recommendedMaxDepth)
         {
             this.evaluator = evaluator;
+            this.recommendedMaxDepth = recommendedMaxDepth;
         }
 
         public Option<Move.Move> FindBestMove(Position.Position currentPosition)
@@ -20,31 +30,35 @@ namespace ChessEngine.AI.Search
             evaluator.OnNewSearch(currentPosition);
 
             Option<Move.Move> bestMove = Option.None<Move.Move>();
-            int bestMoveEvaluation = -int.MaxValue;
+            int bestMoveEvaluation = MinEvaluationValue;
 
             foreach (var move in MoveGenerator.GenerateLegalMoves(currentPosition))
             {
                 currentPosition.PlayMove(move);
-                var moveEvaluation = -CalculateEvaluationRecursively(
+
+                var evaluation = -CalculateEvaluationRecursively(
                     currentPosition,
-                    depthLeft: 3);
-                if (!bestMove.HasValue || moveEvaluation > bestMoveEvaluation)
+                    currentDepth: 1)
+                    .ValueOr(-MinEvaluationValue);
+
+                if (!bestMove.HasValue || evaluation >= bestMoveEvaluation)
                 {
                     bestMove = Option.Some(move);
-                    bestMoveEvaluation = moveEvaluation;
+                    bestMoveEvaluation = evaluation;
                 }
+
                 currentPosition.UndoMove();
             }
 
             return bestMove;
         }
 
-        private int CalculateEvaluationRecursively(
+        private Option<int> CalculateEvaluationRecursively(
             Position.Position position,
-            int depthLeft)
+            int currentDepth)
         {
             var bestMove = Move.Move.NullMove;
-            var bestMoveEvaluation = -int.MaxValue;
+            var bestMoveEvaluation = MinEvaluationValue;
             bool hasLegalMove = false;
 
             var playerEvaluationMultiplier = GetPlayerEvaluationMultiplier(position.PlayerToMove);
@@ -61,24 +75,24 @@ namespace ChessEngine.AI.Search
                 }
 
                 hasLegalMove = true;
+                int movePriority = CalculateMovePriority(move, currentDepth);
+                if (movePriority < MinPriorityToConsiderMove)
+                {
+                    position.UndoMove();
+                    continue;
+                }
+
                 evaluator.OnMovePlayed(move, playerToMove);
 
-                int moveEvaluation;
-                if (depthLeft == 1)
-                {
-                    moveEvaluation = playerEvaluationMultiplier * evaluator.GetCurrentEvaluation();
-                }
-                else
-                {
-                    moveEvaluation = -CalculateEvaluationRecursively(
-                        position,
-                        depthLeft - 1);
-                }
+                var evaluation = -CalculateEvaluationRecursively(
+                    position,
+                    currentDepth + 1)
+                    .ValueOr(() => -playerEvaluationMultiplier * evaluator.GetCurrentEvaluation());
 
-                if (moveEvaluation >= bestMoveEvaluation)
+                if (evaluation >= bestMoveEvaluation)
                 {
                     bestMove = move;
-                    bestMoveEvaluation = moveEvaluation;
+                    bestMoveEvaluation = evaluation;
                 }
 
                 position.UndoMove();
@@ -87,12 +101,25 @@ namespace ChessEngine.AI.Search
 
             if (!hasLegalMove)
             {
-                return GetEvaluationForPositionWithoutLegalMoves(
-                    position,
-                    playerEvaluationMultiplier);
+                return Option.Some(
+                    GetEvaluationForPositionWithoutLegalMoves(
+                        position,
+                        playerEvaluationMultiplier));
             }
 
-            return bestMoveEvaluation;
+            return bestMove.IsNullMove ? Option.None<int>() : Option.Some(bestMoveEvaluation);
+        }
+
+        private int CalculateMovePriority(
+            Move.Move move,
+            int currentDepth)
+        {
+            int result = PriorityPerDepthLevel * (recommendedMaxDepth - currentDepth);
+            if (IsMoveChangesMaterial(move))
+            {
+                result += PriorityBonusMoveChangesMaterial;
+            }
+            return result;
         }
 
         private static bool IsPlayedMoveLegal(Position.Position positionAfterMovePlayed)
@@ -126,6 +153,11 @@ namespace ChessEngine.AI.Search
                 (IsKingUnderAttack(position, position.PlayerToMove) ?
                     Evaluator.GetCheckmatedEvaluation() :
                     Evaluator.StalemateEvaluation);
+        }
+
+        private static bool IsMoveChangesMaterial(Move.Move move)
+        {
+            return move.IsCapture || move.IsPromotion;
         }
     }
 }
