@@ -54,7 +54,7 @@ namespace UI
                         0 => ChessboardItem.CellColor.Dark,
                         _ => ChessboardItem.CellColor.Light
                     };
-                    items.Add(new ChessboardItem(new Square(row, column), null, null, cellColor));
+                    items.Add(new ChessboardItem(new BoardSquare(row, column), null, null, cellColor));
                 }
             }
 
