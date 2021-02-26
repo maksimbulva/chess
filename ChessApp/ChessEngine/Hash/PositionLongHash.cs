@@ -1,6 +1,6 @@
 ﻿namespace ChessEngine.Hash
 {
-    internal struct PositionLongHash
+    public struct PositionLongHash
     {
         private readonly ulong lowerHash;
         private readonly ulong higherHash;

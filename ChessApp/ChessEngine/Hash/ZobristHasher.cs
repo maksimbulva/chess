@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ChessEngine.Hash
 {
-    internal sealed class ZobristHasher
+    public sealed class ZobristHasher
     {
         private static readonly int PieceTypeCount = typeof(Piece).GetEnumValues().Length;
         private static readonly int PlayerCount = typeof(Player).GetEnumValues().Length;
